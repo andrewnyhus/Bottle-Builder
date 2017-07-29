@@ -1,3 +1,4 @@
+.idea
 *.pyc
 Bottle_Builder/settings.py
 db.sqlite3

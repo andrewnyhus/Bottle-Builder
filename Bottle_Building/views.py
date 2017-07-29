@@ -89,6 +89,7 @@ def view_profile(request):
 # ===============================================================================
 # Get Bottle Buildings, View Bottle Building, Design Bottle Building
 # ===============================================================================
+# ALLOW FOR DELETING BOTTLE BUILDINGS
 
 @api_view(['GET'])
 def get_bottle_buildings(request):
