@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>{% block title %}{% endblock %}</title>
+		
+		<!-- include dependencies -->
+
+		<!-- jQuery 3.2.1 -->
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  
+		<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>	
+
+
+
+	</head>
+
+	<body>
+		<!-- include nav bar -->
+		<nav class="navbar navbar-default">
+		  <div class="container-fluid">
+		    <!-- Brand and toggle get grouped for better mobile display -->
+		    <div class="navbar-header">
+		      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		      </button>
+		      <a class="navbar-brand" href="/">Bottle Builder</a>
+		    </div>
+
+		    <!-- Collect the nav links, forms, and other content for toggling -->
+		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+
+					<!-- About Link -->
+					<li><a href="/about">About</a></li>
+
+					<!-- Design Building Link -->
+					<li><a href="/design_bottle_building">Design Building</a></li>
+
+					{% if user.is_authenticated %}
+						<!-- Logout link -->
+						<li><a href="/logout">Logout</a></li>
+					{% endif %}
+		      </ul>
+
+
+		      <ul class="nav navbar-nav navbar-right">	
+				<li>
+					{% if user.is_authenticated %}
+
+						<a href="/view_profile/">View Profile</a>
+					{% else %}
+						<a href="/login_page">Login</a>
+					{% endif %}
+				</li>
+		      </ul>
+		    </div><!-- /.navbar-collapse -->
+		  </div><!-- /.container-fluid -->
+		</nav>
+
+		<!-- End of Navbar -->		
+
+
+		{% block content %}{% endblock %}
+	</body>
+
+</html>

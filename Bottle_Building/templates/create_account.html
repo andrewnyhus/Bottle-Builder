@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+
+{% block title %} Bottle Builder | Homepage {% endblock %}
+
+
+
+{% block content %}
+
+	<h2 align="center"> Create Account </h2>
+    <br>
+
+    <form align="center" style="padding-left:20%; padding-right:20%">
+
+
+        <input align="center" class="form-control" type="email" id="email" placeholder="E-mail" maxlength="35">
+        <input align="center" class="form-control" type="text" id="username" placeholder="Username" maxlength="25">
+        <input align="center" class="form-control" type="password" id="password" placeholder="Password" maxlength="20">
+        <input align="center" class="form-control" type="password" id="confirm_password" placeholder="Confirm Password" maxlength="20">
+        <br>
+        <button align="center" class="form-control btn btn-primary" type="submit" id="submit_button">Create Account</button>
+
+    </form>
+
+
+
+
+    TODO - REDIRECT TO HOME IF AUTHENTICATED
+    TODO - WORKING CREATE ACCOUNT FORM
+
+
+{% endblock %}
