@@ -1,7 +1,8 @@
 from .models import *
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, logout
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
@@ -12,6 +13,8 @@ from rest_framework.permissions import AllowAny
 import json
 import re
 
+@never_cache
+@ensure_csrf_cookie
 def home(request):
 	if request.user.is_authenticated and request.user.is_active:
 		return render(request, 'profile.html')
@@ -24,12 +27,15 @@ def about(request):
 # ===============================================================================
 # Login/Logout
 # ===============================================================================
+@never_cache
+@ensure_csrf_cookie
 def login_page(request):
 	if request.user.is_authenticated and request.user.is_active:
 		return render(request, 'profile.html')
 	return render(request, 'login_page.html')
 
 @api_view(['POST'])
+@permission_classes((AllowAny, ))
 def login(request):
     username = request.data["username"]
     password = request.data["password"]
@@ -38,14 +44,21 @@ def login(request):
 
     if user is not None:
         if user.is_active:
-            login(request, user)
-            return HttpResponse("Success")
+            auth_login(request, user)
+            return Response("Logged in Successfully", status=status.HTTP_200_OK)
 
-    return HttpResponse("Failure")
+    return Response("Login Failed", status=status.HTTP_400_BAD_REQUEST)
 
 def logout_page(request):
 	logout(request)
 	return render(request, "logout_successful.html")
+
+
+@never_cache
+@ensure_csrf_cookie
+def forgot_credentials(request):
+	return render(request, 'forgot_credentials.html')
+
 # ===============================================================================
 # ===============================================================================
 
@@ -119,12 +132,8 @@ def create_account(request):
 			return Response("Account Created Successfully", status=status.HTTP_201_CREATED)
 
 
-
-
-
-# HANDLE FORGOTTEN PASSWORD
-
-
+@never_cache
+@ensure_csrf_cookie
 def view_profile(request):
 	if request.user.is_authenticated and request.user.is_active:
 		return render(request, "profile.html")
@@ -145,12 +154,16 @@ def get_bottle_buildings(request):
 		# retrieve from db
 		return HttpResponse("Insert JSON response")
 
+@never_cache
+@ensure_csrf_cookie
 def view_bottle_building(request, building_id):
 
 	if request.method == "GET" and request.user.is_authenticated and request.user.is_active: # and the building exists in their building list
 		return render("view_bottle_building.html", {"building": {}})
 	return render(request, "404.html")
 
+@never_cache
+@ensure_csrf_cookie
 def design_bottle_building(request):
 	return render(request, "design_bottle_building.html")
 
