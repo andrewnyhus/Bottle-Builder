@@ -6,11 +6,144 @@
 
 
 
+
 {% block content %}
+
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+
+
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css'/>
+    <!--
+    <script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet' />
+
+
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.3/leaflet.draw.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.3/leaflet.draw.js'></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-geodesy/v0.1.0/leaflet-geodesy.js'></script>
+    -->
+
+
+    <style>
+        #map_to_draw_building{
+            height: 380px;
+            width: 100%;
+        }
+
+    </style>
+
+
+
 
 	<h2 align="center"> Design Bottle Building </h2>
 
-    TODO - Paste & Fix code
+    <!-- ---------------------------------------- -->
+
+
+
+
+        <form align="center" style="padding-left:20%; padding-right:20%;" >
+
+            <div class="alert alert-danger" id="bad_alert" style="display: none;"></div>
+
+            <!-- Measurement System Radio Buttons -->
+            <label class="radio-inline">
+              <input type="radio" id="imperial_radio" name="measurement_system_radio" onclick="set_page_to_imperial();"/>Use Imperial System
+            </label>
+            <label class="radio-inline">
+              <input type="radio" id="metric_radio" name="measurement_system_radio" onclick="set_page_to_metric();" />Use Metric System
+            </label><br><br>
+
+
+            <!-- Num Pillars Input -->
+            <label for="num_pillars_input" id="num_pillars_label">Enter the # of pillars (0, 3 or greater)</label>
+            <input type="number" class="form-control" id="num_pillars_input" min="0" required><br>
+
+
+            <!-- Enter Building Height -->
+            <label for="building_height_input" id="building_height_label"></label>
+            <input type="number" class="form-control" id="building_height_input" step="0.01" min="0" required><br>
+
+            <!-- Enter Bottle Volume -->
+            <label for="bottle_volume_input" id="bottle_volume_label"></label>
+            <input type="number" class="form-control" id="bottle_volume_input" min="0" required><br>
+
+            <!-- Enter Bottle Diameter -->
+            <label for="bottle_diameter_input" id="bottle_diameter_label"></label>
+            <input type="number" class="form-control" id="bottle_diameter_input" min="0" required><br>
+
+            <!-- Enter Bottle Fill Density -->
+            <label for="bottle_fill_density_dropdown" id="bottle_fill_density_dropdown_label"></label>
+
+             <div id="bottle_fill_density_dropdown" class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" id="bottle_fill_density_dropdown_button" type="button" data-toggle="dropdown">Select Bottle Fill Material/Density
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a id="dry_dirt_selected"></a></li>
+                <li><a id="dry_sand_selected"></a></li>
+                <li><a id="manual_entry_selected">Custom, (Enter Manually)</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a id="no_density_entry_selected">I don't know, or don't want to include bottle fill material in my estimate.</a></li>
+              </ul>
+            </div><br>
+
+            <input type="number" style="display:none" class="form-control" id="manual_entry_bottle_fill_density" min="0"><br>
+
+
+
+            <!-- Map -->
+            <label for="map_to_draw_building">Please draw the perimeter of your new building
+            in the map below.</label>
+            <div id="map_to_draw_building"></div><br>
+
+
+            <!-- Generate Resource Estimate Button -->
+            <button type="button" class="btn btn-primary form-control" id="generate_resource_estimate_button" onclick="generate_resource_estimate_html()">Generate Resource Estimate</button>
+
+
+        </form>
+
+
+        <!-- Resource Estimate Table Here -->
+        <div align="center" id="resource_estimate_table_div"></div>
+
+
+
+
+    <!-- ---------------------------------------- -->
+
+    <script src="/static/js/alert-scripts.js"></script>
+    <script src="/static/design_building/js/density_dropdown.js"></script>
+    <script src="/static/design_building/js/measurement_system.js"></script>
+    <script src="/static/design_building/js/resource_estimation.js"></script>
+    <script src="/static/design_building/js/map_script.js"></script>
+    <script src="/static/design_building/js/validate_and_store_form_data.js"></script>
+
+    <script>
+    {% if use_imperial_system %}
+        // initialize measurement system global
+        measurement_system = measurement_system_enum.IMPERIAL;
+
+        // check radio button
+        document.getElementById("imperial_radio").checked = true;
+
+        // update page
+        set_page_to_imperial();
+    {% else %}
+        // initialize measurement system global
+        measurement_system = measurement_system_enum.METRIC;
+
+        // check radio button
+        document.getElementById("metric_radio").checked = true;
+
+        // update page
+        set_page_to_metric();
+
+    {% endif %}
+    </script>
 
 
 {% endblock %}

@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^logout/', views.logout_page, name="logout"),
     url(r'^forgot_credentials/', views.forgot_credentials, name="forgot_credentials"),
 
+
     url(r'^create_account/', views.create_account_page, name="create_account"),
     url(r'^register/', views.create_account, name="register"),
     url(r'^view_profile/', views.view_profile, name="profile"),

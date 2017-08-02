@@ -13,6 +13,9 @@ from rest_framework.permissions import AllowAny
 import json
 import re
 
+
+
+
 @never_cache
 @ensure_csrf_cookie
 def home(request):
@@ -127,9 +130,13 @@ def create_account(request):
 
 			user = User.objects.create(username=request.data["username"], email=request.data["email"])
 			user.set_password(request.data['password'])
+
+			user.is_active = False
 			user.save()
 
-			return Response("Account Created Successfully", status=status.HTTP_201_CREATED)
+
+
+			return Response("Account Created Successfully, Please Activate Your Account", status=status.HTTP_201_CREATED)
 
 
 @never_cache
@@ -165,7 +172,7 @@ def view_bottle_building(request, building_id):
 @never_cache
 @ensure_csrf_cookie
 def design_bottle_building(request):
-	return render(request, "design_bottle_building.html")
+	return render(request, "design_bottle_building.html", {"use_imperial_system": True})
 
 @api_view(['POST'])
 def post_bottle_building_design(request):
@@ -176,6 +183,8 @@ def post_bottle_building_design(request):
 		# save bottle building
 		return HttpResponse("Success")
 	return HttpResponse("Failure")
+
+
 # ===============================================================================
 # ===============================================================================
 
