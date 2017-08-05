@@ -55,7 +55,10 @@ function convert_coordinates_to_walls(coordinate_set){
 function generate_resource_estimate(){
 
     // if form is valid and building_info is complete, continue
+    if(!store_form_input()){return false;}
 
+    // TODO: generate estimate
+    return true;
 
 }
 // ------------------------------------------------------------------------------------------------------
@@ -66,14 +69,11 @@ function generate_resource_estimate(){
 function generate_resource_estimate_html(){
 
     // generate resource estimate first
-    generate_resource_estimate();
+    if(generate_resource_estimate()){
+        //TODO: create table
 
-    // if resource estimate generation was successful, continue
-    if(building_info["resources"] != undefined){
-
-    }else{
-        $("#resource_estimate_table_div").html("<p align='center'>Cannot generate resource estimate until the form is complete.</p>");
     }
-
 }
+
+
 // ------------------------------------------------------------------------------------------------------

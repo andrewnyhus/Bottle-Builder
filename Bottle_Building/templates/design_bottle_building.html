@@ -8,7 +8,7 @@
 
 
 {% block content %}
-
+<!--
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 
@@ -16,7 +16,7 @@
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
     <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css'/>
-    <!--
+    -->
     <script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
     <link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet' />
 
@@ -24,7 +24,7 @@
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.3/leaflet.draw.css' rel='stylesheet' />
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.3/leaflet.draw.js'></script>
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-geodesy/v0.1.0/leaflet-geodesy.js'></script>
-    -->
+
 
 
     <style>
@@ -85,8 +85,6 @@
                 <li><a id="dry_dirt_selected"></a></li>
                 <li><a id="dry_sand_selected"></a></li>
                 <li><a id="manual_entry_selected">Custom, (Enter Manually)</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a id="no_density_entry_selected">I don't know, or don't want to include bottle fill material in my estimate.</a></li>
               </ul>
             </div><br>
 
@@ -124,8 +122,6 @@
 
     <script>
     {% if use_imperial_system %}
-        // initialize measurement system global
-        measurement_system = measurement_system_enum.IMPERIAL;
 
         // check radio button
         document.getElementById("imperial_radio").checked = true;
@@ -133,8 +129,6 @@
         // update page
         set_page_to_imperial();
     {% else %}
-        // initialize measurement system global
-        measurement_system = measurement_system_enum.METRIC;
 
         // check radio button
         document.getElementById("metric_radio").checked = true;

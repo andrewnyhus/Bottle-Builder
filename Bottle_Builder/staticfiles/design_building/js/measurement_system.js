@@ -1,31 +1,18 @@
-// create enum for switching between measurement systems
-measurement_system_enum = {
-    METRIC : 1,
-    IMPERIAL : 2
-}
-
-var measurement_system;
 
 // ------------------------------------------------------------------------------------------------------
-    // return measurement_system. 1 = Metric, 2 = Imperial
-    function get_measurement_system(){
-        return measurement_system;
+
+    // ------------------------------------------------------------------------------------------------------
+    // Returns whether or not the user selected imperial system.
+    function imperial_selected(){
+        return $("#imperial_radio").prop("checked");
     }
     // ------------------------------------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------------------------------------
-    function measurement_system_button_clicked(){
-        // if using metric, switch to imperial & update html
-        if(measurement_system == 1){
-            measurement_system = measurement_system_enum.IMPERIAL;
-            set_page_to_imperial();
-
-        }else if(measurement_system == 2){
-        // if using imperial, switch to metric & update html
-            measurement_system = measurement_system_enum.METRIC;
-            set_page_to_metric();
-        }
+    // Returns whether or not the user selected metric system.
+    function metric_selected(){
+        return $("#metric_radio").prop("checked");
     }
     // ------------------------------------------------------------------------------------------------------
 
@@ -46,13 +33,12 @@ var measurement_system;
     // ------------------------------------------------------------------------------------------------------
     // update the page to show units for the metric system
     function set_page_to_metric(){
-        measurement_system = measurement_system_enum.METRIC;
 
         // update: building_height_label, bottle_volume_label, & bottle_diameter_label
 
         $("#building_height_label").html("Enter the height of your building (meters).");
-        $("#bottle_volume_label").html("Enter the volume of your bottle (milliliters).  We assume that the bottle are of uniform volume, if they are not please provide your best average of the bottles.");
-        $("#bottle_diameter_label").html("Enter the diameter of the bottle (centimeters).  We assume that the bottle are of uniform diameter, if they are not please provide your best average of the bottles.");
+        $("#bottle_volume_label").html("Enter the average volume of your bottle (milliliters).");
+        $("#bottle_diameter_label").html("Enter the average diameter of the bottle (centimeters).");
 
 
         // Update bottle fill density dropdown
@@ -71,14 +57,13 @@ var measurement_system;
     // ------------------------------------------------------------------------------------------------------
     // update the page to show units for the imperial system
     function set_page_to_imperial(){
-        measurement_system = measurement_system_enum.IMPERIAL;
 
 
         // update: building_height_label, bottle_volume_label, & bottle_diameter_label
 
         $("#building_height_label").html("Enter the height of your building (feet).");
-        $("#bottle_volume_label").html("Enter the volume of your bottle (fluid ounces).  We assume that the bottle are of uniform volume, if they are not please provide your best average of the bottles.");
-        $("#bottle_diameter_label").html("Enter the diameter of the bottle (inches).  We assume that the bottle are of uniform diameter, if they are not please provide your best average of the bottles.");
+        $("#bottle_volume_label").html("Enter the average volume of your bottle (fluid ounces).");
+        $("#bottle_diameter_label").html("Enter the average diameter of your bottle (inches).");
 
 
         // Update bottle fill density dropdown
