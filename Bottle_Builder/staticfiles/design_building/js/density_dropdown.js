@@ -18,21 +18,21 @@ function get_fill_density(){
     if(imperial_selected()){// if imperial
 
         if(density_entry == 1){ // if dirt
-
+            return 76;
         }else if(density_entry == 2){ // if sand
-
+            return 97;
         }else if(density_entry == 3){ // if manual
-
+            return $("#manual_entry_bottle_fill_density").val();
         }
 
     }else if(metric_selected()){// if metric
 
         if(density_entry == 1){ // if dirt
-
+            return 1220;
         }else if(density_entry == 2){ // if sand
-
+            return 1555;
         }else if(density_entry == 3){ // if manual
-
+            return $("#manual_entry_bottle_fill_density").val();
         }
 
     }

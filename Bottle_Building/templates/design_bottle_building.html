@@ -5,25 +5,26 @@
 {% block title %} Bottle Builder | Design Bottle Building {% endblock %}
 
 
+{% block import_headers %}
 
-
-{% block content %}
-<!--
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 
-
-    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
     <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css'/>
-    -->
-    <script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
-    <link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet' />
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.0/mapbox-gl-geocoder.min.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.0/mapbox-gl-geocoder.css' type='text/css' />
+
+    <script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+
+{% endblock %}
 
 
-    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.3/leaflet.draw.css' rel='stylesheet' />
-    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.3/leaflet.draw.js'></script>
-    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-geodesy/v0.1.0/leaflet-geodesy.js'></script>
+
+{% block content %}
+
+
 
 
 
@@ -45,9 +46,11 @@
 
 
 
-        <form align="center" style="padding-left:20%; padding-right:20%;" >
-
+        <form align="center" id="building_design_form" style="padding-left:10%; padding-right:10%; display:none;" >
+            {% csrf_token %}
             <div class="alert alert-danger" id="bad_alert" style="display: none;"></div>
+        <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert"></div>
+
 
             <!-- Measurement System Radio Buttons -->
             <label class="radio-inline">
@@ -66,6 +69,11 @@
             <!-- Enter Building Height -->
             <label for="building_height_input" id="building_height_label"></label>
             <input type="number" class="form-control" id="building_height_input" step="0.01" min="0" required><br>
+
+            <!-- Enter Foundation Depth -->
+            <label for="foundation_depth_input" id="foundation_depth_label"></label>
+            <input type="number" class="form-control" id="foundation_depth_input" step="0.01" min="0" required><br>
+
 
             <!-- Enter Bottle Volume -->
             <label for="bottle_volume_input" id="bottle_volume_label"></label>
@@ -91,15 +99,18 @@
             <input type="number" style="display:none" class="form-control" id="manual_entry_bottle_fill_density" min="0"><br>
 
 
-
+            <br>
             <!-- Map -->
-            <label for="map_to_draw_building">Please draw the perimeter of your new building
+            <label for="map_to_draw_building" id="map_label">Please draw the perimeter of your new building
             in the map below.</label>
-            <div id="map_to_draw_building"></div><br>
+            <div id="map_to_draw_building"></div><br><br>
 
 
             <!-- Generate Resource Estimate Button -->
             <button type="button" class="btn btn-primary form-control" id="generate_resource_estimate_button" onclick="generate_resource_estimate_html()">Generate Resource Estimate</button>
+            <br>
+            <!-- Post Building Design -->
+            <button type="button" class="btn btn-default form-control" id="post_design_button"></button>
 
 
         </form>
@@ -117,10 +128,13 @@
     <script src="/static/design_building/js/density_dropdown.js"></script>
     <script src="/static/design_building/js/measurement_system.js"></script>
     <script src="/static/design_building/js/resource_estimation.js"></script>
-    <script src="/static/design_building/js/map_script.js"></script>
     <script src="/static/design_building/js/validate_and_store_form_data.js"></script>
+    <script src="/static/js/cookie-stuff.js"></script>
 
     <script>
+
+
+
     {% if use_imperial_system %}
 
         // check radio button
@@ -137,7 +151,29 @@
         set_page_to_metric();
 
     {% endif %}
+
+
+
+    {% if user.is_authenticated %}
+        // set text and onclick of post button
+        $("#post_design_button").html("Post Building Design");
+        $("#post_design_button").attr("onclick", "post_building_design()");
+    {% else %}
+        // set text and onclick of post button
+        $("#post_design_button").html("Login to Post Building Design (You will lose progress).");
+        $("#post_design_button").attr("onclick", "document.location = '/login_page';");
+
+    {% endif %}
+
+    // show form once it is loaded
+    document.getElementById("building_design_form").style.display = "block";
+
+
+
     </script>
+
+
+    <script src="/static/design_building/js/map_script.js"></script>
 
 
 {% endblock %}

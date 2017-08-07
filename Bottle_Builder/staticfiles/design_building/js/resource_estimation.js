@@ -16,29 +16,23 @@ function convert_coordinates_to_walls(coordinate_set){
     var walls = [];
 
 
-    for(i = 0; i < coordinate_set.length; i++){
+    for(i = 0; i < coordinate_set.length - 1; i++){
             coordinate_set[i]["vertice_id"] = (i+1);
 
-            if(i + 1 == coordinate_set.length){
-                walls.push([coordinate_set[i], coordinate_set[0]]);
+            // create walls[i]] & include coordinates
+            walls.push({});
+            walls[i][0] = coordinate_set[i];
+            walls[i][1] = coordinate_set[i+1];
 
-                walls[i]["length_meters"] = (coordinate_set[i].distanceTo(coordinate_set[0])).toFixed(3);
-                walls[i]["length_feet"] = (walls[i]["length_meters"]*3.28).toFixed(3);
-            }else{
-                walls.push([coordinate_set[i], coordinate_set[i+1]]);
-                walls[i]["length_meters"] = (coordinate_set[i].distanceTo(coordinate_set[i+1])).toFixed(3);
-                walls[i]["length_feet"] = (walls[i]["length_meters"]*3.28).toFixed(3);
+            // put distance in either meters or feet
+            // into walls[i]
+            if(metric_selected()){
+                walls[i]["length"] = turf.distance(coordinate_set[i], coordinate_set[i+1], "meters")
+                walls[i]["length_units"] = "meters";
+            }else if(imperial_selected()){
+                walls[i]["length"] = turf.distance(coordinate_set[i], coordinate_set[i+1], "feet")
+                walls[i]["length_units"] = "feet";
             }
-
-
-            // if measurement system is imperial, store length in feet
-    // if measurement system is metric, store length in meters
-    if(get_measurement_system() == measurement_system_enum.IMPERIAL){
-        walls[i]["length"] = (3.28)*(coordinate_set[i].distanceTo(coordinate_set[i+1])).toFixed(3);
-            }else if(get_measurement_system() == measurement_system_enum.METRIC){
-            walls[i]["length"] = (coordinate_set[i].distanceTo(coordinate_set[i+1])).toFixed(3);
-            }
-
 
 
     }
@@ -56,6 +50,7 @@ function generate_resource_estimate(){
 
     // if form is valid and building_info is complete, continue
     if(!store_form_input()){return false;}
+
 
     // TODO: generate estimate
     return true;
@@ -77,3 +72,5 @@ function generate_resource_estimate_html(){
 
 
 // ------------------------------------------------------------------------------------------------------
+
+

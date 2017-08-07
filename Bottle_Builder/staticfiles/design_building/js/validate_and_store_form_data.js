@@ -6,11 +6,22 @@ function store_form_input(){
     if(form_is_valid_and_complete()){
         // store info
 
-        // store measurement system
+        // store units
         if(imperial_selected()){
             building_info["measurement_system"] = "imperial";
+            building_info["building_height_units"] = "feet";
+            building_info["average_bottle_volume_units"] = "fluid ounces";
+            building_info["average_bottle_diameter_units"] = "inches";
+            building_info["fill_density_units"] = "pounds/cubic foot";
+            building_info["foundation_depth_units"] = "feet";
+
         }else if(metric_selected()){
             building_info["measurement_system"] = "metric";
+            building_info["building_height_units"] = "meters";
+            building_info["average_bottle_volume_units"] = "milliliters";
+            building_info["average_bottle_diameter_units"] = "centimeters";
+            building_info["fill_density_units"] = "kilogram/cubic meter";
+            building_info["foundation_depth_units"] = "meters";
         }
 
         // store num pillars
@@ -19,15 +30,19 @@ function store_form_input(){
         // store building height
         building_info["building_height"] = $("#building_height_input").val();
 
+        building_info["foundation_depth"] = $("#foundation_depth_input").val();
+
         // store avg. bottle volume
         building_info["average_bottle_volume"] = $("#bottle_volume_input").val();
 
         // store avg. bottle diameter
         building_info["average_bottle_diameter"] = $("#bottle_diameter_input").val();
 
-        // store bottle fill density
+        // store fill density
+        building_info["fill_density"] = "" + get_fill_density();
 
-        // TODO: FINISH
+        console.log("building_info: ");
+        console.log(building_info);
 
 
         return true;
@@ -48,12 +63,13 @@ function form_is_valid_and_complete(){
     if(!num_pillars_is_valid()){return false;}
 
     if(!input_is_positive_number($("#building_height_input").val(), "building height")){return false;}
+    if(!input_is_positive_number($("#foundation_depth_input").val(), "foundation depth")){return false;}
     if(!input_is_positive_number($("#bottle_volume_input").val(), "average bottle volume")){return false;}
     if(!input_is_positive_number($("#bottle_diameter_input").val(), "average bottle diameter")){return false;}
 
     if(!fill_density_is_selected()){ return false;}
 
-    // TODO: Include Map Data in Validation
+    if(!map_was_drawn()){return false;}
 
     return true;
 
@@ -138,5 +154,62 @@ function fill_density_is_selected(){
     }
 
     return true;
+}
+// ------------------------------------------------------------------------------------------------------
+
+// ------------------------------------------------------------------------------------------------------
+// Checks that the map was drawn
+function map_was_drawn(){
+
+    // if map was not drawn, display alert and return false
+    if(building_info["walls"] == undefined){
+        set_message_bad_alert("Please draw the building perimeter on the map.");
+        show_bad_alert();
+        return false;
+    }
+    // otherwise return true
+    return true;
+}
+// ------------------------------------------------------------------------------------------------------
+
+
+
+// ------------------------------------------------------------------------------------------------------
+// Post Building Design
+function post_building_design(){
+
+    // if form is valid and building_info is complete, continue with stored info
+    if(!store_form_input()){return false;}
+
+
+    //building_info["csrfmiddlewaretoken"] = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+
+    console.log("building info:");
+    console.log(building_info);
+
+
+    $.ajax({
+
+        url: "/post_bottle_building_design/",
+        type: "POST",
+        data: building_info,
+
+        success: function(response){
+            set_message_good_alert(response["message"]);
+            show_good_alert();
+            if(response["url"] != undefined){
+                document.location = response["url"];
+            }
+
+            console.log(response);
+        },
+
+        error: function(xhr, error_message, err){
+            var response = xhr.responseJSON;
+            console.log(response);
+        }
+
+    });
+
 }
 // ------------------------------------------------------------------------------------------------------

@@ -178,11 +178,14 @@ def design_bottle_building(request):
 def post_bottle_building_design(request):
 	if request.user.is_authenticated and request.user.is_active:
 
-		# if request is valid
 
-		# save bottle building
-		return HttpResponse("Success")
-	return HttpResponse("Failure")
+
+		#url_to_design = "view_bottle_building/building_id=" + building.pk
+
+		# if request is valid
+		return Response({"message": "Design Posted Successfully!"}, status=status.HTTP_200_OK)
+
+	return Response("Please log in", status=status.HTTP_401_UNAUTHORIZED)
 
 
 # ===============================================================================
