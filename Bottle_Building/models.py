@@ -11,8 +11,6 @@ class Bottle(models.Model):
 class Bottle_Wall(models.Model):
     pass
 
-class Bottle_Pillar(models.Model):
-    pass
 
 class Foundation(models.Model):
     pass

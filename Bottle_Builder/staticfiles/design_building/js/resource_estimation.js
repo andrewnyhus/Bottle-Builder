@@ -241,12 +241,10 @@ function generate_resource_estimate_html(){
     // generate resource estimate first
     if(resource_estimate != undefined){
 
-        console.log("resource estimate:");
-        console.log(resource_estimate);
 
         // create table header
         //=====================================================================================================================
-        var table_header = "<h4 align='center'>This estimate is not tested, and is theoretical.  It also assumes the concrete density is 1400 kg/cubic meter (87.39 lb/cubic foot)</h4><div class='container'><table class='table table-bordered'>";
+        var table_header = '<p align="center" style="padding-left:10%; padding-right:10%;"> Disclaimer: This has not been tested in real life, and is theoretical estimate.  It does not take into account any pillars that may be needed.  It assumes that the density of concrete is 1400 kg/cubic meter (87.39 lb/cubic foot).  If you have tried it and have feedback please go <a href="/feedback">here</a></p>';
 
         // include bottle in header
         table_header += "<thead><tr><th></th><th>"+ resource_estimate["bottle_units"] + "</th>";
@@ -322,21 +320,6 @@ function generate_resource_estimate_html(){
         total_bottles += total_bottles_for_walls;
         total_fill += total_fill_for_walls;
         total_cement += total_cement_for_walls;
-
-        //=====================================================================================================================
-
-        // Include Estimate for Pillars
-        //=====================================================================================================================
-        var num_pillars = parseInt(resource_estimate["num_pillars"]);
-
-        if(num_pillars > 0){
-            // Calculate and Include Row for Estimate of a Single Pillar
-            //=====================================================================================================================
-            //=====================================================================================================================
-
-            // Start Total Pillars Row
-
-        }
 
         //=====================================================================================================================
 
