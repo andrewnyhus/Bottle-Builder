@@ -21,12 +21,15 @@
     function clear_fields_related_to_measurement_system(){
         $("#building_height_input").val("");
         $("#foundation_depth_input").val("");
+        $("#pillar_depth_input").val("");
         $("#bottle_volume_input").val("");
         $("#bottle_diameter_input").val("");
+        $("#bottle_height_input").val("");
+        $("#width_between_bottles_input").val("");
 
         $("#bottle_fill_density_dropdown_button").html("Select Bottle Fill Material/Density");
         $("#manual_entry_bottle_fill_density").css("display", "none");
-        $("#manual_entry_bottle_fill_density").val("0");
+        $("#manual_entry_bottle_fill_density").val("");
         fill_density_entry = 0;
     }
     // ------------------------------------------------------------------------------------------------------
@@ -39,9 +42,11 @@
 
         $("#building_height_label").html("Enter the height of your building (meters).");
         $("#foundation_depth_label").html("Enter the depth of your foundation (meters).  Usually this is about 0.9 meters deep, but if the soil is very moist or on a hill you should dig a little deeper.")
+        $("#pillar_depth_label").html("Enter the depth of your pillars if you have any (meters).");
+        $("#width_between_bottles_label").html("Enter the width between bottles (centimeters).");
         $("#bottle_volume_label").html("Enter the average volume of your bottle (milliliters).");
         $("#bottle_diameter_label").html("Enter the average diameter of the bottle (centimeters).");
-
+        $("#bottle_height_label").html("Enter the average height of your bottle (centimeters).");
 
         // Update bottle fill density dropdown
 
@@ -65,8 +70,11 @@
 
         $("#building_height_label").html("Enter the height of your building (feet).");
         $("#foundation_depth_label").html("Enter the depth of your foundation (feet).  Usually this is about 3 feet deep, but if the soil is very moist or on a hill you should dig a little deeper.")
-        $("#bottle_volume_label").html("Enter the average volume of your bottle (fluid ounces).");
+        $("#pillar_depth_label").html("Enter the depth of your pillars if you have any (feet).");
+        $("#width_between_bottles_label").html("Enter the width between bottles (inches).");
+        $("#bottle_volume_label").html("Enter the average volume of your bottle (US fluid ounces).");
         $("#bottle_diameter_label").html("Enter the average diameter of your bottle (inches).");
+        $("#bottle_height_label").html("Enter the average height of your bottle (inches).");
 
 
         // Update bottle fill density dropdown

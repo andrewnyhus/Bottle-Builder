@@ -10,7 +10,7 @@ $(document).ready(function(){
 
     var map = new mapboxgl.Map({
         container: 'map_to_draw_building',
-        style: 'mapbox://styles/mapbox/satellite-v9',
+        style: 'mapbox://styles/mapbox/satellite-streets-v9',
         center: [-91.874, 42.760], // longitude, latitude
         zoom: 1,
     });
@@ -49,14 +49,10 @@ $(document).ready(function(){
         $("#map_to_draw_building").css("display", "none");
 
         // update map label
-        $("#map_label").html("Your map has been drawn");
+        $("#map_label").html("Your map has been drawn.  If you have finished the form, continue to generate an estimate or save the building design.");
 
-        /*var area_of_building_floor_meters_sq = (LGeo.area(e.layer) ).toFixed(2) ;
-        var area_of_building_floor_feet_sq = (area_of_building_floor_meters_sq*10.7639).toFixed(2);
-
-        building_info["area_meters_sq"] = area_of_building_floor_meters_sq;
-        building_info["area_feet_sq"] = area_of_building_floor_feet_sq;
-        */
+        // change color of map label to green
+        $("#map_label").css("color", "green");
 
         // get area of building
         var area_sq_meters = turf.area(e["features"][0]);
@@ -64,9 +60,11 @@ $(document).ready(function(){
 
         // store area in building_info
         if(metric_selected()){
-            building_info["area_sq_meters"] = area_sq_meters;
+            building_info["area"] = area_sq_meters;
+            building_info["area_units"] = "squared meters";
         }else if(imperial_selected()){
-            building_info["area_sq_feet"] = area_sq_feet;
+            building_info["area"] = area_sq_feet;
+            building_info["area_units"] = "squared feet";
         }
 
         // get coordinate set

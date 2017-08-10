@@ -40,9 +40,9 @@
 
 
 	<h2 align="center"> Design Bottle Building </h2>
-
+    <p align="center" style="padding-left:10%; padding-right:10%;"> Disclaimer: This has not been tested in real life, this provides an estimate.  If you have tried it and have feedback please go <a href="/feedback">here</a></p>
     <!-- ---------------------------------------- -->
-
+    <br>
 
 
 
@@ -74,14 +74,14 @@
             <label for="foundation_depth_input" id="foundation_depth_label"></label>
             <input type="number" class="form-control" id="foundation_depth_input" step="0.01" min="0" required><br>
 
+            <!-- Enter Pillar Depth -->
+            <label for="pillar_depth_input" id="pillar_depth_label"></label>
+            <input type="number" class="form-control" id="pillar_depth_input" step="0.01" min="0" required><br>
 
-            <!-- Enter Bottle Volume -->
-            <label for="bottle_volume_input" id="bottle_volume_label"></label>
-            <input type="number" class="form-control" id="bottle_volume_input" min="0" required><br>
 
-            <!-- Enter Bottle Diameter -->
-            <label for="bottle_diameter_input" id="bottle_diameter_label"></label>
-            <input type="number" class="form-control" id="bottle_diameter_input" min="0" required><br>
+            <!-- Enter Width Between Bottles -->
+            <label for="width_between_bottles_input" id="width_between_bottles_label"></label>
+            <input type="number" class="form-control" id="width_between_bottles_input" min="0" required><br>
 
             <!-- Enter Bottle Fill Density -->
             <label for="bottle_fill_density_dropdown" id="bottle_fill_density_dropdown_label"></label>
@@ -97,6 +97,19 @@
             </div><br>
 
             <input type="number" style="display:none" class="form-control" id="manual_entry_bottle_fill_density" min="0"><br>
+
+
+            <!-- Enter Bottle Volume -->
+            <label for="bottle_volume_input" id="bottle_volume_label"></label>
+            <input type="number" class="form-control" id="bottle_volume_input" min="0" required><br>
+
+            <!-- Enter Bottle Diameter -->
+            <label for="bottle_diameter_input" id="bottle_diameter_label"></label>
+            <input type="number" class="form-control" id="bottle_diameter_input" min="0" required><br>
+
+            <!-- Enter Bottle Height -->
+            <label for="bottle_height_input" id="bottle_height_label"></label>
+            <input type="number" class="form-control" id="bottle_height_input" min="0" required><br>
 
 
             <br>
@@ -115,7 +128,7 @@
 
         </form>
 
-
+        <br>
         <!-- Resource Estimate Table Here -->
         <div align="center" id="resource_estimate_table_div"></div>
 
