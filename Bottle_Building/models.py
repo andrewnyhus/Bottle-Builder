@@ -4,10 +4,14 @@ from django.contrib.auth.models import User
 
 class Bottle_Building(models.Model):
     # created by user
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
     # bottle walls
+    walls = models.ManyToManyField(Bottle_Wall, related_name="bottle_walls+")
+
     # foundation
-    # average bottle
-    pass
+    foundation = models.ForeignKey(Foundation, on_delete=models.CASCADE, null=True)
+
 
 class Bottle(models.Model):
     # height & units
@@ -19,8 +23,30 @@ class Bottle(models.Model):
     pass
 
 class Bottle_Wall(models.Model):
-    # mass of fill & units
-    # mass of cement & units
+
+    # point a
+
+
+    # point b
+
+
+    # length & units
+
+
+    # 
+
+    # average bottle
+
+
+    # number of bottles
+
+
+    # total mass of fill & units
+
+
+    # total mass of cement & units
+
+
     pass
 
 
