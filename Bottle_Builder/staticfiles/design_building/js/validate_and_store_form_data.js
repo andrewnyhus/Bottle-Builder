@@ -54,10 +54,10 @@ function store_form_input(){
         // store cement density
         if(imperial_selected()){
             building_info["cement_density"] = 87.39914;
-            building_info["cement_density_units"] = "pounds/cubic foot";
+            building_info["cement_density_units"] = "lbs/cubic ft";
         }else if(metric_selected()){
             building_info["cement_density"] = 1400;
-            building_info["cement_density_units"] = "kg/cubic meter";
+            building_info["cement_density_units"] = "kg/cubic m";
         }
 
         return true;
@@ -207,7 +207,13 @@ function post_building_design(){
 
         error: function(xhr, error_message, err){
             var response = xhr.responseJSON;
+
+            console.log("response:");
             console.log(response);
+
+            hide_good_alert();
+            set_message_bad_alert(error_message);
+            show_bad_alert();
         }
 
     });

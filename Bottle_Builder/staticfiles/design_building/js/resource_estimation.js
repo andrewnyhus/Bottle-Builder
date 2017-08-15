@@ -27,11 +27,11 @@ function convert_coordinates_to_walls(coordinate_set){
             // put distance in either meters or feet
             // into walls[i]
             if(metric_selected()){
-                walls[i]["length"] = turf.distance(coordinate_set[i], coordinate_set[i+1], "meters")
-                walls[i]["length_units"] = "meters";
+                walls[i]["length"] = turf.distance(coordinate_set[i], coordinate_set[i+1], "meters").toFixed(2);
+                walls[i]["length_units"] = "m";
             }else if(imperial_selected()){
-                walls[i]["length"] = turf.distance(coordinate_set[i], coordinate_set[i+1], "feet")
-                walls[i]["length_units"] = "feet";
+                walls[i]["length"] = turf.distance(coordinate_set[i], coordinate_set[i+1], "feet").toFixed(2);
+                walls[i]["length_units"] = "ft";
             }
 
 
@@ -59,6 +59,15 @@ function generate_resource_estimate(){
     resource_estimate["fill"] = {};
     resource_estimate["cement"] = {};
     //=====================================================================================================================
+
+    // total counter variables for estimate
+    //=====================================================================================================================
+    var total_bottles = 0;
+    var total_fill = 0.0;
+    var total_cement = 0.0;
+    //=====================================================================================================================
+
+
 
     // store some info into resource_estimate
     //=====================================================================================================================
@@ -113,6 +122,7 @@ function generate_resource_estimate(){
     //=====================================================================================================================
     var foundation_volume = parseFloat(building_info["foundation_depth"]) * parseFloat(building_info["area"]);
     resource_estimate["cement"]["foundation"] = (cement_density * foundation_volume).toFixed(2);
+    total_cement += (cement_density * foundation_volume);
     //=====================================================================================================================
 
 
@@ -144,6 +154,8 @@ function generate_resource_estimate(){
             // calculate and store the number of bottles
             var num_bottles = num_rows * num_bottles_per_row;
             resource_estimate["bottles"]["wall_" + (i+1)] = Math.round(num_bottles);
+
+            total_bottles += resource_estimate["bottles"]["wall_" + (i+1)];
             //=====================================================================================================================
 
             // calculate mass of fill needed for wall
@@ -156,6 +168,8 @@ function generate_resource_estimate(){
             // calculate and store volume
             var fill_mass_kg = bottle_volume_wall_cubic_m * fill_density;
             resource_estimate["fill"]["wall_" + (i+1)] = fill_mass_kg.toFixed(2);
+
+            total_fill += fill_mass_kg;
             //=====================================================================================================================
 
 
@@ -172,6 +186,8 @@ function generate_resource_estimate(){
 
             // store cement mass
             resource_estimate["cement"]["wall_" + (i+1)] = cement_mass_kg.toFixed(2);
+
+            total_cement += cement_mass_kg;
             //=====================================================================================================================
 
         }else if(imperial_selected()){
@@ -190,6 +206,8 @@ function generate_resource_estimate(){
             // calculate and store the number of bottles
             var num_bottles = num_rows * num_bottles_per_row;
             resource_estimate["bottles"]["wall_" + (i+1)] = Math.round(num_bottles);
+
+            total_bottles += resource_estimate["bottles"]["wall_" + (i+1)];
             //=====================================================================================================================
 
 
@@ -203,6 +221,8 @@ function generate_resource_estimate(){
             // calculate and store volume
             var weight_lb = bottle_volume_wall_cubic_ft * fill_density;
             resource_estimate["fill"]["wall_" + (i+1)] = weight_lb.toFixed(2);
+
+            total_fill += weight_lb;
             //=====================================================================================================================
 
             // calculate mass of cement needed for wall
@@ -218,6 +238,8 @@ function generate_resource_estimate(){
             var cement_mass_lb = cement_density * cement_cubic_ft;
             // store mass
             resource_estimate["cement"]["wall_" + (i+1)] = cement_mass_lb.toFixed(2);
+
+            total_cement += cement_mass_lb;
             //=====================================================================================================================
 
         }
@@ -226,7 +248,13 @@ function generate_resource_estimate(){
     }
     //=====================================================================================================================
 
-    // TODO: generate estimate
+    // store totals in resource estimate
+    //=====================================================================================================================
+    resource_estimate["bottles"]["total"] = total_bottles;
+    resource_estimate["fill"]["total"] = total_fill.toFixed(2);
+    resource_estimate["cement"]["total"] = total_cement.toFixed(2);
+    //=====================================================================================================================
+
     return resource_estimate;
 
 }
@@ -247,7 +275,7 @@ function generate_resource_estimate_html(){
         var table_header = '<p align="center" style="padding-left:10%; padding-right:10%;"> Disclaimer: This has not been tested in real life, and is theoretical estimate.  It does not take into account any pillars that may be needed.  It assumes that the density of concrete is 1400 kg/cubic meter (87.39 lb/cubic foot).  If you have tried it and have feedback please go <a href="/feedback">here</a></p>';
 
         // include bottle in header
-        table_header += "<thead><tr><th></th><th>"+ resource_estimate["bottle_units"] + "</th>";
+        table_header += "<table class='table table-bordered'><thead><tr><th></th><th>"+ resource_estimate["bottle_units"] + "</th>";
         // include fill in header
         table_header += "<th>" + resource_estimate["fill_units"] + "</th>";
         // include cement in header
@@ -343,7 +371,7 @@ function generate_resource_estimate_html(){
 
 
 
-        var table_footer = "</table></div>";
+        var table_footer = "</table>";
 
         // create table html string
         var table = table_header + table_body + table_footer;

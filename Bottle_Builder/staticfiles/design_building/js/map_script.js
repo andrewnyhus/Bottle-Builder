@@ -60,11 +60,11 @@ $(document).ready(function(){
 
         // store area in building_info
         if(metric_selected()){
-            building_info["area"] = area_sq_meters;
-            building_info["area_units"] = "squared meters";
+            building_info["area"] = area_sq_meters.toFixed(2);
+            building_info["area_units"] = "sq m";
         }else if(imperial_selected()){
-            building_info["area"] = area_sq_feet;
-            building_info["area_units"] = "squared feet";
+            building_info["area"] = area_sq_feet.toFixed(2);
+            building_info["area_units"] = "sq ft";
         }
 
         // get coordinate set

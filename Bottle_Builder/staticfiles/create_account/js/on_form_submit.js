@@ -47,8 +47,11 @@ $(function(){
                 error: function(xhr, error_message, err){
                     var response = xhr.responseJSON;
 
+                    console.log("response:");
+                    console.log(response);
+
                     hide_good_alert();
-                    set_message_bad_alert(response);
+                    set_message_bad_alert(error_message);
                     show_bad_alert();
                 }
 
