@@ -69,7 +69,8 @@ $(document).ready(function(){
 
         // get coordinate set
         var coordinate_set_vertices = e["features"][0]["geometry"]["coordinates"][0];
-
+        console.log("coordinates:");
+        console.log(coordinate_set_vertices);
         // generate wall data
         building_info["walls"] = convert_coordinates_to_walls(coordinate_set_vertices);
 

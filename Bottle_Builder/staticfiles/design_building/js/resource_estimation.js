@@ -13,14 +13,14 @@ function get_building_info(){
 // helper function to buildingFloorDrawn.
 // provides an array that contains info pertaining to walls
 function convert_coordinates_to_walls(coordinate_set){
-    var walls = [];
+    var walls = {};
 
 
     for(i = 0; i < coordinate_set.length - 1; i++){
             coordinate_set[i]["vertice_id"] = (i+1);
 
-            // create walls[i]] & include coordinates
-            walls.push({});
+            // create walls[i] & include coordinates
+            walls[i] = {};
             walls[i][0] = coordinate_set[i];
             walls[i][1] = coordinate_set[i+1];
 

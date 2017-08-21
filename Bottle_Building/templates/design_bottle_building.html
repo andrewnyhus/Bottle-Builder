@@ -49,7 +49,27 @@
         <form align="center" id="building_design_form" style="padding-left:10%; padding-right:10%; display:none;" >
             {% csrf_token %}
             <div class="alert alert-danger" id="bad_alert" style="display: none;"></div>
-        <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert"></div>
+            <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert"></div>
+
+
+
+            {% if user.is_authenticated %}
+            <!-- Privacy Checkboxes -->
+            <h5>Visible to:</h5>
+            <div class="checkbox">
+                <label><input id="visible_to_public_checkbox" type="checkbox" value="">Public</label>
+            </div>
+
+            <div class="checkbox">
+                <label><input id="visible_to_members_checkbox" type="checkbox" value="">Site members</label>
+            </div>
+
+            <div class="checkbox">
+                <label><input id="visible_to_link_checkbox" type="checkbox" value="">Those with the link</label>
+            </div><br><br>
+
+            {% endif %}
+
 
 
             <!-- Measurement System Radio Buttons -->
@@ -61,6 +81,11 @@
             </label><br><br>
 
 
+            <br>
+            <!-- Map -->
+            <label for="map_to_draw_building" id="map_label">Please draw the perimeter of your new building
+            in the map below.</label>
+            <div id="map_to_draw_building"></div><br>
 
 
             <!-- Enter Building Height -->
@@ -102,14 +127,7 @@
 
             <!-- Enter Bottle Height -->
             <label for="bottle_height_input" id="bottle_height_label"></label>
-            <input type="number" class="form-control" id="bottle_height_input" min="0" required><br>
-
-
-            <br>
-            <!-- Map -->
-            <label for="map_to_draw_building" id="map_label">Please draw the perimeter of your new building
-            in the map below.</label>
-            <div id="map_to_draw_building"></div><br><br>
+            <input type="number" class="form-control" id="bottle_height_input" min="0" required><br><br>
 
 
             <!-- Generate Resource Estimate Button -->

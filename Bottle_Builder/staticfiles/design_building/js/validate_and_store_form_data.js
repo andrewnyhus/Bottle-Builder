@@ -181,38 +181,32 @@ function post_building_design(){
     // stop if resource estimate or form validation fails
     if(resource_estimate == undefined){return false;}
 
-    building_info["resource_estimate"] = resource_estimate;
+    var post_data = {"resource_estimate": resource_estimate, "walls": building_info["walls"],
+                     "visible_link": document.getElementById("visible_to_link_checkbox").checked,
+                     "visible_members": document.getElementById("visible_to_members_checkbox").checked,
+                     "visible_public": document.getElementById("visible_to_public_checkbox").checked};
 
-    console.log("building info:");
-    console.log(building_info);
 
 
     $.ajax({
 
         url: "/post_bottle_building_design/",
         type: "POST",
-        data: building_info,
+        data: {"data_string": JSON.stringify(post_data)},
 
         success: function(response){
-            set_message_good_alert(response["message"]);
+            set_message_good_alert("Building Design Created! Redirecting to: <a href='" +response + "'> " + response + "</a>");
             show_good_alert();
 
-            // if a redirect url is provided, redirect to it.
-            if(response["url"] != undefined){
-                document.location = response["url"];
-            }
+            document.location = response;
 
-            console.log(response);
         },
 
         error: function(xhr, error_message, err){
             var response = xhr.responseJSON;
 
-            console.log("response:");
-            console.log(response);
-
             hide_good_alert();
-            set_message_bad_alert(error_message);
+            set_message_bad_alert(err);
             show_bad_alert();
         }
 
