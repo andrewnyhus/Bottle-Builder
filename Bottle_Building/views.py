@@ -20,7 +20,10 @@ import re
 @ensure_csrf_cookie
 def home(request):
 	if request.user.is_authenticated and request.user.is_active:
-		return render(request, 'profile.html')
+
+		buildings_db = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
+
+		return render(request, 'profile.html', {"buildings": buildings_db, "size": len(buildings_db)})
 	return render(request, 'about.html')
 
 def about(request):
@@ -34,7 +37,9 @@ def about(request):
 @ensure_csrf_cookie
 def login_page(request):
 	if request.user.is_authenticated and request.user.is_active:
-		return render(request, 'profile.html')
+		buildings_db = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
+
+		return render(request, 'profile.html', {"buildings": buildings_db, "size": len(buildings_db)})
 	return render(request, 'login_page.html')
 
 @api_view(['POST'])
@@ -75,7 +80,9 @@ def forgot_credentials(request):
 @ensure_csrf_cookie
 def create_account_page(request):
 	if request.user.is_authenticated and request.user.is_active:
-		return render(request, "profile.html")
+		buildings_db = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
+
+		return render(request, "profile.html", {"buildings": buildings_db, "size": len(buildings_db)})
 	return render(request, "create_account.html")
 
 
@@ -143,7 +150,11 @@ def create_account(request):
 @ensure_csrf_cookie
 def view_profile(request):
 	if request.user.is_authenticated and request.user.is_active:
-		return render(request, "profile.html")
+
+		buildings_db = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
+
+		return render(request, "profile.html", {"buildings": buildings_db, "size": len(buildings_db)})
+
 	return render(request, "login_page.html")
 # ===============================================================================
 # ===============================================================================
@@ -160,6 +171,8 @@ def get_bottle_buildings(request):
 	if request.method == "GET" and request.user.is_authenticated and request.user.is_active:
 		# retrieve from db
 		return HttpResponse("Insert JSON response")
+
+
 
 @never_cache
 @ensure_csrf_cookie
@@ -182,40 +195,58 @@ def view_bottle_building(request, building_id):
 			return render(request, "unauthorized_request.html")
 
 
-		building_info = {}
+		'''building_info = {}
 
 		building_info["title"] = building.title
+		building_info["pk"] = building.pk
 
 		building_info["created_by"] = building.created_by
 		building_info["created_on"] = building.created_on
 
-		building_info["bottle_estimate"] = building.bottle_estimate
+		building_info["bottle_estimate"] = "{:,}".format(building.bottle_estimate)
 		building_info["bottle_units"] = building.bottle_units
 
-		building_info["cement_estimate"] = building.cement_estimate
+		building_info["cement_estimate"] = "{:,}".format(building.cement_estimate)
 		building_info["cement_units"] = building.cement_units
 
-		building_info["fill_estimate"] = building.fill_estimate
+		building_info["fill_estimate"] = "{:,}".format(building.fill_estimate)
 		building_info["fill_units"] = building.fill_units
 
 
-		coordinate_array = {}
+		#coordinate_array = {}
 		coords = building.coordinates.all()
-		for i in range(len(coords)):
-			coordinate_array[i] = {"longitude": coords[i].longitude, "latitude": coords[i].latitude}
-			i += 1
+		#for i in range(len(coords)):
+		#	coordinate_array.append({"longitude": coords[i].longitude, "latitude": coords[i].latitude})
+		#	i += 1
 
-		building_info["coordinates"] = coordinate_array
+		building_info["coordinates"] = coords'''
 
-		return render(request, "view_bottle_building.html", building_info)
+		link = request.build_absolute_uri("/view_bottle_building/building_id=" + str(building.pk))
+
+		return render(request, "view_bottle_building.html", {"building": building, "link": link})
 	except Exception as exc:
-		return render(request, "404.html", {"exception": str(exc)})
+		return render(request, "error.html", {"exception": str(exc)})
 
 
 @never_cache
 @ensure_csrf_cookie
 def design_bottle_building(request):
 	return render(request, "design_bottle_building.html", {"use_imperial_system": True})
+
+
+
+@api_view(['POST'])
+def delete_bottle_building_design(request, building_id):
+
+	try:
+		return render(request, "404.html")
+		building = Bottle_Building.objects.get(pk=building_id)
+		if request.user.is_authenticated and request.user.is_active and (request.user is building.created_by):
+			building.delete()
+			return Response("Building deleted", status=status.HTTP_200_OK)
+		return Response("Could not delete building because you are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
+	except Exception as exc:
+		return Response("Error deleting bottle building.  Make sure the proper id was provided.", status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
@@ -233,6 +264,8 @@ def post_bottle_building_design(request):
 		cement_estimate_units = None
 		fill_estimate_units = None
 
+		walls = list()
+
 		data_string = request.data["data_string"]#["walls"]
 		request_data = json.loads(data_string)
 
@@ -243,7 +276,6 @@ def post_bottle_building_design(request):
 		bottle_estimate_units = request_data["resource_estimate"]["bottle_units"]
 		cement_estimate_units = request_data["resource_estimate"]["cement_units"]
 		fill_estimate_units = request_data["resource_estimate"]["fill_units"]
-
 
 		# reject if bottle units are too long
 		if (len(request_data["resource_estimate"]["bottle_units"]) > 70):
@@ -256,6 +288,7 @@ def post_bottle_building_design(request):
 		# reject if fill units are too long
 		if (len(request_data["resource_estimate"]["fill_units"]) > 20):
 			return Response("Error: The fill units exceed the 70 character limit", status=status.HTTP_400_BAD_REQUEST)
+
 		#----------------------------------------------------------------------------------
 
 

@@ -40,104 +40,103 @@
 
 
 	<h2 align="center"> Design Bottle Building </h2>
-    <p align="center" style="padding-left:10%; padding-right:10%;"> Disclaimer: This has not been tested in real life, and is theoretical estimate.  It does not take into account any pillars that may be needed.  It assumes that the density of concrete is 1400 kg/cubic meter (87.39 lb/cubic foot).  If you have tried it and have feedback please go <a href="/feedback">here</a></p>
+    <p align="center" style="padding-left:10%; padding-right:10%;"> Disclaimer: This has not been tested in real life, and is a theoretical estimate.  It does not take into account any pillars that may be needed.  It assumes that the density of concrete is 1400 kg/cubic meter (87.39 lb/cubic foot).  If you have tried it and have feedback please go <a href="/feedback">here</a></p>
     <!-- ---------------------------------------- -->
     <br>
 
-
-
-        <form align="center" id="building_design_form" style="padding-left:10%; padding-right:10%; display:none;" >
-            {% csrf_token %}
-            <div class="alert alert-danger" id="bad_alert" style="display: none;"></div>
-            <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert"></div>
-
-
-
-            {% if user.is_authenticated %}
-            <!-- Privacy Checkboxes -->
-            <h5>Visible to:</h5>
-            <div class="checkbox">
-                <label><input id="visible_to_public_checkbox" type="checkbox" value="">Public</label>
-            </div>
-
-            <div class="checkbox">
-                <label><input id="visible_to_members_checkbox" type="checkbox" value="">Site members</label>
-            </div>
-
-            <div class="checkbox">
-                <label><input id="visible_to_link_checkbox" type="checkbox" value="">Those with the link</label>
-            </div><br><br>
-
-            {% endif %}
+    <!-- ---------------------------------------- -->
+    <form id="building_design_form" style="padding-left:10%; padding-right:10%;" >
+        {% csrf_token %}
+        <div class="alert alert-danger" id="bad_alert" style="display: none;"></div>
+        <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert"></div>
 
 
 
-            <!-- Measurement System Radio Buttons -->
-            <label class="radio-inline">
-              <input type="radio" id="imperial_radio" name="measurement_system_radio" onclick="set_page_to_imperial();"/>Use Imperial System
-            </label>
-            <label class="radio-inline">
-              <input type="radio" id="metric_radio" name="measurement_system_radio" onclick="set_page_to_metric();" />Use Metric System
-            </label><br><br>
+        {% if user.is_authenticated %}
+        <!-- Privacy Checkboxes -->
+        <h5>Share with:</h5>
+        <div class="checkbox">
+            <label><input id="visible_to_public_checkbox" type="checkbox" value="">Public</label>
+        </div>
+
+        <div class="checkbox">
+            <label><input id="visible_to_members_checkbox" type="checkbox" value="">Site members</label>
+        </div>
+
+        <div class="checkbox">
+            <label><input id="visible_to_link_checkbox" type="checkbox" value="">Those with the link</label>
+        </div><br><br>
+
+        {% endif %}
 
 
-            <br>
-            <!-- Map -->
-            <label for="map_to_draw_building" id="map_label">Please draw the perimeter of your new building
-            in the map below.</label>
-            <div id="map_to_draw_building"></div><br>
+
+        <!-- Measurement System Radio Buttons -->
+        <label class="radio-inline">
+          <input type="radio" id="imperial_radio" name="measurement_system_radio" onclick="set_page_to_imperial();"/>Use Imperial System
+        </label>
+        <label class="radio-inline">
+          <input type="radio" id="metric_radio" name="measurement_system_radio" onclick="set_page_to_metric();" />Use Metric System
+        </label><br><br>
 
 
-            <!-- Enter Building Height -->
-            <label for="building_height_input" id="building_height_label"></label>
-            <input type="number" class="form-control" id="building_height_input" step="0.01" min="0" required><br>
-
-            <!-- Enter Foundation Depth -->
-            <label for="foundation_depth_input" id="foundation_depth_label"></label>
-            <input type="number" class="form-control" id="foundation_depth_input" step="0.01" min="0" required><br>
+        <br>
+        <!-- Map -->
+        <label for="map_to_draw_building" id="map_label">Please draw the perimeter of your new building
+        in the map below.</label>
+        <div id="map_to_draw_building"></div><br>
 
 
-            <!-- Enter Width Between Bottles -->
-            <label for="width_between_bottles_input" id="width_between_bottles_label"></label>
-            <input type="number" class="form-control" id="width_between_bottles_input" min="0" required><br>
+        <!-- Enter Building Height -->
+        <label for="building_height_input" id="building_height_label"></label>
+        <input type="number" class="form-control" id="building_height_input" step="0.01" min="0" required><br>
 
-            <!-- Enter Bottle Fill Density -->
-            <label for="bottle_fill_density_dropdown" id="bottle_fill_density_dropdown_label"></label>
-
-             <div id="bottle_fill_density_dropdown" class="dropdown">
-              <button class="btn btn-primary dropdown-toggle" id="bottle_fill_density_dropdown_button" type="button" data-toggle="dropdown">Select Bottle Fill Material/Density
-              <span class="caret"></span></button>
-              <ul class="dropdown-menu">
-                <li><a id="dry_dirt_selected"></a></li>
-                <li><a id="dry_sand_selected"></a></li>
-                <li><a id="manual_entry_selected">Custom, (Enter Manually)</a></li>
-              </ul>
-            </div><br>
-
-            <input type="number" style="display:none" class="form-control" id="manual_entry_bottle_fill_density" min="0"><br>
+        <!-- Enter Foundation Depth -->
+        <label for="foundation_depth_input" id="foundation_depth_label"></label>
+        <input type="number" class="form-control" id="foundation_depth_input" step="0.01" min="0" required><br>
 
 
-            <!-- Enter Bottle Volume -->
-            <label for="bottle_volume_input" id="bottle_volume_label"></label>
-            <input type="number" class="form-control" id="bottle_volume_input" min="0" required><br>
+        <!-- Enter Width Between Bottles -->
+        <label for="width_between_bottles_input" id="width_between_bottles_label"></label>
+        <input type="number" class="form-control" id="width_between_bottles_input" min="0" required><br>
 
-            <!-- Enter Bottle Diameter -->
-            <label for="bottle_diameter_input" id="bottle_diameter_label"></label>
-            <input type="number" class="form-control" id="bottle_diameter_input" min="0" required><br>
+        <!-- Enter Bottle Fill Density -->
+        <label for="bottle_fill_density_dropdown" id="bottle_fill_density_dropdown_label"></label>
 
-            <!-- Enter Bottle Height -->
-            <label for="bottle_height_input" id="bottle_height_label"></label>
-            <input type="number" class="form-control" id="bottle_height_input" min="0" required><br><br>
+         <div id="bottle_fill_density_dropdown" class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" id="bottle_fill_density_dropdown_button" type="button" data-toggle="dropdown">Select Bottle Fill Material/Density
+          <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li><a id="dry_dirt_selected"></a></li>
+            <li><a id="dry_sand_selected"></a></li>
+            <li><a id="manual_entry_selected">Custom, (Enter Manually)</a></li>
+          </ul>
+        </div><br>
+
+        <input type="number" style="display:none" class="form-control" id="manual_entry_bottle_fill_density" min="0"><br>
 
 
-            <!-- Generate Resource Estimate Button -->
-            <button type="button" class="btn btn-primary form-control" id="generate_resource_estimate_button" onclick="generate_resource_estimate_html()">See In Depth Resource Estimate</button>
-            <br>
-            <!-- Post Building Design -->
-            <button type="button" class="btn btn-default form-control" id="post_design_button"></button>
+        <!-- Enter Bottle Volume -->
+        <label for="bottle_volume_input" id="bottle_volume_label"></label>
+        <input type="number" class="form-control" id="bottle_volume_input" min="0" required><br>
+
+        <!-- Enter Bottle Diameter -->
+        <label for="bottle_diameter_input" id="bottle_diameter_label"></label>
+        <input type="number" class="form-control" id="bottle_diameter_input" min="0" required><br>
+
+        <!-- Enter Bottle Height -->
+        <label for="bottle_height_input" id="bottle_height_label"></label>
+        <input type="number" class="form-control" id="bottle_height_input" min="0" required><br><br>
 
 
-        </form>
+        <!-- Generate Resource Estimate Button -->
+        <button type="button" class="btn btn-primary form-control" id="generate_resource_estimate_button" onclick="generate_resource_estimate_html()">See In Depth Resource Estimate</button>
+        <br>
+        <!-- Post Building Design -->
+        <button type="button" class="btn btn-default form-control" id="post_design_button"></button>
+
+
+    </form>
 
         <br>
         <!-- Resource Estimate Table Here -->
@@ -190,7 +189,7 @@
     {% endif %}
 
     // show form once it is loaded
-    document.getElementById("building_design_form").style.display = "block";
+    //document.getElementById("building_design_form").style.display = "block";
 
 
 

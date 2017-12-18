@@ -7,6 +7,25 @@ class Coordinates(models.Model):
     longitude = models.FloatField()
     latitude = models.FloatField()
 
+'''class Bottle_Wall(models.Model):
+    begin = models.ForeignKey(Coordinates, on_delete=models.CASCADE, null=True)
+    end = models.ForeignKey(Coordinates, on_delete=models.CASCADE, null=True)
+    length = models.FloatField()
+    height = models.FloatField()
+
+    # units
+    length_units = models.CharField(max_length=20)
+    height_units = models.CharField(max_length=20)
+    bottle_units = models.CharField(max_length=70)
+    cement_units = models.CharField(max_length=20)
+    fill_units = models.CharField(max_length=20)
+
+    # estimates
+    bottle_estimate = models.IntegerField()
+    cement_estimate = models.FloatField()
+    fill_estimate = models.FloatField()'''
+
+
 class Bottle_Building(models.Model):
     title = models.CharField(max_length=40)
 

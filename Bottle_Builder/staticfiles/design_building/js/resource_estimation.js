@@ -72,7 +72,7 @@ function generate_resource_estimate(){
     // store some info into resource_estimate
     //=====================================================================================================================
 
-    resource_estimate["num_walls"] = building_info["walls"].length;
+    resource_estimate["num_walls"] = Object.keys(building_info["walls"]).length;
 
 
     resource_estimate["bottle_units"] = "Bottles (" +building_info["average_bottle_volume"] + " " + building_info["average_bottle_volume_units"] + " w/ height: " +building_info["average_bottle_height"]+" "+building_info["average_bottle_height_units"]+ " and diameter: "+ building_info["average_bottle_diameter"] +" "+ building_info["average_bottle_diameter_units"] + ")";
@@ -129,8 +129,10 @@ function generate_resource_estimate(){
     // generate resource estimates for walls
     //=====================================================================================================================
 
+
+
     // iterate through all walls
-    for(i = 0; i < building_info["walls"].length; i++){
+    for(i = 0; i < Object.keys(building_info["walls"]).length; i++){
 
         // store variables for num rows & num bottles per row
         var num_rows;
@@ -168,6 +170,7 @@ function generate_resource_estimate(){
             // calculate and store volume
             var fill_mass_kg = bottle_volume_wall_cubic_m * fill_density;
             resource_estimate["fill"]["wall_" + (i+1)] = fill_mass_kg.toFixed(2);
+
 
             total_fill += fill_mass_kg;
             //=====================================================================================================================
@@ -254,7 +257,6 @@ function generate_resource_estimate(){
     resource_estimate["fill"]["total"] = total_fill.toFixed(2);
     resource_estimate["cement"]["total"] = total_cement.toFixed(2);
     //=====================================================================================================================
-
     return resource_estimate;
 
 }

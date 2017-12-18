@@ -4,6 +4,14 @@
 
 {% block title %} Bottle Builder | Profile {% endblock %}
 
+{% block import_headers %}
+
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+
+    <script src="https://api.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js"></script>
+
+{% endblock %}
 
 
 {% block content %}
@@ -12,7 +20,197 @@
 
     <h4 align="center">Your Bottle Building Designs:</h4>
 
-    TODO - FETCH & DISPLAY BUILDING DESIGNS
-    TODO - ALLOW FOR USERS TO MAKE THEIR DESIGNS & PROFILES PUBLICLY VIEWABLE
+
+    {% for building in buildings %}
+
+
+
+            <div style="padding-left:15%; padding-right:15%;">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                  <a href="/delete_bottle_building/building_id={{building.pk}}"><span class="glyphicon glyphicon-remove"></span>  Delete Building</a>
+                  <h3 class="panel-title" align="center"><a href="/view_bottle_building/building_id={{building.pk}}">"{{building.title}}", created on {{building.created_on}}</a></h3>
+              </div>
+              <div class="panel-body" >
+
+
+                <!-- Map -->
+
+                <div id="display_map_{{building.pk}}" style="height: 380px; width: 100%;"></div><br>
+
+                <!--
+                map resource estimate
+                -->
+
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th># Bottles ({{building.bottle_units}})</th>
+                                <th>Bottle Fill ({{building.fill_units}})</th>
+                                <th>Cement ({{building.cement_units}})</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="bottle_estimate_{{building.pk}}">{{building.bottle_estimate}}</td>
+                                <td id="fill_estimate_{{building.pk}}">{{building.fill_estimate}}</td>
+                                <td id="cement_estimate_{{building.pk}}">{{building.cement_estimate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+
+              </div>
+            </div>
+            </div>
+
+				<!--
+
+				building_dict["bottle_estimate"] = building_db.bottle_estimate
+				building_dict["bottle_units"] = building_db.bottle_units
+
+				building_dict["cement_estimate"] = building_db.cement_estimate
+				building_dict["cement_units"] = building_db.cement_units
+
+				building_dict["fill_estimate"] = building_db.fill_estimate
+				building_dict["fill_units"] = building_db.fill_units-->
+
+    {% endfor %}
+
+
+    <script>
+        $(document).ready(function (){
+
+            mapboxgl.accessToken = 'pk.eyJ1IjoiZnVlcnRlbnVldmFjYXNhIiwiYSI6ImNqMGgzdTg5ZzAydnEyd3J1cHF4eG54eHUifQ.Aikx4qEIowhrKbSVhNEpRw';
+
+            {% for building in buildings %}
+
+                // ====================================================================================================
+
+
+                // fix bottle estimate labels
+                var bottle_estimate = parseInt($("#bottle_estimate_{{building.pk}}").html());
+                $("#bottle_estimate_{{building.pk}}").html(bottle_estimate.toLocaleString());
+
+
+                // fix fill estimate labels
+                var fill_estimate = parseFloat($("#fill_estimate_{{building.pk}}").html());
+                $("#fill_estimate_{{building.pk}}").html(fill_estimate.toLocaleString());
+
+
+                // fix cement estimate labels
+                var cement_estimate = parseFloat($("#cement_estimate_{{building.pk}}").html());
+                $("#cement_estimate_{{building.pk}}").html(cement_estimate.toLocaleString());
+
+
+
+
+                // initialize coordinates array
+                var coordinates_{{building.pk}} = [];
+                // track center point
+                var building_center_{{building.pk}} = [0.0, 0.0];
+                var num_coordinates_{{building.pk}} = 0;
+
+                // track most extreme coordinates
+                var min_lng_coord_{{building.pk}} = [];
+                var max_lng_coord_{{building.pk}} = [];
+
+                var min_lat_coord_{{building.pk}} = [];
+
+
+
+                {% for coordinate in building.coordinates.all %}
+
+                    // update the sum coordinate
+                    building_center_{{building.pk}}[0] += {{coordinate.longitude}};
+                    building_center_{{building.pk}}[1] += {{coordinate.latitude}};
+
+                    // push the current coordinate to the coordinates array
+                    coordinates_{{building.pk}}.push([{{coordinate.longitude}}, {{coordinate.latitude}}]);
+
+                    // increment num_coordinates in building
+                    num_coordinates_{{building.pk}} += 1;
+
+                {% endfor %}
+
+
+                // calculate average of all coordinates
+                building_center_{{building.pk}}[0] = building_center_{{building.pk}}[0] / num_coordinates_{{building.pk}};
+                building_center_{{building.pk}}[1] = building_center_{{building.pk}}[1] / num_coordinates_{{building.pk}};
+
+
+                // create map
+                var map_{{building.pk}} = new mapboxgl.Map({
+                    container: 'display_map_{{building.pk}}',
+                    style: 'mapbox://styles/mapbox/satellite-streets-v9',
+                    center: building_center_{{building.pk}}, // longitude, latitude
+                    zoom: 3,
+                });
+
+
+                // Assistance zooming to drawn polygon from: https://bl.ocks.org/danswick/83a8ddff7fb9193176a975a02a896792
+
+
+                // store data for polygon of building
+                var geojson_{{building.pk}} = {
+                  "type": "FeatureCollection",
+                  "features": [
+                    {
+                      "type": "Feature",
+                      "properties": {},
+                      "geometry": {
+                        "type": "Polygon",
+                        "coordinates": [coordinates_{{building.pk}}]
+                      }
+                    }
+                  ]
+                };
+
+                // get bounds of polygon
+                var bbox_{{building.pk}} = turf.extent(geojson_{{building.pk}});
+
+
+                // listen for map load finish
+                map_{{building.pk}}.on('load', function(){
+
+                    // add data source for polygon
+                    map_{{building.pk}}.addSource('geojson-{{building.pk}}', {
+                        "type": "geojson",
+                        "data": geojson_{{building.pk}}
+                    });
+
+
+                    // add polygon to map
+                    map_{{building.pk}}.addLayer({
+                        "id": "geojsonLayer_{{building.pk}}",
+                        "type": "fill",
+                        "source": "geojson-{{building.pk}}",
+                        "paint": {
+                            "fill-color": "#000fff",
+                            "fill-opacity": 0.35
+                        }
+                    });
+
+                    // fit map to polygon of building
+                    map_{{building.pk}}.fitBounds(bbox_{{building.pk}}, {padding: 20});
+
+                });
+
+
+
+
+
+                // ====================================================================================================
+
+            {% endfor %}
+
+        });
+    </script>
+
+
+    <!--TODO - FETCH & DISPLAY BUILDING DESIGNS
+    TODO - ALLOW FOR USERS TO MAKE THEIR DESIGNS & PROFILES PUBLICLY VIEWABLE-->
 
 {% endblock %}

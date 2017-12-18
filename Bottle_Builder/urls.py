@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^view_profile/', views.view_profile, name="profile"),
 
     url(r'^get_bottle_buildings/', views.get_bottle_buildings, name="get_bottle_buildings"),
+    url(r'^delete_bottle_building/building_id=(?P<building_id>\d+)/$', views.delete_bottle_building_design, name="delete_bottle_building"),
     url(r'^view_bottle_building/building_id=(?P<building_id>\d+)/$', views.view_bottle_building, name="view_bottle_building"),
     url(r'^design_bottle_building/', views.design_bottle_building, name="design_bottle_building"),
     url(r'^post_bottle_building_design/', views.post_bottle_building_design, name="post_bottle_building_design"),

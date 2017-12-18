@@ -4,12 +4,356 @@
 
 {% block title %} Bottle Builder | Building {{ title }} {% endblock %}
 
+{% block import_headers %}
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
 
+    <script src="https://api.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js"></script>
+{% endblock %}
 
 {% block content %}
 
-	<h2 align="center"> Building {{ title }} </h2>
 
+    <style>
+        #display_map{
+            height: 380px;
+        }
+
+
+        body{
+            padding-left:10%;
+            padding-right:10%;
+        }
+
+    </style>
+        <div style="padding-left:15%; padding-right:15%;">
+        <div class="panel panel-default">
+
+            <!-- Heading -->
+            <div class="panel-heading">
+
+              <!-- Delete Building -->
+                <a href="/delete_bottle_building/building_id={{building.pk}}" style="display:inline-block; float:left;">
+                    <span class="glyphicon glyphicon-trash"></span>  Delete Building</a>
+
+
+              <!-- Edit Privacy -->
+                <a id="building_popover" style="display:inline-block; float:right;" data-toggle="building_popover_toggle" title="More" data-html="true" >
+                    <span id="building_popover_glyphicon" ></span>
+
+                    <script>
+                        // POPOVER FUNCTIONALITY
+
+                        $(document).ready(function(){
+                            // set popover
+                            $('[data-toggle="building_popover_toggle"]').popover();
+
+
+                            // declare building popover html
+                            var building_popover_html = '';
+
+                            // include viewable at link
+                            building_popover_html = building_popover_html + "<a style='display:block; text-align:center;' href='{{link}}'>Building Viewable Here</a>";
+
+
+                                // if user is creator of building, enable radio buttons
+                                if("{{request.user.pk}}" == "{{building.created_by.pk}}"){
+
+                                    // set popover glyphicon
+                                    document.getElementById("building_popover_glyphicon").className = "glyphicon glyphicon-pencil";
+
+                                    // declare html for radios
+                                    var public_privacy_radios_html;
+                                    var members_privacy_radios_html;
+                                    var link_privacy_radios_html;
+
+
+
+                                    // =================================================================================
+                                    // if building is visible to public, check visible to public radio button
+                                    if("{{building.visible_to_public}}" == "True"){
+                                        public_privacy_radios_html = '<th><input type="radio" class="radio"  name="public" id="set_visible_to_public" checked></th>';
+                                        public_privacy_radios_html = public_privacy_radios_html + '<th><input type="radio" class="radio"  name="public" id="set_invisible_to_public"></th>';
+
+
+                                    // else if it is not, uncheck it
+                                    }else if("{{building.visible_to_public}}" == "False"){
+                                        public_privacy_radios_html = '<th><input type="radio" class="radio"  name="public" id="set_visible_to_public" ></th>';
+                                        public_privacy_radios_html = public_privacy_radios_html + '<th><input type="radio" class="radio"  name="public" id="set_invisible_to_public" checked></th>';
+
+                                    // else there is an error
+                                    }else{
+                                        console.log("Error: Building is neither visible nor invisible to public according to data given.  Make sure injection is done properly");
+                                    }
+                                    // =================================================================================
+
+
+
+                                    // =================================================================================
+                                    // if building is visible to members, check visible to members radio button
+                                    if("{{building.visible_to_members}}" == "True"){
+                                        members_privacy_radios_html = '<th><input type="radio" class="radio"  name="members" id="set_visible_to_members" checked></th>';
+                                        members_privacy_radios_html = members_privacy_radios_html + '<th><input type="radio" class="radio"  name="members" id="set_invisible_to_members"></th>';
+
+
+                                    // else if it is not, uncheck it
+                                    }else if("{{building.visible_to_members}}" == "False"){
+                                        members_privacy_radios_html = '<th><input type="radio" class="radio"  name="members" id="set_visible_to_members" ></th>';
+                                        members_privacy_radios_html = members_privacy_radios_html + '<th><input type="radio" class="radio"  name="members" id="set_invisible_to_members" checked></th>';
+
+
+                                    // else there is an error
+                                    }else{
+                                        console.log("Error: Building is neither visible nor invisible to members according to data given.  Make sure injection is done properly");
+                                    }
+                                    // =================================================================================
+
+
+                                    // =================================================================================
+                                    // if building is visible to those with link, check visible to members radio button
+                                    if("{{building.visible_to_those_with_link}}" == "True"){
+                                        link_privacy_radios_html = '<th><input type="radio" class="radio"  name="link" id="set_visible_to_those_with_link"  checked></th>';
+                                        link_privacy_radios_html = link_privacy_radios_html + '<th><input type="radio" class="radio"  name="link" id="set_invisible_to_those_with_link" ></th>';
+
+
+                                    // else if it is not, uncheck it
+                                    }else if("{{building.visible_to_those_with_link}}" == "False"){
+                                        link_privacy_radios_html = '<th><input type="radio" class="radio"  name="link" id="set_visible_to_those_with_link"  ></th>';
+                                        link_privacy_radios_html = link_privacy_radios_html + '<th><input type="radio" class="radio"  name="link" id="set_invisible_to_those_with_link" checked></th>';
+
+
+                                    // else there is an error
+                                    }else{
+                                        console.log("Error: Building is neither visible nor invisible to those with the link according to data given.  Make sure injection is done properly");
+                                    }
+                                    // =================================================================================
+
+
+
+
+                                    var edit_privacy_html = `
+
+
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Visible<span class="glyphicon glyphicon-eye-open" > </span> </th>
+                                                    <th>Invisible<span class="glyphicon glyphicon-eye-close" > </span> </th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr>
+                                                    <th>Public <span class="glyphicon glyphicon-globe"></span></th>
+                                                    `+public_privacy_radios_html+`
+                                                </tr>
+
+                                                <tr>
+                                                    <th>Members <span class="glyphicon glyphicon-user"></span></th>
+                                                    `+members_privacy_radios_html+`
+                                                </tr>
+
+                                                <tr>
+                                                    <th>Those with the link <span class="glyphicon glyphicon-link"></span></th>
+                                                    `+link_privacy_radios_html+`
+                                                </tr>
+                                            </tbody>
+
+                                        </table>
+
+                                        <!-- Apply Changes Button -->
+                                        <button type="button" id="apply_changes_button" class="btn btn-primary btn-block" onclick="alert('Submitting Privacy Changes');" disabled>Apply Changes</button>
+                                        <br>
+                                        `;
+
+
+
+                                    // include edit privacy popover html
+                                    building_popover_html = building_popover_html + edit_privacy_html;
+
+                                // if user is not the owner, change popover glyphicon
+                                }else{
+                                    // set popover glyphicon
+                                    document.getElementById("building_popover_glyphicon").className = "glyphicon glyphicon-info-sign";
+                                }
+
+                                // add click listener to radio buttons
+                                // to enable apply changes button
+                                building_popover_html = building_popover_html + `<script>
+                                        $('.radio').click(function(){
+                                            document.getElementById('apply_changes_button').disabled = false;
+                                        });
+                                        <\/script>`;
+
+
+                                // set html of popover
+                                $("#building_popover").attr("data-content", building_popover_html);
+
+                        });
+                    </script>
+
+                </a>
+
+
+
+              <!-- Building Title -->
+                <h3 class="building_panel" align="center" style="text-align:center;"><a href="/view_bottle_building/building_id={{building.pk}}">"{{building.title}}", created by {{building.created_by}} on {{building.created_on}}</a></h3>
+
+
+          </div>
+
+            <div class="panel-body" >
+
+                <div id="display_map"></div><br>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th># Bottles ({{building.bottle_units}})</th>
+                            <th>Bottle Fill ({{building.fill_units}})</th>
+                            <th>Cement ({{building.cement_units}})</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="bottle_estimate">{{building.bottle_estimate}}</td>
+                            <td id="fill_estimate">{{building.fill_estimate}}</td>
+                            <td id="cement_estimate">{{building.cement_estimate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div></div></div>
+
+
+
+
+
+
+
+    <script>
+        $(document).ready(function (){
+
+
+            // MAP AND TABLE UPDATES
+
+
+
+
+            // fix bottle estimate labels
+            var bottle_estimate = parseInt($("#bottle_estimate").html());
+            $("#bottle_estimate").html(bottle_estimate.toLocaleString());
+
+
+            // fix fill estimate labels
+            var fill_estimate = parseFloat($("#fill_estimate").html());
+            $("#fill_estimate").html(fill_estimate.toLocaleString());
+
+
+            // fix cement estimate labels
+            var cement_estimate = parseFloat($("#cement_estimate").html());
+            $("#cement_estimate").html(cement_estimate.toLocaleString());
+
+
+            mapboxgl.accessToken = 'pk.eyJ1IjoiZnVlcnRlbnVldmFjYXNhIiwiYSI6ImNqMGgzdTg5ZzAydnEyd3J1cHF4eG54eHUifQ.Aikx4qEIowhrKbSVhNEpRw';
+
+            // initialize coordinates array
+            var coordinates = [];
+            // track center point
+            var building_center = [0.0, 0.0];
+            var num_coordinates = 0;
+
+            // track most extreme coordinates
+            var min_lng_coord = [];
+            var max_lng_coord = [];
+
+            var min_lat_coord = [];
+
+
+
+            {% for coordinate in building.coordinates.all %}
+
+                // update the sum coordinate
+                building_center[0] += {{coordinate.longitude}};
+                building_center[1] += {{coordinate.latitude}};
+
+                // push the current coordinate to the coordinates array
+                coordinates.push([{{coordinate.longitude}}, {{coordinate.latitude}}]);
+
+                // increment num_coordinates in building
+                num_coordinates += 1;
+
+            {% endfor %}
+
+
+            // calculate average of all coordinates
+            building_center[0] = building_center[0] / num_coordinates;
+            building_center[1] = building_center[1] / num_coordinates;
+
+
+            // create map
+            var map = new mapboxgl.Map({
+                container: 'display_map',
+                style: 'mapbox://styles/mapbox/satellite-streets-v9',
+                center: building_center, // longitude, latitude
+                zoom: 3,
+            });
+
+
+            // Assistance zooming to drawn polygon from: https://bl.ocks.org/danswick/83a8ddff7fb9193176a975a02a896792
+
+
+            // store data for polygon of building
+            var geojson = {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "properties": {},
+                  "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [coordinates]
+                  }
+                }
+              ]
+            };
+
+            // get bounds of polygon
+            var bbox = turf.extent(geojson);
+
+
+            // listen for map load finish
+            map.on('load', function(){
+
+                // add data source for polygon
+                map.addSource('geojson-{{building.pk}}', {
+                    "type": "geojson",
+                    "data": geojson
+                });
+
+
+                // add polygon to map
+                map.addLayer({
+                    "id": "geojsonLayer",
+                    "type": "fill",
+                    "source": "geojson-{{building.pk}}",
+                    "paint": {
+                        "fill-color": "#000fff",
+                        "fill-opacity": 0.35
+                    }
+                });
+
+                // fit map to polygon of building
+                map.fitBounds(bbox, {padding: 20});
+
+            });
+
+
+
+        });
+
+    </script>
 
 
 
