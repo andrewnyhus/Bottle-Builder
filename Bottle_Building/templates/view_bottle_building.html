@@ -13,6 +13,14 @@
 
 {% block content %}
 
+    <script>
+      function get_building_pk(){
+        return {{building.pk}};
+      }
+      function get_token(){
+        return "{{csrf_token}}";
+      }
+    </script>
 
     <style>
         #display_map{
@@ -36,15 +44,23 @@
                 <a href="/delete_bottle_building/building_id={{building.pk}}" style="display:inline-block; float:left;">
                     <span class="glyphicon glyphicon-trash"></span>  Delete Building</a>
 
+              <!-- Link external apply privacy changes script -->
+                <script src="/static/view_building/js/apply_privacy_changes.js"></script>
 
               <!-- Edit Privacy -->
                 <a id="building_popover" style="display:inline-block; float:right;" data-toggle="building_popover_toggle" title="More" data-html="true" >
                     <span id="building_popover_glyphicon" ></span>
 
+
                     <script>
                         // POPOVER FUNCTIONALITY
 
                         $(document).ready(function(){
+
+                          function get_building_pk(){
+                            return {{building.pk}};
+                          }
+
                             // set popover
                             $('[data-toggle="building_popover_toggle"]').popover();
 
@@ -163,7 +179,7 @@
                                         </table>
 
                                         <!-- Apply Changes Button -->
-                                        <button type="button" id="apply_changes_button" class="btn btn-primary btn-block" onclick="alert('Submitting Privacy Changes');" disabled>Apply Changes</button>
+                                        <button type="button" id="apply_changes_button" class="btn btn-primary btn-block" onclick="apply_privacy_changes();" disabled>Apply Changes</button>
                                         <br>
                                         `;
 
@@ -225,9 +241,6 @@
                 </table>
 
             </div></div></div>
-
-
-
 
 
 

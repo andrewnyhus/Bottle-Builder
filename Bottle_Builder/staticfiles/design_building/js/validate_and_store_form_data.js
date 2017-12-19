@@ -192,7 +192,7 @@ function post_building_design(){
 
         url: "/post_bottle_building_design/",
         type: "POST",
-        data: {"data_string": JSON.stringify(post_data)},
+        data: {"data_string": JSON.stringify(post_data), csrfmiddlewaretoken: get_token()},
 
         success: function(response){
             set_message_good_alert("Building Design Created! Redirecting to: <a href='" +response + "'> " + response + "</a>");

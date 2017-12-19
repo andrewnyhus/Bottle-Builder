@@ -266,7 +266,7 @@ def post_bottle_building_design(request):
 
 		walls = list()
 
-		data_string = request.data["data_string"]#["walls"]
+		data_string = request.data["data_string"]
 		request_data = json.loads(data_string)
 
 
@@ -360,8 +360,57 @@ def post_bottle_building_design(request):
 	return Response("Please log in", status=status.HTTP_401_UNAUTHORIZED)
 
 
+@api_view(['POST'])
+def post_building_privacy_changes(request):
+	# ensure that the user is authenticated and active
+	if request.user.is_authenticated and request.user.is_active:
+
+		# get data string
+		data_string = str(request.data["data_string"])
+
+		# construct array from data string
+		request_data = json.loads(data_string)
+		#return Response(data_string)
+		# ensure that a building pk is included in the data
+		# and that the user is the owner of the building design
+		# and that the necessary privacy info is in the data
+		if (request_data["building_pk"] and request_data["is_visible_to_public"] and request_data["is_visible_to_members"] and request_data["is_visible_to_link"]):
+			try:
+
+				#convert building pk to int
+				building_pk = int(request_data["building_pk"])
+
+
+				# try to get building
+				building = Bottle_Building.objects.get(pk=building_pk)
+
+				# if user is building owner
+				if request.user.pk == building.created_by.pk:
+
+					# cast visibility preferences to pythonic booleans
+					visible_to_public = True if request_data["is_visible_to_public"] == "true" else False
+					visible_to_members = True if request_data["is_visible_to_members"] == "true" else False
+					visible_to_link = True if request_data["is_visible_to_link"] == "true" else False
+
+					# set visibility preferences
+					building.visible_to_public = visible_to_public
+					building.visible_to_members = visible_to_public
+					building.visible_to_those_with_link = visible_to_link
+
+					building.save()
+
+					return Response("Privacy changes have been applied.", status=status.HTTP_202_ACCEPTED)
+				return Response("You are not the owner of the building design", status=status.HTTP_401_UNAUTHORIZED)
+
+			# building does not exist
+			except Bottle_Building.DoesNotExist:
+				return Response("Building does not exist", status=status.HTTP_400_BAD_REQUEST)
+			# error with regards to data types
+			except ValueError:
+				return Response("Invalid Data", status=status.HTTP_400_BAD_REQUEST)
+			# general error
+			except Exception as exc:
+				return Response(str(exc), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 # ===============================================================================
 # ===============================================================================
-
-
-
