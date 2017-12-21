@@ -8,28 +8,45 @@
 
 {% block content %}
 
-	<h2 align="center"> Create Account </h2>
-    <br>
+<div style="padding-left:15%; padding-right:15%;">
+  <div class="panel panel-default">
 
-    <form align="center" id="create_account_form" style="padding-left:20%; padding-right:20%">
-        {% csrf_token %}
+    <div class="panel-heading">
+			<h2 align="center"> Create Account </h2>
+    </div>
 
-        <div align="center" class="form-control alert alert-danger alert-dismissible" id="bad_alert" style="display:none;" role="alert">
-            Error:<br><br><br>
-        </div>
-        <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert">
-            Account Created Successfully, Please Check E-mail to Verify Your Account
-            <br><br><br>
-        </div>
+    <div class="panel-body">
+			<br>
 
-        <input align="center" class="form-control" type="email" name="email" id="email" placeholder="E-mail" maxlength="50">
-        <input align="center" class="form-control" type="text" name="username" id="username" placeholder="Username" maxlength="30">
-        <input align="center" class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="30">
-        <input align="center" class="form-control" type="password" id="confirm_password" placeholder="Confirm Password" maxlength="30">
-        <br>
-        <button align="center" class="form-control btn btn-primary" type="submit" id="submit_button">Create Account</button>
+	    <form align="center" id="create_account_form" style="padding-left:20%; padding-right:20%">
+	        {% csrf_token %}
 
-    </form>
+	        <div align="center" class="form-control alert alert-danger alert-dismissible" id="bad_alert" style="display:none;" role="alert">
+	            Error:<br><br><br>
+	        </div>
+	        <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert">
+	            Account Created Successfully, Please Check E-mail to Verify Your Account
+	            <br><br><br>
+	        </div>
+
+	        <input align="center" class="form-control" type="email" name="email" id="email" placeholder="E-mail" maxlength="50">
+	        <input align="center" class="form-control" type="text" name="username" id="username" placeholder="Username" maxlength="30">
+	        <input align="center" class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="30">
+	        <input align="center" class="form-control" type="password" id="confirm_password" placeholder="Confirm Password" maxlength="30">
+	        <br>
+	        <button align="center" class="form-control btn btn-primary" type="submit" id="submit_button">Create Account</button>
+
+	    </form>
+
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
 
     <script src="/static/js/alert-scripts.js"></script>
     <script src="/static/create_account/js/validate_input_client_side.js"></script>

@@ -74,6 +74,7 @@ function form_is_valid_and_complete(){
     set_message_bad_alert("");
     hide_bad_alert();
 
+
     if(!measurement_system_is_selected()){return false;}
 
     if(!input_is_positive_number($("#building_height_input").val(), "building height")){return false;}
@@ -181,10 +182,22 @@ function post_building_design(){
     // stop if resource estimate or form validation fails
     if(resource_estimate == undefined){return false;}
 
+    // stop if the title is too long
+    if(document.getElementById("building_title_input").value.length > 40){
+      hide_good_alert();
+      set_message_bad_alert("Please enter a title that is under 40 characters");
+      show_bad_alert();
+
+      return false;
+    }
+
+
     var post_data = {"resource_estimate": resource_estimate, "walls": building_info["walls"],
                      "visible_link": document.getElementById("visible_to_link_checkbox").checked,
                      "visible_members": document.getElementById("visible_to_members_checkbox").checked,
-                     "visible_public": document.getElementById("visible_to_public_checkbox").checked};
+                     "visible_public": document.getElementById("visible_to_public_checkbox").checked,
+                     "title": document.getElementById("building_title_input").value
+                   };
 
 
 

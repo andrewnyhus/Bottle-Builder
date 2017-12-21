@@ -14,17 +14,63 @@ import json
 import re
 
 
-
-
 @never_cache
 @ensure_csrf_cookie
 def home(request):
-	if request.user.is_authenticated and request.user.is_active:
 
-		buildings_db = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
+	try:
+		# initialize all design collections to None
+		user_designs = None
+		member_designs = None
+		public_designs = None
+		buildings = None
 
-		return render(request, 'profile.html', {"buildings": buildings_db, "size": len(buildings_db)})
-	return render(request, 'about.html')
+		user_is_member = False
+
+		# populate building_designs
+		# --------------------------------------------------------------------------
+		# if user is authenticated, add user and member-visible designs to the mix of results
+		if request.user.is_active and request.user.is_authenticated:
+			user_designs = Bottle_Building.objects.filter(created_by=request.user)
+			member_designs = Bottle_Building.objects.filter(visible_to_members=True)
+			user_is_member = True
+
+		# add public designs to the mix
+		public_designs = Bottle_Building.objects.filter(visible_to_public=True)
+
+		# if user is member, include user and member designs with public user_designs
+		# and sort them by date
+		if user_is_member:
+			buildings = (public_designs | user_designs | member_designs).distinct().order_by('-created_on')[:15]
+
+		# else, sort public designs
+		else:
+			buildings = public_designs.order_by("-created_on")[:15]
+		# --------------------------------------------------------------------------
+
+		# declare an array for building_designs
+		building_designs = []
+
+		# include coordinates
+		# --------------------------------------------------------------------------
+
+		# iterate through buildings created by user
+		for building in buildings.all():
+			# get coordinates
+			design_coordinates = Coordinates.objects.filter(bottle_building=building)
+
+			# get link for current design
+			link = request.build_absolute_uri("/view_bottle_building/building_id=" + str(building.pk))
+
+			# add building design to array
+			building_designs.append({"building": building, "coordinates": design_coordinates, "link": link})
+		# --------------------------------------------------------------------------
+
+
+		return render(request, 'home.html', {"building_designs": building_designs})
+	except Exception as exc:
+		return render(request, "error.html", {"exception": str(exc)})
+
 
 def about(request):
 	return render(request, "about.html")
@@ -151,9 +197,22 @@ def create_account(request):
 def view_profile(request):
 	if request.user.is_authenticated and request.user.is_active:
 
-		buildings_db = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
+		buildings = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
 
-		return render(request, "profile.html", {"buildings": buildings_db, "size": len(buildings_db)})
+		# initialize designs array
+		building_designs = []
+
+		# iterate through buildings created by user
+		for building in buildings.all():
+			# get coordinates
+			design_coordinates = Coordinates.objects.filter(bottle_building=building)
+
+			# get link for current design
+			link = request.build_absolute_uri("/view_bottle_building/building_id=" + str(building.pk))
+
+			# add building design to array
+			building_designs.append({"building": building, "coordinates": design_coordinates, "link": link})
+		return render(request, "profile.html", {"building_designs": building_designs})
 
 	return render(request, "login_page.html")
 # ===============================================================================
@@ -194,36 +253,10 @@ def view_bottle_building(request, building_id):
 		if request.user.is_authenticated and not(building.visible_to_public or building.visible_to_members or building.visible_to_those_with_link or (request.user.pk == building.created_by.pk)):
 			return render(request, "unauthorized_request.html")
 
-
-		'''building_info = {}
-
-		building_info["title"] = building.title
-		building_info["pk"] = building.pk
-
-		building_info["created_by"] = building.created_by
-		building_info["created_on"] = building.created_on
-
-		building_info["bottle_estimate"] = "{:,}".format(building.bottle_estimate)
-		building_info["bottle_units"] = building.bottle_units
-
-		building_info["cement_estimate"] = "{:,}".format(building.cement_estimate)
-		building_info["cement_units"] = building.cement_units
-
-		building_info["fill_estimate"] = "{:,}".format(building.fill_estimate)
-		building_info["fill_units"] = building.fill_units
-
-
-		#coordinate_array = {}
-		coords = building.coordinates.all()
-		#for i in range(len(coords)):
-		#	coordinate_array.append({"longitude": coords[i].longitude, "latitude": coords[i].latitude})
-		#	i += 1
-
-		building_info["coordinates"] = coords'''
-
+		coordinates = Coordinates.objects.filter(bottle_building=building)
 		link = request.build_absolute_uri("/view_bottle_building/building_id=" + str(building.pk))
 
-		return render(request, "view_bottle_building.html", {"building": building, "link": link})
+		return render(request, "view_bottle_building.html", {"building": building, "coordinates": coordinates, "link": link})
 	except Exception as exc:
 		return render(request, "error.html", {"exception": str(exc)})
 
@@ -235,26 +268,25 @@ def design_bottle_building(request):
 
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def delete_bottle_building_design(request, building_id):
-
 	try:
-		return render(request, "404.html")
 		building = Bottle_Building.objects.get(pk=building_id)
-		if request.user.is_authenticated and request.user.is_active and (request.user is building.created_by):
+		if request.user.is_authenticated and request.user.is_active and (request.user.pk == building.created_by.pk):
 			building.delete()
-			return Response("Building deleted", status=status.HTTP_200_OK)
-		return Response("Could not delete building because you are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
+			return HttpResponseRedirect("/")
+		return HttpResponse("Could not delete building because you are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
 	except Exception as exc:
-		return Response("Error deleting bottle building.  Make sure the proper id was provided.", status=status.HTTP_400_BAD_REQUEST)
+		return HttpResponse("Error deleting bottle building.  Make sure the proper id was provided.", status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
 def post_bottle_building_design(request):
 
 	if request.user.is_authenticated and request.user.is_active:
-
 		coordinate_array = list()
+
+		title = None
 
 		bottle_estimate = None
 		cement_estimate = None
@@ -272,38 +304,64 @@ def post_bottle_building_design(request):
 
 		#----------------------------------------------------------------------------------
 
-		# get units of resource estimation
-		bottle_estimate_units = request_data["resource_estimate"]["bottle_units"]
-		cement_estimate_units = request_data["resource_estimate"]["cement_units"]
-		fill_estimate_units = request_data["resource_estimate"]["fill_units"]
+		try:
+			# get title
+			title = request_data["title"]
+			# get units of resource estimation
+			bottle_estimate_units = request_data["resource_estimate"]["bottle_units"]
+			cement_estimate_units = request_data["resource_estimate"]["cement_units"]
 
-		# reject if bottle units are too long
-		if (len(request_data["resource_estimate"]["bottle_units"]) > 70):
-			return Response("Error: The bottle units exceed the 70 character limit", status=status.HTTP_400_BAD_REQUEST)
+			fill_estimate_units = request_data["resource_estimate"]["fill_units"]
 
-		# reject if cement units are too long
-		if (len(request_data["resource_estimate"]["cement_units"]) > 20):
-			return Response("Error: The cement units exceed the 70 character limit", status=status.HTTP_400_BAD_REQUEST)
+			# reject if bottle units are too long
+			if (len(request_data["resource_estimate"]["bottle_units"]) > 70):
+				return Response("Error: The bottle units exceed the 70 character limit", status=status.HTTP_400_BAD_REQUEST)
 
-		# reject if fill units are too long
-		if (len(request_data["resource_estimate"]["fill_units"]) > 20):
-			return Response("Error: The fill units exceed the 70 character limit", status=status.HTTP_400_BAD_REQUEST)
+			# reject if cement units are too long
+			if (len(request_data["resource_estimate"]["cement_units"]) > 20):
+				return Response("Error: The cement units exceed the 70 character limit", status=status.HTTP_400_BAD_REQUEST)
 
+			# reject if fill units are too long
+			if (len(request_data["resource_estimate"]["fill_units"]) > 20):
+				return Response("Error: The fill units exceed the 70 character limit", status=status.HTTP_400_BAD_REQUEST)
+
+			# reject if title is too long
+			if (len(request_data["title"]) > 40):
+				return Response("Error: The title exceeds the 40 character limit", status=status.HTTP_400_BAD_REQUEST)
+		except KeyError:
+			return Response("Missing a piece of data", status=status.HTTP_400_BAD_REQUEST)
 		#----------------------------------------------------------------------------------
 
 
 		#----------------------------------------------------------------------------------
 		# reject if one of the estimations is not valid
 		try:
+
 			bottle_estimate = int(request_data["resource_estimate"]["bottles"]["total"])
 			cement_estimate = float(request_data["resource_estimate"]["cement"]["total"])
 			fill_estimate = float(request_data["resource_estimate"]["fill"]["total"])
 
+		except KeyError:
+			return Response("Missing a piece of data", status=status.HTTP_400_BAD_REQUEST)
 		except ValueError:
 			return Response("Error: One of the estimations is not valid. Bottles should be ints, fill and cement should be floats", status=status.HTTP_400_BAD_REQUEST)
 		#----------------------------------------------------------------------------------
 
+		#----------------------------------------------------------------------------------
+		# Check that the visibility settings are valid, store visibility settings
+		visible_link = request_data["visible_link"]
+		visible_members = request_data["visible_members"]
+		visible_public = request_data["visible_public"]
 
+
+		if not(visible_link == True or visible_link == False):
+			return Response("Problem related to viewable by link settings", status=status.HTTP_400_BAD_REQUEST)
+		if not(visible_link == True or visible_link == False):
+			return Response("Problem related to viewable by members settings", status=status.HTTP_400_BAD_REQUEST)
+
+
+		if not(visible_link == True or visible_link == False):
+			return Response("Problem related to viewable by public settings", status=status.HTTP_400_BAD_REQUEST)
 		#----------------------------------------------------------------------------------
 		# reject if one of the coordinates is not valid
 		#return Response(request_data["walls"]["1"]["0"], status=status.HTTP_400_BAD_REQUEST)
@@ -314,49 +372,31 @@ def post_bottle_building_design(request):
 				latitude = float(request_data["walls"][str(i)]["0"][1])
 				coordinate = Coordinates.objects.create(longitude=longitude, latitude=latitude)
 				coordinate_array.append(coordinate)
+		except KeyError:
+			return Response("Missing a piece of data", status=status.HTTP_400_BAD_REQUEST)
 		except ValueError:
-
 			# delete the coordinates we have already created in our database
 			for coordinate in coordinate_array:
 				coordinate.delete()
-
 			return Response("Error: The coordinates for the walls are not floating point numbers.", status=status.HTTP_400_BAD_REQUEST)
 		#----------------------------------------------------------------------------------
-		# Check that the visibility settings are valid, store visibility settings
-
-		visible_link = request_data["visible_link"]
-		visible_members = request_data["visible_members"]
-		visible_public = request_data["visible_public"]
-
-
-
-		if not(visible_link == True or visible_link == False):
-			return Response("Problem related to viewable by link settings", status=status.HTTP_400_BAD_REQUEST)
-
-		if not(visible_link == True or visible_link == False):
-			return Response("Problem related to viewable by members settings", status=status.HTTP_400_BAD_REQUEST)
-
-		if not(visible_link == True or visible_link == False):
-			return Response("Problem related to viewable by public settings", status=status.HTTP_400_BAD_REQUEST)
 
 		#----------------------------------------------------------------------------------
 		# Create building and send response with url pointing to building, otherwise report error
 		try:
-			building = Bottle_Building.objects.create(title="title", created_by=request.user,
+			building = Bottle_Building.objects.create(title=title, created_by=request.user,
 				bottle_units=bottle_estimate_units, cement_units=cement_estimate_units, fill_units=fill_estimate_units,
 				bottle_estimate=bottle_estimate, cement_estimate=cement_estimate, fill_estimate=fill_estimate,
 				visible_to_public=visible_public, visible_to_members=visible_members, visible_to_those_with_link=visible_link)
-
 			for coordinate in coordinate_array:
-				building.coordinates.add(coordinate)
-
+				coordinate.bottle_building = building
+				coordinate.save()
 			url_to_design = "/view_bottle_building/building_id=" + str(building.pk)
 			# Return url of building that was created.
 			return Response(url_to_design, status=status.HTTP_201_CREATED)
 		except Exception as exc:
 			# Return Error
 			return Response(str(exc), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 	return Response("Please log in", status=status.HTTP_401_UNAUTHORIZED)
 
 
@@ -394,7 +434,7 @@ def post_building_privacy_changes(request):
 
 					# set visibility preferences
 					building.visible_to_public = visible_to_public
-					building.visible_to_members = visible_to_public
+					building.visible_to_members = visible_to_members
 					building.visible_to_those_with_link = visible_to_link
 
 					building.save()

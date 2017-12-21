@@ -2,7 +2,7 @@
 
 {% load staticfiles %}
 
-{% block title %} Bottle Builder | Profile {% endblock %}
+{% block title %} Bottle Builder | Home {% endblock %}
 
 {% block import_headers %}
 
@@ -22,9 +22,7 @@
     }
   </script>
 
-	<h2 align="center"> {{ user.username }} </h2>
-
-    <h4 align="center">Your Bottle Building Designs:</h4>
+	<h2 align="center"> Welcome to Bottle Builder </h2>
 
 
     {% for building_design in building_designs %}

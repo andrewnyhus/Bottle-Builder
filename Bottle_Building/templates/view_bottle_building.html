@@ -27,12 +27,6 @@
             height: 380px;
         }
 
-
-        body{
-            padding-left:10%;
-            padding-right:10%;
-        }
-
     </style>
         <div style="padding-left:15%; padding-right:15%;">
         <div class="panel panel-default">
@@ -40,8 +34,9 @@
             <!-- Heading -->
             <div class="panel-heading">
 
+
               <!-- Delete Building -->
-                <a href="/delete_bottle_building/building_id={{building.pk}}" style="display:inline-block; float:left;">
+                <a href="/delete_bottle_building/building_id={{building.pk}}" id="delete_link" style="display:inline-block; float:left;">
                     <span class="glyphicon glyphicon-trash"></span>  Delete Building</a>
 
               <!-- Link external apply privacy changes script -->
@@ -68,12 +63,17 @@
                             // declare building popover html
                             var building_popover_html = '';
 
+
                             // include viewable at link
-                            building_popover_html = building_popover_html + "<a style='display:block; text-align:center;' href='{{link}}'>Building Viewable Here</a>";
+                            building_popover_html = building_popover_html + "URL: <a style='display:inline-block; text-align:center;' href='{{link}}'>Building Design Viewable Here</a>";
 
 
                                 // if user is creator of building, enable radio buttons
                                 if("{{request.user.pk}}" == "{{building.created_by.pk}}"){
+
+                                    // include notice that public visibility will allow public to view with link
+                                    // and that member visibility will allow members to view with link
+                                    building_popover_html = building_popover_html + "<br><br><p>Note that member visibility will allow members to view with the link, and public visibility will allow the public to view with the link.</p>";
 
                                     // set popover glyphicon
                                     document.getElementById("building_popover_glyphicon").className = "glyphicon glyphicon-pencil";
@@ -188,19 +188,26 @@
                                     // include edit privacy popover html
                                     building_popover_html = building_popover_html + edit_privacy_html;
 
+
+                                    // add click listener to radio buttons
+                                    // to enable apply changes button
+                                    building_popover_html = building_popover_html + `<script>
+                                            $('.radio').click(function(){
+                                                document.getElementById('apply_changes_button').disabled = false;
+                                            });
+                                            <\/script>`;
+
+
                                 // if user is not the owner, change popover glyphicon
                                 }else{
                                     // set popover glyphicon
                                     document.getElementById("building_popover_glyphicon").className = "glyphicon glyphicon-info-sign";
+
+                                    // eliminate delete design link
+                                    $("#delete_link").html("");
+                                    document.getElementById("delete_link").href = "";
                                 }
 
-                                // add click listener to radio buttons
-                                // to enable apply changes button
-                                building_popover_html = building_popover_html + `<script>
-                                        $('.radio').click(function(){
-                                            document.getElementById('apply_changes_button').disabled = false;
-                                        });
-                                        <\/script>`;
 
 
                                 // set html of popover
@@ -214,8 +221,15 @@
 
 
               <!-- Building Title -->
-                <h3 class="building_panel" align="center" style="text-align:center;"><a href="/view_bottle_building/building_id={{building.pk}}">"{{building.title}}", created by {{building.created_by}} on {{building.created_on}}</a></h3>
+                <h3 class="building_panel" align="center" style="text-align:center;"><a href="/view_bottle_building/building_id={{building.pk}}">"{{building.title}}", created by {{building.created_by}}</a></h3>
 
+              <!-- Alert for map bug -->
+                <div class="alert alert-info alert-dismissable" role="alert">
+                  <span class="glyphicon glyphicon-warning-sign"></span>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  Sometimes the map tiles turn white, and all you need to do is alter the map slightly (zoom in/out, move left/right/up/down, etc.)
+                  Also, sometimes the polygon representing your design glitches and you need to zoom out in order to see the full polygon.
+                </div>
 
           </div>
 
@@ -284,21 +298,19 @@
             var min_lat_coord = [];
 
 
+            {% for coordinate in coordinates.all %}
 
-            {% for coordinate in building.coordinates.all %}
+            // update the sum coordinate
+            building_center[0] += {{coordinate.longitude}};
+            building_center[1] += {{coordinate.latitude}};
 
-                // update the sum coordinate
-                building_center[0] += {{coordinate.longitude}};
-                building_center[1] += {{coordinate.latitude}};
+            // push the current coordinate to the coordinates array
+            coordinates.push([{{coordinate.longitude}}, {{coordinate.latitude}}]);
 
-                // push the current coordinate to the coordinates array
-                coordinates.push([{{coordinate.longitude}}, {{coordinate.latitude}}]);
-
-                // increment num_coordinates in building
-                num_coordinates += 1;
+            // increment num_coordinates in building
+            num_coordinates += 1;
 
             {% endfor %}
-
 
             // calculate average of all coordinates
             building_center[0] = building_center[0] / num_coordinates;

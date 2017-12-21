@@ -67,6 +67,7 @@ $(document).ready(function(){
             building_info["area_units"] = "sq ft";
         }
 
+
         // get coordinate set
         var coordinate_set_vertices = e["features"][0]["geometry"]["coordinates"][0];
         // generate wall data

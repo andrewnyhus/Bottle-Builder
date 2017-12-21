@@ -8,8 +8,20 @@
 
 {% block content %}
 
-	<h2 align="center"> Error </h2>
 
-	<script> 			alert("exception: " + {{exception}});</script>
+<div style="padding-left:15%; padding-right:15%;">
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+			<h2 align="center"> Error </h2>
+    </div>
+
+    <div class="panel-body">
+			<h6 align="center">Exception: {{exception}}</h6>
+    </div>
+
+  </div>
+</div>
+
 
 {% endblock %}

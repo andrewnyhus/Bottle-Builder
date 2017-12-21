@@ -24,13 +24,17 @@ function convert_coordinates_to_walls(coordinate_set){
             walls[i][0] = coordinate_set[i];
             walls[i][1] = coordinate_set[i+1];
 
+            length_km = turf.distance(coordinate_set[i], coordinate_set[i+1]);
             // put distance in either meters or feet
             // into walls[i]
             if(metric_selected()){
-                walls[i]["length"] = turf.distance(coordinate_set[i], coordinate_set[i+1], "meters").toFixed(2);
+                length_m = length_km * 1000;
+                walls[i]["length"] = length_m.toFixed(2);
                 walls[i]["length_units"] = "m";
             }else if(imperial_selected()){
-                walls[i]["length"] = turf.distance(coordinate_set[i], coordinate_set[i+1], "feet").toFixed(2);
+                //length_miles = turf.distance(coordinate_set[i], coordinate_set[i+1], {"miles"});
+                length_ft = length_km * 3280.84;
+                walls[i]["length"] = length_ft.toFixed(2);
                 walls[i]["length_units"] = "ft";
             }
 
@@ -116,7 +120,7 @@ function generate_resource_estimate(){
     var width_between_bottles = parseFloat(building_info["width_between_bottles"]);
     //=====================================================================================================================
 
-    
+
 
     // calculate & store the mass of cement needed
     //=====================================================================================================================
@@ -389,5 +393,3 @@ function generate_resource_estimate_html(){
 
 
 // ------------------------------------------------------------------------------------------------------
-
-

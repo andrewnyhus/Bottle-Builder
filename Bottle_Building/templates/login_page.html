@@ -8,28 +8,35 @@
 
 {% block content %}
 
-	<h2 align="center"> Please Login or Create an Account </h2>
+<div style="padding-left:15%; padding-right:15%;">
+	<div class="panel panel-default">
 
+		<div class="panel-heading">
+			<h2 align="center"> Please Login or Create an Account </h2>
+		</div>
 
-    <form align="center" id="login_form" style="padding-left:10%; padding-right:10%">
-        {% csrf_token %}
+		<div class="panel-body">
+	    <form align="center" id="login_form" style="padding-left:10%; padding-right:10%">
+	        {% csrf_token %}
 
-        <div align="center" class="form-control alert alert-danger alert-dismissible" id="bad_alert" style="display:none;" role="alert">
-            Error:<br><br><br>
-        </div>
-        <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert">
-            Account Created Successfully, Please Check E-mail to Verify Your Account
-            <br><br><br>
-        </div>
+	        <div align="center" class="form-control alert alert-danger alert-dismissible" id="bad_alert" style="display:none;" role="alert">
+	            Error:<br><br><br>
+	        </div>
+	        <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert">
+	            Account Created Successfully, Please Check E-mail to Verify Your Account
+	            <br><br><br>
+	        </div>
 
-        <input align="center" class="form-control" type="text" name="username" id="username" placeholder="Username" maxlength="30">
-        <input align="center" class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="30">
-        <br>
-        <button align="center" class="form-control btn btn-primary" type="submit" id="submit_button">Login</button>
-        <a align="center" class="form-control btn btn-default" id="create_account_button" href="/create_account">Create Account</a>
-        <a align="center" class="form-control btn btn-default" id="forgot_credentials_button" href="/forgot_credentials">Forgot username or password?</a>
+	        <input align="center" class="form-control" type="text" name="username" id="username" placeholder="Username" maxlength="30">
+	        <input align="center" class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="30">
+	        <br>
+	        <button align="center" class="form-control btn btn-primary" type="submit" id="submit_button">Login</button>
+	        <a align="center" class="form-control btn btn-default" id="create_account_button" href="/create_account">Create Account</a>
+	        <a align="center" class="form-control btn btn-default" id="forgot_credentials_button" href="/forgot_credentials">Forgot username or password?</a>
 
-    </form>
+	    </form>
+
+		</div></div></div>
 
 
     <script src="/static/js/cookie-stuff.js"></script>

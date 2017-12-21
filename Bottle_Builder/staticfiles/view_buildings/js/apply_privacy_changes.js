@@ -40,29 +40,29 @@ function validate_privacy_changes(privacy_changes){
 
 }
 
-function apply_privacy_changes(){
+function apply_privacy_changes(pk){
   // put together dictionary
   privacy_changes = {};
 
   // include building pk
-  privacy_changes["building_pk"] = get_building_pk().toString();
+  privacy_changes["building_pk"] = pk.toString();
 
   // include public visibility
-  if(document.getElementById("set_visible_to_public").checked){
+  if(document.getElementById("set_visible_to_public_"+pk).checked){
     privacy_changes["is_visible_to_public"] = true.toString();
   }else{
     privacy_changes["is_visible_to_public"] = false.toString();
   }
 
   // include member visibility
-  if(document.getElementById("set_visible_to_members").checked){
+  if(document.getElementById("set_visible_to_members_"+pk).checked){
     privacy_changes["is_visible_to_members"] = true.toString();
   }else{
     privacy_changes["is_visible_to_members"] = false.toString();
   }
 
   // include link visibility
-  if(document.getElementById("set_visible_to_those_with_link").checked){
+  if(document.getElementById("set_visible_to_those_with_link_"+pk).checked){
     privacy_changes["is_visible_to_link"] = true.toString();
   }else{
     privacy_changes["is_visible_to_link"] = false.toString();
@@ -91,7 +91,7 @@ function post_privacy_changes(privacy_changes){
             console.log(response);
 
             // update apply changes button
-            document.getElementById('apply_changes_button').disabled = true;
+            document.getElementById('apply_changes_button_'+privacy_changes["building_pk"]).disabled = true;
 
         },
         error: function(err){
