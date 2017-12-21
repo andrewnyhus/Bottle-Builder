@@ -24,7 +24,7 @@
 
 	<body>
 		<!-- include nav bar -->
-		<nav class="navbar navbar-default">
+		<nav class="navbar navbar-inverse">
 		  <div class="container-fluid">
 		    <!-- Brand and toggle get grouped for better mobile display -->
 		    <div class="navbar-header">
@@ -76,10 +76,18 @@
 		</script>
 
 		<style>
-			body{
-					padding-left:10%;
-					padding-right:10%;
+
+			.panel{
+				border-color: rgb(230,236,240);
+				background-color: rgb(255, 255, 255);
 			}
+
+			body{
+				background-color: rgb(245, 248, 250);
+				padding-left:10%;
+				padding-right:10%;
+			}
+
 		</style>
 
 		{% block content %}{% endblock %}
