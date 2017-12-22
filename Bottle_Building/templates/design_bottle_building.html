@@ -51,13 +51,11 @@
         <div class="panel-body">
 
           <p align="center" style="padding-left:10%; padding-right:10%;"> Disclaimer: This has not been tested in real life, and is a theoretical estimate.  It does not take into account any pillars that may be needed.  It assumes that the density of concrete is 1400 kg/cubic meter (87.39 lb/cubic foot).  If you have tried it and have feedback please go <a href="/feedback">here</a></p>
-          <!-- ---------------------------------------- -->
           <br>
 
-          <!-- ---------------------------------------- -->
           <form id="building_design_form" style="padding-left:10%; padding-right:10%;" >
               {% csrf_token %}
-              <div class="alert alert-danger" id="bad_alert" style="display: none;"></div>
+              <div class="alert alert-danger" id="bad_alert" style="display: none;" role="alert"></div>
               <div align="center" class="form-control alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert"></div>
 
 
@@ -82,6 +80,12 @@
               <div class="checkbox">
                   <label><input id="visible_to_link_checkbox" type="checkbox" value="">Those with the link</label>
               </div><br><br>
+              {% else %}
+
+              <div class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-warning-sign"></span>
+                Please note that you must login to post your building design
+              </div>
 
               {% endif %}
 

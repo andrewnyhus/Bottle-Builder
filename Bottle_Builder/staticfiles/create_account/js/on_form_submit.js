@@ -37,22 +37,19 @@ $(function(){
                 data: post_data,
 
                 success: function(response){
-                    hide_bad_alert();
-                    set_message_good_alert(response);
-                    show_good_alert();
+                  hide_bad_alert();
+                  set_message_good_alert(response);
+                  show_good_alert();
 
-                    document.location = "/";
+                  document.location = "/";
                 },
 
                 error: function(xhr, error_message, err){
-                    var response = xhr.responseJSON;
+                  var response = xhr.responseJSON;
 
-                    console.log("response:");
-                    console.log(response);
-
-                    hide_good_alert();
-                    set_message_bad_alert(error_message);
-                    show_bad_alert();
+                  hide_good_alert();
+                  set_message_bad_alert(response);
+                  show_bad_alert();
                 }
 
             });
@@ -62,6 +59,3 @@ $(function(){
 
 
 });
-
-
-

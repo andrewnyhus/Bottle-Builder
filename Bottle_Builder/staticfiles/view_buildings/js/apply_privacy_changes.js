@@ -87,16 +87,21 @@ function post_privacy_changes(privacy_changes){
         type: "POST",
         data: {"csrfmiddlewaretoken":get_token(), "data_string": data_string},
         success: function(response){
+          hide_bad_alert();
+          set_message_good_alert(response);
+          show_good_alert();
 
-            console.log(response);
-
-            // update apply changes button
-            document.getElementById('apply_changes_button_'+privacy_changes["building_pk"]).disabled = true;
+          // update apply changes button
+          document.getElementById('apply_changes_button_'+privacy_changes["building_pk"]).disabled = true;
 
         },
-        error: function(err){
-            console.log("err:");
-            console.log(err.responseJSON);
+        error: function(xhr, error_message, err){
+          var response = xhr.responseJSON;
+
+          hide_good_alert();
+          set_message_bad_alert(response);
+          show_bad_alert();
+
         }
 
       });

@@ -96,10 +96,16 @@ def login(request):
 
     user = authenticate(username=username, password=password)
 
+	# is user exists and password is correct
     if user is not None:
-        if user.is_active:
-            auth_login(request, user)
-            return Response("Logged in Successfully", status=status.HTTP_200_OK)
+        auth_login(request, user)
+
+        # if user is not active, make them active
+        if(not(user.is_active)):
+            user.is_active = True
+            user.save()
+
+        return Response("Logged in Successfully", status=status.HTTP_200_OK)
 
     return Response("Login Failed", status=status.HTTP_400_BAD_REQUEST)
 

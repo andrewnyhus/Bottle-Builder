@@ -11,9 +11,6 @@ class Bottle_Building(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
 
-    # bottle wall coordinates
-    #coordinates = models.ManyToManyField(Coordinates, on_delete=models.CASCADE, related_name="coordinates+")
-
     # units
     bottle_units = models.CharField(max_length=70)
     cement_units = models.CharField(max_length=20)

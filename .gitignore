@@ -3,4 +3,3 @@
 db.sqlite3
 .env
 venv
-Bottle_Builder/staticfiles/dev_files_to_remove/

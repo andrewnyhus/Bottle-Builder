@@ -208,19 +208,20 @@ function post_building_design(){
         data: {"data_string": JSON.stringify(post_data), csrfmiddlewaretoken: get_token()},
 
         success: function(response){
-            set_message_good_alert("Building Design Created! Redirecting to: <a href='" +response + "'> " + response + "</a>");
-            show_good_alert();
+          hide_bad_alert();
+          set_message_good_alert("Building Design Created! Redirecting to: <a href='" +response + "'> " + response + "</a>");
+          show_good_alert();
 
-            document.location = response;
+          document.location = response;
 
         },
 
         error: function(xhr, error_message, err){
-            var response = xhr.responseJSON;
+          var response = xhr.responseJSON;
 
-            hide_good_alert();
-            set_message_bad_alert(err);
-            show_bad_alert();
+          hide_good_alert();
+          set_message_bad_alert(response);
+          show_bad_alert();
         }
 
     });
