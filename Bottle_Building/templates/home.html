@@ -261,9 +261,9 @@
               </thead>
               <tbody>
                   <tr>
-                      <td id="bottle_estimate">{{building_design.building.bottle_estimate}}</td>
-                      <td id="fill_estimate">{{building_design.building.fill_estimate}}</td>
-                      <td id="cement_estimate">{{building_design.building.cement_estimate}}</td>
+                      <td id="bottle_estimate_{{building_design.building.pk}}">{{building_design.building.bottle_estimate}}</td>
+                      <td id="fill_estimate_{{building_design.building.pk}}">{{building_design.building.fill_estimate}}</td>
+                      <td id="cement_estimate_{{building_design.building.pk}}">{{building_design.building.cement_estimate}}</td>
                   </tr>
               </tbody>
           </table>
@@ -286,18 +286,18 @@
 
             {% for building_design in building_designs %}
               // fix bottle estimate labels
-              var bottle_estimate = parseInt($("#bottle_estimate_{{building_design.building.pk}}").html());
-              $("#bottle_estimate_{{building_design.building.pk}}").html(bottle_estimate.toLocaleString());
+              var bottle_estimate_{{building_design.building.pk}} = parseInt($("#bottle_estimate_{{building_design.building.pk}}").html());
+              $("#bottle_estimate_{{building_design.building.pk}}").html(bottle_estimate_{{building_design.building.pk}}.toLocaleString());
 
 
               // fix fill estimate labels
-              var fill_estimate = parseFloat($("#fill_estimate_{{building_design.building.pk}}").html());
-              $("#fill_estimate_{{building_design.building.pk}}").html(fill_estimate.toLocaleString());
+              var fill_estimate_{{building_design.building.pk}} = parseFloat($("#fill_estimate_{{building_design.building.pk}}").html());
+              $("#fill_estimate_{{building_design.building.pk}}").html(fill_estimate_{{building_design.building.pk}}.toLocaleString());
 
 
               // fix cement estimate labels
-              var cement_estimate = parseFloat($("#cement_estimate_{{building_design.building.pk}}").html());
-              $("#cement_estimate_{{building_design.building.pk}}").html(cement_estimate.toLocaleString());
+              var cement_estimate_{{building_design.building.pk}} = parseFloat($("#cement_estimate_{{building_design.building.pk}}").html());
+              $("#cement_estimate_{{building_design.building.pk}}").html(cement_estimate_{{building_design.building.pk}}.toLocaleString());
 
 
               // initialize coordinates array
