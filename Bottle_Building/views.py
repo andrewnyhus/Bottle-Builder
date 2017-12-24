@@ -319,6 +319,10 @@ def post_bottle_building_design(request):
 
 			fill_estimate_units = request_data["resource_estimate"]["fill_units"]
 
+			# reject if building height units are too long
+			if (len(request_data["building_height_units"]) > 10):
+				return Response("Error: The building height exceed the 10 character limit", status=status.HTTP_400_BAD_REQUEST)
+
 			# reject if bottle units are too long
 			if (len(request_data["resource_estimate"]["bottle_units"]) > 70):
 				return Response("Error: The bottle units exceed the 70 character limit", status=status.HTTP_400_BAD_REQUEST)
@@ -390,7 +394,8 @@ def post_bottle_building_design(request):
 		#----------------------------------------------------------------------------------
 		# Create building and send response with url pointing to building, otherwise report error
 		try:
-			building = Bottle_Building.objects.create(title=title, created_by=request.user,
+			building = Bottle_Building.objects.create(title=title, building_height=request_data["building_height"],
+                building_height_units=request_data["building_height_units"], created_by=request.user,
 				bottle_units=bottle_estimate_units, cement_units=cement_estimate_units, fill_units=fill_estimate_units,
 				bottle_estimate=bottle_estimate, cement_estimate=cement_estimate, fill_estimate=fill_estimate,
 				visible_to_public=visible_public, visible_to_members=visible_members, visible_to_those_with_link=visible_link)

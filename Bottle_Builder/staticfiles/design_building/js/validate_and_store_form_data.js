@@ -193,6 +193,7 @@ function post_building_design(){
 
 
     var post_data = {"resource_estimate": resource_estimate, "walls": building_info["walls"],
+                     "building_height": building_info["building_height"], "building_height_units": building_info["building_height_units"],
                      "visible_link": document.getElementById("visible_to_link_checkbox").checked,
                      "visible_members": document.getElementById("visible_to_members_checkbox").checked,
                      "visible_public": document.getElementById("visible_to_public_checkbox").checked,

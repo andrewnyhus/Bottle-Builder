@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 class Bottle_Building(models.Model):
     title = models.CharField(max_length=40)
+    building_height = models.FloatField()
 
     # created by user, created on datetime
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
@@ -15,6 +16,7 @@ class Bottle_Building(models.Model):
     bottle_units = models.CharField(max_length=70)
     cement_units = models.CharField(max_length=20)
     fill_units = models.CharField(max_length=20)
+    building_height_units = models.CharField(max_length=10)
 
     # estimates
     bottle_estimate = models.IntegerField()

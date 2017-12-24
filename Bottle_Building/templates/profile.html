@@ -239,6 +239,10 @@
           <!-- Building Title -->
             <h3 class="building_panel" align="center" style="text-align:center;"><a href="/view_bottle_building/building_id={{building_design.building.pk}}">"{{building_design.building.title}}", created by {{building_design.building.created_by}}</a></h3>
 
+
+        </div>
+        <div class="panel-body">
+
           <!-- Alert for map bug -->
             <div class="alert alert-info alert-dismissable" role="alert">
               <span class="glyphicon glyphicon-warning-sign"></span>
@@ -247,11 +251,11 @@
               Also, sometimes the polygon representing your design glitches and you need to zoom out in order to see the full polygon.
             </div>
 
-        </div>
-        <div class="panel-body">
 
           <!-- Map -->
           <div id="display_map_{{building_design.building.pk}}" style="height: 380px; width: 100%;"></div><br>
+
+          <h5 align="center">Building Height: {{building_design.building.building_height}} {{building_design.building.building_height_units}}</h5>
 
           <table class="table table-striped">
               <thead>
