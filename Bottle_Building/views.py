@@ -231,13 +231,6 @@ def view_profile(request):
 # ===============================================================================
 # ALLOW FOR DELETING BOTTLE BUILDINGS
 
-@api_view(['GET'])
-def get_bottle_buildings(request):
-	if request.method == "GET" and request.user.is_authenticated and request.user.is_active:
-		# retrieve from db
-		return HttpResponse("Insert JSON response")
-
-
 
 @never_cache
 @ensure_csrf_cookie
@@ -274,16 +267,16 @@ def design_bottle_building(request):
 
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def delete_bottle_building_design(request, building_id):
 	try:
 		building = Bottle_Building.objects.get(pk=building_id)
 		if request.user.is_authenticated and request.user.is_active and (request.user.pk == building.created_by.pk):
 			building.delete()
-			return HttpResponseRedirect("/")
-		return HttpResponse("Could not delete building because you are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
+			return Response("Successfully Deleted", status=status.HTTP_200_OK)
+		return Response("Could not delete building because you are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
 	except Exception as exc:
-		return HttpResponse("Error deleting bottle building.  Make sure the proper id was provided.", status=status.HTTP_400_BAD_REQUEST)
+		return Response("Error deleting bottle building.  Make sure the proper id was provided.", status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

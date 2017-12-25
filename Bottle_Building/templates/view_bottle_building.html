@@ -20,6 +20,32 @@
       function get_token(){
         return "{{csrf_token}}";
       }
+
+      function delete_building(primary_key){
+        $.ajax({
+          url: "/delete_bottle_building/building_id="+primary_key+"/",
+          type: "POST",
+          data: {"csrfmiddlewaretoken":get_token()},
+          success: function(response){
+            hide_bad_alert();
+            set_message_good_alert(JSON.stringify(response));
+            show_good_alert();
+
+            // redirect
+            document.location = "/";
+
+          },
+          error: function(xhr, error_message, err){
+            var response = xhr.responseJSON;
+
+            hide_good_alert();
+            set_message_bad_alert(JSON.stringify(response));
+            show_bad_alert();
+
+          }
+
+        });
+      }
     </script>
 
     <style>
@@ -28,6 +54,7 @@
         }
 
     </style>
+
         <div style="padding-left:15%; padding-right:15%;">
         <div class="panel panel-default">
 
@@ -36,8 +63,8 @@
 
 
               <!-- Delete Building -->
-                <a href="/delete_bottle_building/building_id={{building.pk}}" id="delete_link" style="display:inline-block; float:left;">
-                    <span class="glyphicon glyphicon-trash"></span>  Delete Building</a>
+                <button class="btn btn-default" onclick="delete_building('{{building.pk}}');" id="delete_link" style="display:inline-block; float:left;">
+                    <span class="glyphicon glyphicon-trash"></span> </button>
 
               <!-- Link external apply privacy changes script -->
                 <script src="/static/view_building/js/apply_privacy_changes.js"></script>
@@ -217,7 +244,7 @@
                     </script>
 
                 </a>
-
+                <br>
 
 
               <!-- Building Title -->
