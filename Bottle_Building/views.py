@@ -1,5 +1,5 @@
 from .models import *
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
@@ -82,11 +82,9 @@ def about(request):
 @never_cache
 @ensure_csrf_cookie
 def login_page(request):
-	if request.user.is_authenticated and request.user.is_active:
-		buildings_db = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
-
-		return render(request, 'profile.html', {"buildings": buildings_db, "size": len(buildings_db)})
-	return render(request, 'login_page.html')
+    if request.user.is_authenticated and request.user.is_active:
+        return redirect(view_profile)
+    return render(request, 'login_page.html')
 
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
@@ -131,11 +129,9 @@ def forgot_credentials(request):
 @never_cache
 @ensure_csrf_cookie
 def create_account_page(request):
-	if request.user.is_authenticated and request.user.is_active:
-		buildings_db = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
-
-		return render(request, "profile.html", {"buildings": buildings_db, "size": len(buildings_db)})
-	return render(request, "create_account.html")
+    if request.user.is_authenticated and request.user.is_active:
+        return redirect(view_profile)
+    return render(request, "create_account.html")
 
 
 
@@ -201,26 +197,22 @@ def create_account(request):
 @never_cache
 @ensure_csrf_cookie
 def view_profile(request):
-	if request.user.is_authenticated and request.user.is_active:
+    if request.user.is_authenticated and request.user.is_active:
 
-		buildings = Bottle_Building.objects.filter(created_by=request.user).order_by("created_on")
+        buildings = Bottle_Building.objects.filter(created_by=request.user).order_by("-created_on")
+        # initialize designs array
+        building_designs = []
+        # iterate through buildings created by user
+        for building in buildings.all():
+            # get coordinates
+            design_coordinates = Coordinates.objects.filter(bottle_building=building)
+            # get link for current design
+            link = request.build_absolute_uri("/view_bottle_building/building_id=" + str(building.pk))
+            # add building design to array
+            building_designs.append({"building": building, "coordinates": design_coordinates, "link": link})
 
-		# initialize designs array
-		building_designs = []
-
-		# iterate through buildings created by user
-		for building in buildings.all():
-			# get coordinates
-			design_coordinates = Coordinates.objects.filter(bottle_building=building)
-
-			# get link for current design
-			link = request.build_absolute_uri("/view_bottle_building/building_id=" + str(building.pk))
-
-			# add building design to array
-			building_designs.append({"building": building, "coordinates": design_coordinates, "link": link})
-		return render(request, "profile.html", {"building_designs": building_designs})
-
-	return render(request, "login_page.html")
+        return render(request, "profile.html", {"building_designs": building_designs})
+    return render(request, "login_page.html")
 # ===============================================================================
 # ===============================================================================
 
