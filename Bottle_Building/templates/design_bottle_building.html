@@ -103,9 +103,68 @@
                   Sometimes the map tiles turn white, and all you need to do is alter the map slightly (zoom in/out, move left/right/up/down, etc.)
                 </div>
 
-              <!-- Map -->
+              <!-- Map label -->
               <label for="map_to_draw_building" id="map_label">Please draw the perimeter of your new building
               in the map below.</label>
+
+              <!-- Need Help Popover -->
+              <a id="help_popover" style="display:inline-block; float:right;" data-placement="right" data-original-title="help_popover_toggle" title="Map Help" data-html="true" >
+                  Need Help?
+                  <script>
+                      // POPOVER FUNCTIONALITY
+
+                      $(document).ready(function(){
+
+
+                          // set popover
+                          $('[data-original-title="help_popover_toggle"]').popover();
+
+
+                          // declare building popover html
+                          var help_popover_html = '';
+
+                          // add first description and image
+                          help_popover_html = help_popover_html + "<h5> Start the building perimeter polygon by clicking the draw button.</h5>";
+                          help_popover_html = help_popover_html + "<div class='embed-responsive embed-responsive-4by3'><img class='embed-responsive-item' src='/static/images/help/start-polygon.png'></img></div><br>";
+
+                          // add second description and image
+                          help_popover_html = help_popover_html + "<h5> If you make a mistake, press the trash button to scrap the polygon you drew.</h5>";
+                          help_popover_html = help_popover_html + "<div class='embed-responsive embed-responsive-4by3'><img class='embed-responsive-item' src='/static/images/help/scrap-polygon.png'></img></div><br>";
+
+                          // add third description and image
+                          help_popover_html = help_popover_html + "<h5> When you are finished drawing the polygon, you need to close it by clicking on the first point drawn. In the below example, the polygon was drawn A->B->C. Therefore, the user must click on A after they drew C.</h5>";
+                          help_popover_html = help_popover_html + "<div class='embed-responsive embed-responsive-4by3'><img class='embed-responsive-item' src='/static/images/help/close-polygon.png'></img></div>";
+
+
+                          // set html of popover
+                          $("#help_popover").attr("data-content", help_popover_html);
+
+
+                          // dismiss popovers on click outside popover
+                          $("html").on('click', function(event){
+                            /*
+                            Related StackOverflow answer
+                            http://stackoverflow.com/a/19638199/275333 */
+                            if (typeof $(event.target).data('original-title') == 'undefined' &&
+                               !$(event.target).parents().is('.popover.in')) {
+
+                                  $('[data-original-title]').popover('hide');
+                              }
+
+                          });
+
+
+                      });
+                  </script>
+
+              </a>
+              <br>
+
+
+
+
+
+              <!-- Map -->
               <div id="map_to_draw_building"></div><br>
 
 

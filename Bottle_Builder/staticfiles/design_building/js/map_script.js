@@ -48,6 +48,9 @@ $(document).ready(function(){
         // hide map
         $("#map_to_draw_building").css("display", "none");
 
+        // hide help popover
+        $("#help_popover").css("display", "none");
+
         // update map label
         $("#map_label").html("Your map has been drawn.  If you have finished the form, continue to generate an estimate or save the building design.");
 
