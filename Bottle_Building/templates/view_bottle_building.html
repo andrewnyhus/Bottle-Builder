@@ -62,10 +62,11 @@
             <div class="panel-heading">
 
 
+              {% if request.user.is_authenticated and request.user.pk == building.created_by.pk %}
               <!-- Delete Building -->
                 <button class="btn btn-default" onclick="delete_building('{{building.pk}}');" id="delete_link" style="display:inline-block; float:left;">
                     <span class="glyphicon glyphicon-trash"></span> </button>
-
+              {% endif %}
               <!-- Link external apply privacy changes script -->
                 <script src="/static/view_building/js/apply_privacy_changes.js"></script>
 
@@ -231,8 +232,8 @@
                                     document.getElementById("building_popover_glyphicon").className = "glyphicon glyphicon-info-sign";
 
                                     // eliminate delete design link
-                                    $("#delete_link").html("");
-                                    document.getElementById("delete_link").href = "";
+                                    //$("#delete_link").html("");
+                                    //document.getElementById("delete_link").href = "";
                                 }
 
 
@@ -244,8 +245,6 @@
                     </script>
 
                 </a>
-                <br>
-
 
               <!-- Building Title -->
                 <h3 class="building_panel" align="center" style="text-align:center;"><a href="/view_bottle_building/building_id={{building.pk}}">"{{building.title}}", created by {{building.created_by}}</a></h3>

@@ -64,10 +64,11 @@
         <div class="panel-heading">
 
 
+          {% if request.user.is_authenticated and request.user.pk == building_design.building.created_by.pk %}
           <!-- Delete Building -->
             <button class="btn btn-default" onclick="delete_building('{{building_design.building.pk}}');" id="delete_link_{{building_design.building.pk}}" style="display:inline-block; float:left;">
                 <span class="glyphicon glyphicon-trash"></span> </button>
-
+          {% endif %}
 
           <!-- Edit Privacy -->
             <a id="building_popover_{{building_design.building.pk}}" style="display:inline-block; float:right;" data-toggle="building_popover_toggle_{{building_design.building.pk}}" title="More" data-html="true" >
@@ -248,8 +249,8 @@
                                 document.getElementById("building_popover_glyphicon_{{building_design.building.pk}}").className = "glyphicon glyphicon-info-sign";
 
                                 // eliminate delete design link
-                                $("#delete_link_{{building_design.building.pk}}").html("");
-                                document.getElementById("delete_link_{{building_design.building.pk}}").href = "";
+                                //$("#delete_link_{{building_design.building.pk}}").html("");
+                                //document.getElementById("delete_link_{{building_design.building.pk}}").href = "";
                             }
 
 

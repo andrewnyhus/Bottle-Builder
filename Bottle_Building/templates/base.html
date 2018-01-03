@@ -4,7 +4,9 @@
 
 	<head>
 		<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
-		<title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{% block title %}{% endblock %}</title>
 
 		<!-- include dependencies -->
 
@@ -59,7 +61,7 @@
 						<li><a href="/logout">Logout</a></li>
 
 					{% else %}
-						<li><a href="/login_page">Login</a></li>
+						<li><a href="/login_page">Login/Create Account</a></li>
 					{% endif %}
 		      </ul>
 		    </div><!-- /.navbar-collapse -->

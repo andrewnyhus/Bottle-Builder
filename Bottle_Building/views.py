@@ -114,7 +114,7 @@ def logout_page(request):
 
 @never_cache
 @ensure_csrf_cookie
-def forgot_credentials(request):
+def forgot_credentials_page(request):
 	return render(request, 'forgot_credentials.html')
 
 # ===============================================================================
