@@ -86,9 +86,25 @@
 
 			body{
 				background-color: rgb(245, 248, 250);
-				padding-left:10%;
-				padding-right:10%;
+				/*padding-left:0%;
+				padding-right:0%;*/
 			}
+
+      /* Small Devices */
+      @media screen and (max-width: 768px){
+        .panel-div{
+            padding-left: 2%;
+            padding-right: 2%;
+        }
+      }
+
+      /* Bigger Devices */
+      @media screen and (min-width: 768px){
+        .panel-div{
+          padding-left: 15%;
+          padding-right: 15%;
+        }
+      }
 
 		</style>
 
