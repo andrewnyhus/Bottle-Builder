@@ -12,8 +12,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 import json
 import re
+import smtplib
+from email.mime.text import MIMEText
+from .email_account import *
 
-
+# ===============================================================================
+# Miscellaneous
+# ===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def home(request):
@@ -73,7 +78,37 @@ def home(request):
 
 
 def about(request):
-	return render(request, "about.html")
+    return render(request, "about.html")
+
+def send_email(recipient, subject, message_body):
+    # help from http://www.tutorialspoint.com/python3/python_sending_email.htm
+    # help from https://docs.python.org/2/library/email-examples.html
+    # help from https://stackoverflow.com/questions/10147455/how-to-send-an-email-with-gmail-as-provider-using-python/12424439#12424439
+
+    try:
+        sender = get_email_address()
+
+        # compose message
+        message = MIMEText(message_body)
+        message["Subject"] = subject
+        message["From"] = sender
+        message["To"] = recipient
+
+        # connect to server, send message and quit
+        smtp_object = smtplib.SMTP("smtp.gmail.com", 587)
+        smtp_object.starttls()
+        smtp_object.login(sender, get_password())
+        smtp_object.sendmail(sender, recipient, message.as_string())
+        smtp_object.quit()
+
+        return "Email sent successfully."
+    except SMTPException:
+        return "Error: unable to send email."
+    except Exception as exc:
+        return "Exception sending an email"
+
+# ===============================================================================
+# ===============================================================================
 
 
 # ===============================================================================
