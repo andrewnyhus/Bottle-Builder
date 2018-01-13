@@ -3,9 +3,12 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -135,8 +138,9 @@ def login(request):
 
         # if user is not active, make them active
         if(not(user.is_active)):
-            user.is_active = True
-            user.save()
+            return Response("User is Inactive", status=status.HTTP_400_BAD_REQUEST)
+            #user.is_active = True
+            #user.save()
 
         return Response("Logged in Successfully", status=status.HTTP_200_OK)
 
@@ -147,11 +151,6 @@ def logout_page(request):
 	return render(request, "logout_successful.html")
 
 
-@never_cache
-@ensure_csrf_cookie
-def forgot_credentials_page(request):
-	return render(request, 'forgot_credentials.html')
-
 # ===============================================================================
 # ===============================================================================
 
@@ -161,6 +160,28 @@ def forgot_credentials_page(request):
 # ===============================================================================
 # Create Account, Create Account Page, Forgot Password, View Profile
 # ===============================================================================
+
+@never_cache
+@ensure_csrf_cookie
+def activate_account(request, uidb64, token):
+    # help from https://stackoverflow.com/questions/25292052/send-email-confirmation-after-registration-django
+
+    if uidb64 is not None and token is not None:
+        try:
+            user = User.objects.get(pk=uid)
+
+            # if user is inactive and token is valid
+            if default_token_generator.check_token(user, token) and not(user.is_active):
+
+                # set activate user, log them in and redirect to home
+                user.is_active = True
+
+                return redirect(home)
+
+    	except Exception as exc:
+    		return render(request, "error.html", {"exception": str(exc)})
+
+
 @never_cache
 @ensure_csrf_cookie
 def create_account_page(request):
@@ -224,9 +245,19 @@ def create_account(request):
 			user.is_active = False
 			user.save()
 
+            # generate token and uid
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
 
+            # construct activation url and email body
+            url = request.build_absolute_uri("activate/uidb64="+str(uid)+"/token="+str(token)+"/")
+            body = '''Please click on the following link to activate your account:
+                    '''+url+'''
+                    '''
 
-			return Response("Account Created Successfully, Please Activate Your Account", status=status.HTTP_201_CREATED)
+            send_email(user.email,"Please Activate Your Account", body)
+
+			return Response("Account Created Successfully, Please Check Your E-mail to Activate Your Account", status=status.HTTP_201_CREATED)
 
 
 @never_cache
@@ -248,6 +279,13 @@ def view_profile(request):
 
         return render(request, "profile.html", {"building_designs": building_designs})
     return render(request, "login_page.html")
+
+@never_cache
+@ensure_csrf_cookie
+def forgot_credentials_page(request):
+	return render(request, 'forgot_credentials.html')
+
+
 # ===============================================================================
 # ===============================================================================
 

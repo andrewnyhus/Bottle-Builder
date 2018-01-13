@@ -30,6 +30,7 @@ urlpatterns = [
 
     url(r'^create_account/', views.create_account_page, name="create_account"),
     url(r'^register/', views.create_account, name="register"),
+    url(r'^activate/uidb64=(?P<uidb64>[0-9A-Za-z_\-]+)/token=(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activate_account, name="activate_account"),
     url(r'^view_profile/', views.view_profile, name="profile"),
 
     url(r'^delete_bottle_building/building_id=(?P<building_id>\d+)/$', views.delete_bottle_building_design, name="delete_bottle_building"),
