@@ -21,6 +21,7 @@ from Bottle_Building import views
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^about/', views.about, name="about"),
+    url(r'^submit_feedback/', views.submit_feedback, name="submit_feedback"),
 
     url(r'^login_page/', views.login_page, name="login_page"),
     url(r'^login/', views.login, name="login"),

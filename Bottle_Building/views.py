@@ -83,6 +83,36 @@ def home(request):
 def about(request):
     return render(request, "about.html")
 
+@api_view(['POST'])
+@permission_classes((AllowAny, ))
+def submit_feedback(request):
+    try:
+        feedback = request.data["feedback"]
+        # if feedback is invalid, return invalid response,
+        # otherwise, send email with feedback
+        if len(feedback) == 0:
+            return Response("Feedback is empty", status=status.HTTP_400_BAD_REQUEST)
+        elif len(feedback) > 1000:
+            return Response("Feedback exceeds 1000 characters", status=status.HTTP_400_BAD_REQUEST)
+        else:
+
+            subject = ""
+            # if user is authenticated, include user info
+            # otherwise, just send it anonymously
+            if request.user.is_active and request.user.is_authenticated:
+                username = str(request.user.username)
+                email = str(request.user.email)
+                subject = 'Feedback from "'+username+'" ('+email+')'
+            else:
+                subject = 'Anonymous feedback'
+
+            # send email to admin email with feedback
+            send_email(get_email_address(), subject, feedback)
+            return Response("Feedback Submitted Successfully!", status=status.HTTP_200_OK)
+
+    except Exception as exc:
+        return Response("Error Submitting Feedback", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 def send_email(recipient, subject, message_body):
     # help from http://www.tutorialspoint.com/python3/python_sending_email.htm
     # help from https://docs.python.org/2/library/email-examples.html

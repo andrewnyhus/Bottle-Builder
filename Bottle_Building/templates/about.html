@@ -8,6 +8,19 @@
 
 {% block content %}
 
+  <script>
+    function get_token(){
+      return "{{csrf_token}}";
+    }
+  </script>
+
+
+  <style>
+    .panel-default>.panel-heading{
+      background-color: rgb(55, 123, 181);
+      color: white;
+    }
+  </style>
 
   <h2 align="center"> About Bottle Builder </h2>
 
@@ -45,7 +58,7 @@
         <p align="center">
           Bottle Builder is a tool to provide a theoretical estimate of the resources that one would need to create a bottle building. The user provides the resource information (bottle type/dimensions, fill information, foundation depth, building information, etc.) and Bottle Builder estimates the number of bottles, the amount of fill and the amount of cement needed for this building.
           <br><br>
-          Bottle Builder is NOT: a tool to calculate structural integrity, a tool for determining the building codes in a user's location, nor is it a tool to give a 100% accurate calculation of necessary resources.
+          <b style="color: red;">Bottle Builder is NOT: a tool to calculate structural integrity, a tool for determining the building codes in a user's location, nor is it a tool to give a 100% accurate calculation of necessary resources.</b>
         </p>
       </div>
 
@@ -71,5 +84,36 @@
 
     </div>
   </div>
+
+
+  <!-- Contact Us -->
+  <div class="panel-div">
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <h4 align="center"> Contact Us </h2>
+      </div>
+
+      <div class="panel-body">
+        <form id="contact_us_form" onsubmit="submit_form(); return false;">
+
+          <script src="/static/about/js/validate_and_submit_form.js"></script>
+
+          <!-- Feedback Input -->
+          <label for="feedback_input" id="feedback_input_label">Please enter your feedback (1000 characters remaining)</label>
+          <textarea class="form-control" id="feedback_input" maxlength="1000" rows="8"></textarea>
+          <br>
+
+          <!-- Submit Button -->
+          <input type="submit" class="btn btn-primary form-control" id="feedback_button" value="Submit">
+
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+
 
 {% endblock %}

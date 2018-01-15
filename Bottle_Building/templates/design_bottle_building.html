@@ -51,14 +51,14 @@
         <div class="panel-body">
 
 
-          <form id="building_design_form" style="padding-left:10%; padding-right:10%;" >
+          <form id="building_design_form">
               {% csrf_token %}
 
 
 
               {% if user.is_authenticated %}
 
-              <!-- Enter Building Height -->
+              <!-- Enter Building Title -->
               <label for="building_title_input" id="building_title_label">Building Title: (max: 40 characters)</label>
               <input type="text" maxLength="40" class="form-control" id="building_title_input" required><br>
 
