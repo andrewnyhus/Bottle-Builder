@@ -101,12 +101,28 @@
 
           <!-- Feedback Input -->
           <label for="feedback_input" id="feedback_input_label">Please enter your feedback (1000 characters remaining)</label>
-          <textarea class="form-control" id="feedback_input" maxlength="1000" rows="8"></textarea>
+          <textarea class="form-control" id="feedback_input" minlength="1" maxlength="1000" rows="8" onkeyup="update_label()" onmouseup="update_label()"></textarea>
           <br>
 
           <!-- Submit Button -->
           <input type="submit" class="btn btn-primary form-control" id="feedback_button" value="Submit">
 
+          <!-- Listen and react to textarea onchange -->
+          <script>
+            // when textarea changes, update label
+            function update_label(){
+              var content_length = document.getElementById("feedback_input").value.length;
+
+              // update label
+              if(content_length > 1000){
+                document.getElementById("feedback_input_label").innerHTML = "Your feedback exceeds 1000 characters";
+              }else{
+                var num_characters_left = 1000 - content_length;
+                document.getElementById("feedback_input_label").innerHTML = "Please enter your feedback ("+num_characters_left+" characters remaining)";
+              }
+
+            }
+          </script>
 
         </form>
       </div>

@@ -97,6 +97,7 @@ def submit_feedback(request):
         else:
 
             subject = ""
+            
             # if user is authenticated, include user info
             # otherwise, just send it anonymously
             if request.user.is_active and request.user.is_authenticated:
