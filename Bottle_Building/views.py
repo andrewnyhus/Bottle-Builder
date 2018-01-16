@@ -7,7 +7,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.cache import never_cache
-from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -170,9 +170,7 @@ def login(request):
 
         # if user is not active, make them active
         if(not(user.is_active)):
-            return Response("User is Inactive", status=status.HTTP_400_BAD_REQUEST)
-            #user.is_active = True
-            #user.save()
+            return Response("Your Account is Inactive, Please Check Your Email or Visit: " + request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_400_BAD_REQUEST)
 
         return Response("Logged in Successfully", status=status.HTTP_200_OK)
 
@@ -197,21 +195,18 @@ def logout_page(request):
 @ensure_csrf_cookie
 def activate_account(request, uidb64, token):
     # help from https://stackoverflow.com/questions/25292052/send-email-confirmation-after-registration-django
-    print("0")
     if uidb64 is not None and token is not None:
         try:
-            print("a")
+            uid = urlsafe_base64_decode(str(uidb64))
             user = User.objects.get(pk=uid)
-            print("b")
             # if user is inactive and token is valid
             if default_token_generator.check_token(user, token) and not(user.is_active):
-                print("c")
                 # set activate user, log them in and redirect to home
                 user.is_active = True
-                print("d")
-                return redirect(home)
+                user.save()
+                return render(request, "message.html", {"title": "Account Activated Successfully!", "heading":"Your Account Has Been Activated", "message":"Please login now."})
+            return render(request, "message.html", {"title":"Account Activation Failed", "heading":"Account Activation Failed", "message":"This token has expired. If you have not already activated your account, please do so at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
         except Exception as exc:
-            print("e")
             return render(request, "error.html", {"exception": str(exc)})
 
 
@@ -282,7 +277,7 @@ def create_account(request):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
             # construct activation url and email body
-            url = request.build_absolute_uri("/activate/uidb64="+str(uid)+"/token="+str(token)+"/")
+            url = request.build_absolute_uri("/activate/"+str(uid)+"/"+str(token)+"/")
             body = '''Please click on the following link to activate your account:
                     '''+url+'''
                     '''

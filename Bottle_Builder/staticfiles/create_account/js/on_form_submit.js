@@ -41,7 +41,6 @@ $(function(){
                   set_message_good_alert(response);
                   show_good_alert();
 
-                  document.location = "/";
                 },
 
                 error: function(xhr, error_message, err){
