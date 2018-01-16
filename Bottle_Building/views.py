@@ -97,7 +97,7 @@ def submit_feedback(request):
         else:
 
             subject = ""
-            
+
             # if user is authenticated, include user info
             # otherwise, just send it anonymously
             if request.user.is_active and request.user.is_authenticated:
@@ -113,6 +113,7 @@ def submit_feedback(request):
 
     except Exception as exc:
         return Response("Error Submitting Feedback", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 def send_email(recipient, subject, message_body):
     # help from http://www.tutorialspoint.com/python3/python_sending_email.htm
@@ -196,19 +197,21 @@ def logout_page(request):
 @ensure_csrf_cookie
 def activate_account(request, uidb64, token):
     # help from https://stackoverflow.com/questions/25292052/send-email-confirmation-after-registration-django
-
+    print("0")
     if uidb64 is not None and token is not None:
         try:
+            print("a")
             user = User.objects.get(pk=uid)
-
+            print("b")
             # if user is inactive and token is valid
             if default_token_generator.check_token(user, token) and not(user.is_active):
-
+                print("c")
                 # set activate user, log them in and redirect to home
                 user.is_active = True
-
+                print("d")
                 return redirect(home)
         except Exception as exc:
+            print("e")
             return render(request, "error.html", {"exception": str(exc)})
 
 
@@ -279,7 +282,7 @@ def create_account(request):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
 
             # construct activation url and email body
-            url = request.build_absolute_uri("activate/uidb64="+str(uid)+"/token="+str(token)+"/")
+            url = request.build_absolute_uri("/activate/uidb64="+str(uid)+"/token="+str(token)+"/")
             body = '''Please click on the following link to activate your account:
                     '''+url+'''
                     '''

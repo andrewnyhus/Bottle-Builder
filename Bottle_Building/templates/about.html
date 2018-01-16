@@ -38,7 +38,7 @@
           <br><br>
           Not only are bottle buildings a great use of plastic bottles, they are very durable. I cannot confirm this, but according to various sources, these structures are: bulletproof, earthquake resistant, fireproof, and temperature retaining.
           <br><br>
-          To find out more about bottle buildings, check out <a href="https://www.google.com/search?q=bottle+building">these search results.</a>
+          There are several ways to build a bottle building. If you want to find instructions, inspiration or just more information, check out <a href="https://www.google.com/search?q=bottle+building">these search results.</a>
         </p>
       </div>
 
@@ -78,7 +78,7 @@
         <p align="center">
           You don't need to build a whole house to take advantage of this cool sustainable building technique!
           <br><br>
-          Some possible structures you can build: doggie homes, greenhouses, sheds.
+          Some possible structures you can build: doggie homes, greenhouses, sheds, or cool art sculptures. Check out these <a href="https://www.google.com/search?q=bottle+structures&source=lnms&tbm=isch&sa=X&ved=0ahUKEwi-6ay8gd3YAhVGkeAKHQWkDUoQ_AUICigB">image search results for "bottle structures"!</a>
         </p>
       </div>
 
@@ -100,7 +100,33 @@
           <script src="/static/about/js/validate_and_submit_form.js"></script>
 
           <!-- Feedback Input -->
-          <label for="feedback_input" id="feedback_input_label">Please enter your feedback (1000 characters remaining)</label>
+          <label for="feedback_input" id="feedback_input_label">Please enter your feedback, include your contact information (1000 characters remaining)</label>
+
+          <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
+          <div id="submit_loader" class="loader" style="display:none;"></div>
+          <style>
+            .loader {
+              border: 5px solid #f3f3f3;
+              border-radius: 50%;
+              border-top: 5px solid #3498db;
+              width: 20px;
+              height: 20px;
+              -webkit-animation: spin 2s linear infinite; /* Safari */
+              animation: spin 2s linear infinite;
+            }
+
+            /* Safari */
+            @-webkit-keyframes spin {
+              0% { -webkit-transform: rotate(0deg); }
+              100% { -webkit-transform: rotate(360deg); }
+            }
+
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          </style>
+
           <textarea class="form-control" id="feedback_input" minlength="1" maxlength="1000" rows="8" onkeyup="update_label()" onmouseup="update_label()"></textarea>
           <br>
 
@@ -118,7 +144,7 @@
                 document.getElementById("feedback_input_label").innerHTML = "Your feedback exceeds 1000 characters";
               }else{
                 var num_characters_left = 1000 - content_length;
-                document.getElementById("feedback_input_label").innerHTML = "Please enter your feedback ("+num_characters_left+" characters remaining)";
+                document.getElementById("feedback_input_label").innerHTML = "Please enter your feedback, include your contact information ("+num_characters_left+" characters remaining)";
               }
 
             }
