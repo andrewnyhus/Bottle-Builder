@@ -147,7 +147,53 @@ def send_email(recipient, subject, message_body):
 
 
 # ===============================================================================
-# Login/Logout
+# Forgotten Credential Routes
+# ===============================================================================
+
+
+@never_cache
+@ensure_csrf_cookie
+def forgot_credentials_page(request):
+    return render(request, 'forgot_credentials.html')
+
+@api_view(["POST"])
+@permission_classes((AllowAny, ))
+def forgot_username(request):
+    try:
+        email = request.data["email"]
+
+        # determine that the email is a valid email
+        location_of_at_symbol = email.find("@")
+
+        # if not valid, respond so
+
+        if location_of_at_symbol == -1:
+            return Response("Invalid Email", status=status.HTTP_400_BAD_REQUEST)
+
+        second_half_of_email = email[location_of_at_symbol:]
+
+        if second_half_of_email.find(".") == -1:
+            return Response("Invalid Email", status=status.HTTP_400_BAD_REQUEST)
+
+        # email is valid
+        user = User.objects.get(email=email)
+
+        # now we email the username to the account holders email.
+        body = "Your username is: " + user.username
+        send_email(email,"Your Bottle Builder Username", body)
+        return Response("We have successfully emailed you your username", status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response("No account is associated with that email.", status=status.HTTP_400_BAD_REQUEST)
+    except Exception as exc:
+        return Response("Error while sending email, Please try a few more times", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# ===============================================================================
+# ===============================================================================
+
+
+# ===============================================================================
+# Account Related Routes (Except Forgotten Credential Routes)
 # ===============================================================================
 @never_cache
 @ensure_csrf_cookie
@@ -180,16 +226,6 @@ def logout_page(request):
     logout(request)
     return render(request, "logout_successful.html")
 
-
-# ===============================================================================
-# ===============================================================================
-
-
-
-
-# ===============================================================================
-# Create Account, Create Account Page, Forgot Password, View Profile
-# ===============================================================================
 
 @never_cache
 @ensure_csrf_cookie
@@ -304,13 +340,9 @@ def view_profile(request):
             # add building design to array
             building_designs.append({"building": building, "coordinates": design_coordinates, "link": link})
 
-        return render(request, "profile.html", {"building_designs": building_designs})
+            return render(request, "profile.html", {"building_designs": building_designs})
     return render(request, "login_page.html")
 
-@never_cache
-@ensure_csrf_cookie
-def forgot_credentials_page(request):
-    return render(request, 'forgot_credentials.html')
 
 
 # ===============================================================================
@@ -319,7 +351,7 @@ def forgot_credentials_page(request):
 
 
 # ===============================================================================
-# Get Bottle Buildings, View Bottle Building, Design Bottle Building
+# Bottle Building Routes
 # ===============================================================================
 # ALLOW FOR DELETING BOTTLE BUILDINGS
 

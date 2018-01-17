@@ -48,7 +48,6 @@ function submit_form(){
       error: function(xhr, error_message, err){
         // get and print error
         var response = xhr.responseJSON;
-        console.log(response);
 
         //hide loader
         document.getElementById("submit_loader").style.display = "none";

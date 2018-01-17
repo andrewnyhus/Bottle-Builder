@@ -23,12 +23,13 @@ urlpatterns = [
     url(r'^about/', views.about, name="about"),
     url(r'^submit_feedback/', views.submit_feedback, name="submit_feedback"),
 
+    url(r'^forgot_credentials_page/', views.forgot_credentials_page, name="forgot_credentials"),
+    url(r'^forgot_username/', views.forgot_username, name="forgot_username"),
+
+
     url(r'^login_page/', views.login_page, name="login_page"),
     url(r'^login/', views.login, name="login"),
     url(r'^logout/', views.logout_page, name="logout"),
-    url(r'^forgot_credentials_page/', views.forgot_credentials_page, name="forgot_credentials"),
-
-
     url(r'^create_account/', views.create_account_page, name="create_account"),
     url(r'^register/', views.create_account, name="register"),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activate_account, name="activate_account"),
