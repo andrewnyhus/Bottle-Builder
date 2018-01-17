@@ -25,6 +25,8 @@ urlpatterns = [
 
     url(r'^forgot_credentials_page/', views.forgot_credentials_page, name="forgot_credentials"),
     url(r'^forgot_username/', views.forgot_username, name="forgot_username"),
+    url(r'^request_password_reset_link/', views.request_password_reset_link, name="request_password_reset_link"),
+    url(r'^request_account_activation_link/', views.request_account_activation_link, name="request_account_activation_link"),
 
 
     url(r'^login_page/', views.login_page, name="login_page"),

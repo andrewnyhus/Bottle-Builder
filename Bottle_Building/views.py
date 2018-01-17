@@ -182,6 +182,64 @@ def forgot_username(request):
         body = "Your username is: " + user.username
         send_email(email,"Your Bottle Builder Username", body)
         return Response("We have successfully emailed you your username", status=status.HTTP_200_OK)
+    except KeyError:
+        return Response("No email was provided.", status=status.HTTP_400_BAD_REQUEST)
+    except User.DoesNotExist:
+        return Response("No account is associated with that email.", status=status.HTTP_400_BAD_REQUEST)
+    except Exception as exc:
+        return Response("Error while sending email, Please try a few more times", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["POST"])
+@permission_classes((AllowAny, ))
+def request_password_reset_link(request):
+    pass
+
+@api_view(["POST"])
+@permission_classes((AllowAny, ))
+def request_account_activation_link(request):
+    try:
+        email = request.data["email"]
+
+        # determine that the email is a valid email
+        location_of_at_symbol = email.find("@")
+
+        # if not valid, respond so
+
+        if location_of_at_symbol == -1:
+            return Response("Invalid Email", status=status.HTTP_400_BAD_REQUEST)
+
+        second_half_of_email = email[location_of_at_symbol:]
+
+        if second_half_of_email.find(".") == -1:
+            return Response("Invalid Email", status=status.HTTP_400_BAD_REQUEST)
+
+        # email is valid
+        user = User.objects.get(email=email)
+
+        if user.is_active:
+            return Response("This user is already active.", status=status.HTTP_400_BAD_REQUEST)
+
+        # generate token
+        token = default_token_generator.make_token(user)
+        uid = str(urlsafe_base64_encode(force_bytes(user.pk)))
+
+        # if necessary strip b''
+        if (uid[:2] == "b'") and (uid[len(uid) - 1] == "'"):
+            uid = uid[2:len(uid)-1]
+
+        # construct activation url and email body
+        url = request.build_absolute_uri("/activate/"+uid+"/"+str(token)+"/")
+
+        body = '''Please click on the following link to activate your account:
+                '''+url+'''
+                '''
+
+        # now we email the link to the account holders email.
+        send_email(user.email,"Your Account Activation Link", body)
+
+        return Response("We have successfully emailed you your account activation link", status=status.HTTP_200_OK)
+    except KeyError:
+        return Response("No email was provided.", status=status.HTTP_400_BAD_REQUEST)
     except User.DoesNotExist:
         return Response("No account is associated with that email.", status=status.HTTP_400_BAD_REQUEST)
     except Exception as exc:
@@ -205,22 +263,29 @@ def login_page(request):
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
 def login(request):
-    username = request.data["username"]
-    password = request.data["password"]
+    try:
+        username = request.data["username"]
+        password = request.data["password"]
 
-    user = authenticate(username=username, password=password)
+        user = authenticate(username=username, password=password)
 
-    # is user exists and password is correct
-    if user is not None:
-        auth_login(request, user)
+        # is user exists and password is correct
+        if user is not None:
+            auth_login(request, user)
 
-        # if user is not active, make them active
-        if(not(user.is_active)):
-            return Response("Your Account is Inactive, Please Check Your Email or Visit: " + request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_400_BAD_REQUEST)
+            # if user is not active, make them active
+            if(not(user.is_active)):
+                return Response("Your Account is Inactive, Please Check Your Email or Visit: " + request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_400_BAD_REQUEST)
 
-        return Response("Logged in Successfully", status=status.HTTP_200_OK)
+            return Response("Logged in Successfully", status=status.HTTP_200_OK)
+        elif User.objects.get(username=username) is not None:
+            return Response("Login Failed, Password is Incorrect", status=status.HTTP_400_BAD_REQUEST)
 
-    return Response("Login Failed", status=status.HTTP_400_BAD_REQUEST)
+        return Response("Login Failed, Username is Incorrect.", status=status.HTTP_400_BAD_REQUEST)
+    except User.DoesNotExist:
+        return Response("Login Failed, Username is Incorrect.", status=status.HTTP_400_BAD_REQUEST)
+    except Exception as exc:
+        return Response("Login Failed, Server Problem, Please Try Again", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 def logout_page(request):
     logout(request)
@@ -280,48 +345,55 @@ def create_account(request):
             # username, password, and email are all valid
             # if they are, create user, if not respond accordingly
 
-            # check length of email
-            if not( ((len(request.data['email']) >= 5) and (len(request.data['email']) <= 50))
-                    and request.data['email'].count("@") == 1
-                    and request.data['email'].count(".") > 0):
-                return Response("E-mail is invalid, it's length must be between 5 and 50 characters, it must have a single '@', and at least one '.'", status=status.HTTP_400_BAD_REQUEST)
+            try:
 
-            # check length of username
-            if not( len(request.data['username']) >= 5 and len(request.data['username']) <= 30):
-                return Response("Username is invalid, it's length must be between 5 and 30 characters.", status=status.HTTP_400_BAD_REQUEST)
+                # check length of email
+                if not( ((len(request.data['email']) >= 5) and (len(request.data['email']) <= 50))
+                        and request.data['email'].count("@") == 1
+                        and request.data['email'].count(".") > 0):
+                    return Response("E-mail is invalid, it's length must be between 5 and 50 characters, it must have a single '@', and at least one '.'", status=status.HTTP_400_BAD_REQUEST)
 
-            # check username for invalid characters
-            regex = re.compile("[a-z]|[A-Z]|[0-9]|[_]|[-]")
-            regex_result = "".join(regex.findall(request.data["username"]))
-            if not(regex_result == request.data["username"]):
-                return Response("Username contains invalid characters, only use letters, numbers, underscores and dashes", status=status.HTTP_400_BAD_REQUEST)
+                # check length of username
+                if not( len(request.data['username']) >= 5 and len(request.data['username']) <= 30):
+                    return Response("Username is invalid, it's length must be between 5 and 30 characters.", status=status.HTTP_400_BAD_REQUEST)
 
-            # check length of password
-            if not(len(request.data['password']) >= 5 and len(request.data['password']) <= 30):
-                return Response("Password length must be between 5 and 30 characters", status=status.HTTP_400_BAD_REQUEST)
+                # check username for invalid characters
+                regex = re.compile("[a-z]|[A-Z]|[0-9]|[_]|[-]")
+                regex_result = "".join(regex.findall(request.data["username"]))
+                if not(regex_result == request.data["username"]):
+                    return Response("Username contains invalid characters, only use letters, numbers, underscores and dashes", status=status.HTTP_400_BAD_REQUEST)
 
-            # everything is okay, we must store user
-            # and sent a response that it was successful
+                # check length of password
+                if not(len(request.data['password']) >= 5 and len(request.data['password']) <= 30):
+                    return Response("Password length must be between 5 and 30 characters", status=status.HTTP_400_BAD_REQUEST)
 
-            user = User.objects.create(username=request.data["username"], email=request.data["email"])
-            user.set_password(request.data['password'])
+                # everything is okay, we must store user
+                # and sent a response that it was successful
 
-            user.is_active = False
-            user.save()
+                user = User.objects.create(username=request.data["username"], email=request.data["email"])
+                user.set_password(request.data['password'])
 
-            token = default_token_generator.make_token(user)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
+                user.is_active = False
+                user.save()
 
-            # construct activation url and email body
-            url = request.build_absolute_uri("/activate/"+str(uid)+"/"+str(token)+"/")
-            body = '''Please click on the following link to activate your account:
-                    '''+url+'''
-                    '''
+                token = default_token_generator.make_token(user)
+                uid = str(urlsafe_base64_encode(force_bytes(user.pk)))
 
-            send_email(user.email,"Please Activate Your Account", body)
+                # if necessary strip b''
+                if (uid[:2] == "b'") and (uid[len(uid) - 1] == "'"):
+                    uid = uid[2:len(uid)-1]
 
-            return Response("Account Created Successfully, Please Check Your E-mail to Activate Your Account", status=status.HTTP_201_CREATED)
+                # construct activation url and email body
+                url = request.build_absolute_uri("/activate/"+uid+"/"+str(token)+"/")
+                body = '''Please click on the following link to activate your account:
+                        '''+url+'''
+                        '''
 
+                send_email(user.email,"Your Account Activation Link", body)
+
+                return Response("Account Created Successfully, Please Check Your Email For Your Temporary Account Activation Link", status=status.HTTP_201_CREATED)
+            except Exception as exc:
+                return Response("Error, Account may have been created. Try logging in, if you are told to activate your account, either check your email for an activation link, or request a new one from our forgotten credentials page: "+ request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @never_cache
 @ensure_csrf_cookie
