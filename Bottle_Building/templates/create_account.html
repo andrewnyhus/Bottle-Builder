@@ -21,6 +21,10 @@
 	    <form align="center" id="create_account_form" style="padding-left:20%; padding-right:20%">
 	        {% csrf_token %}
           <script>
+            function get_token(){
+              return "{{csrf_token}}";
+            }
+
             $("#bad_alert").html("Error:");
             $("#good_alert").html("Account Created Successfully, Please Check E-mail to Verify Your Account");
           </script>

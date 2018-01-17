@@ -17,7 +17,7 @@ function email_is_valid(email){
   if(email.length >= 50 || email.length <= 5){
       return false;
   }
-  
+
   return true;
 }
 
@@ -38,7 +38,7 @@ function forgot_username_form_submitted(){
 
         url: "/forgot_username/",
         type: "POST",
-        data: {"email": email},
+        data: {"email": email, "csrfmiddlewaretoken": get_csrf()},
 
         success: function(response){
           hide_bad_alert();
@@ -80,7 +80,7 @@ function forgot_password_form_submitted(){
 
         url: "/request_password_reset_link/",
         type: "POST",
-        data: {"email": email},
+        data: {"email": email, "csrfmiddlewaretoken": get_csrf()},
 
         success: function(response){
           hide_bad_alert();
@@ -122,7 +122,7 @@ function account_activation_form_submitted(){
 
         url: "/request_account_activation_link/",
         type: "POST",
-        data: {"email": email},
+        data: {"email": email, "csrfmiddlewaretoken": get_csrf()},
 
         success: function(response){
           hide_bad_alert();

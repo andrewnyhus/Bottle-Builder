@@ -347,6 +347,7 @@ def request_account_activation_link(request):
 def login_page(request):
     if request.user.is_authenticated and request.user.is_active:
         return redirect(view_profile)
+
     return render(request, 'login_page.html')
 
 @api_view(['POST'])
@@ -360,11 +361,12 @@ def login(request):
 
         # is user exists and password is correct
         if user is not None:
-            auth_login(request, user)
 
             # if user is not active, make them active
             if(not(user.is_active)):
                 return Response("Your Account is Inactive, Please Check Your Email or Visit: " + request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_400_BAD_REQUEST)
+
+            auth_login(request, user)
 
             return Response("Logged in Successfully", status=status.HTTP_200_OK)
         elif User.objects.get(username=username) is not None:
@@ -407,6 +409,8 @@ def activate_account(request, uidb64, token):
 def create_account_page(request):
     if request.user.is_authenticated and request.user.is_active:
         return redirect(view_profile)
+    elif request.user.is_authenticated:
+        return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
     return render(request, "create_account.html")
 
 
@@ -489,6 +493,7 @@ def register(request):
 @never_cache
 @ensure_csrf_cookie
 def view_profile(request):
+
     if request.user.is_authenticated and request.user.is_active:
 
         buildings = Bottle_Building.objects.filter(created_by=request.user).order_by("-created_on")
@@ -503,8 +508,11 @@ def view_profile(request):
             # add building design to array
             building_designs.append({"building": building, "coordinates": design_coordinates, "link": link})
 
-            return render(request, "profile.html", {"building_designs": building_designs})
-    return render(request, "login_page.html")
+        return render(request, "profile.html", {"building_designs": building_designs})
+    elif request.user.is_authenticated:
+        return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
+    else:
+        return redirect(login_page)
 
 
 

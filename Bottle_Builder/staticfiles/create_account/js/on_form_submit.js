@@ -27,7 +27,7 @@ $(function(){
     $("#create_account_form").submit(function(e){
 
         if(form_input_is_valid()){
-            var post_data = {email: $("#email").val(), username: $("#username").val(), password: $("#password").val() };
+            var post_data = {email: $("#email").val(), username: $("#username").val(), password: $("#password").val(), csrfmiddlewaretoken: get_token()};
 
 
             $.ajax({

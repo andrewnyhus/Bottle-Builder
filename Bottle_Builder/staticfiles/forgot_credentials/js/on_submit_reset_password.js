@@ -48,7 +48,7 @@ function reset_password_form_submitted(){
 
         url: reset_url,
         type: "POST",
-        data: {"password": document.getElementById("password_input").value},
+        data: {"password": document.getElementById("password_input").value, , "csrfmiddlewaretoken": get_csrf()},
 
         success: function(response){
           hide_bad_alert();
