@@ -13,6 +13,11 @@ function email_is_valid(email){
     return false;
   }
 
+  // check if length is valid
+  if(email.length >= 50 || email.length <= 5){
+      return false;
+  }
+  
   return true;
 }
 

@@ -26,6 +26,8 @@ urlpatterns = [
     url(r'^forgot_credentials_page/', views.forgot_credentials_page, name="forgot_credentials"),
     url(r'^forgot_username/', views.forgot_username, name="forgot_username"),
     url(r'^request_password_reset_link/', views.request_password_reset_link, name="request_password_reset_link"),
+    url(r'^reset_password_page/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.reset_password_page, name="reset_password_page"),
+    url(r'^reset_password/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.reset_password, name="reset_password"),
     url(r'^request_account_activation_link/', views.request_account_activation_link, name="request_account_activation_link"),
 
 
@@ -33,7 +35,7 @@ urlpatterns = [
     url(r'^login/', views.login, name="login"),
     url(r'^logout/', views.logout_page, name="logout"),
     url(r'^create_account/', views.create_account_page, name="create_account"),
-    url(r'^register/', views.create_account, name="register"),
+    url(r'^register/', views.register, name="register"),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.activate_account, name="activate_account"),
     url(r'^view_profile/', views.view_profile, name="profile"),
 
