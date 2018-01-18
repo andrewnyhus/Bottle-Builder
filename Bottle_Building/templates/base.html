@@ -49,19 +49,24 @@
 					<!-- Design Building Link -->
 					<li><a href="/design_bottle_building">Design Building</a></li>
 
+          {% if user.is_authenticated %}
+            <li><a href="/view_profile/">View Profile</a></li>
+          {% endif %}
+
 		      </ul>
 
 
 		      <ul class="nav navbar-nav navbar-right">
 					{% if user.is_authenticated %}
 
-						<li><a href="/view_profile/">View Profile</a></li>
+
+            <li><a href="/change_password_page/">Change Password</a></li>
 
 						<!-- Logout link -->
-						<li><a href="/logout">Logout</a></li>
+						<li><a href="/logout/">Logout</a></li>
 
 					{% else %}
-						<li><a href="/login_page">Login/Create Account</a></li>
+						<li><a href="/login_page/">Login/Create Account</a></li>
 					{% endif %}
 		      </ul>
 		    </div><!-- /.navbar-collapse -->

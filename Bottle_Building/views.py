@@ -38,7 +38,7 @@ def home(request):
         # populate building_designs
         # --------------------------------------------------------------------------
         # if user is authenticated, add user and member-visible designs to the mix of results
-        if request.user.is_active and request.user.is_authenticated:
+        if request.user.is_active and request.user.is_authenticated():
             user_designs = Bottle_Building.objects.filter(created_by=request.user)
             member_designs = Bottle_Building.objects.filter(visible_to_members=True)
             user_is_member = True
@@ -100,7 +100,7 @@ def submit_feedback(request):
 
             # if user is authenticated, include user info
             # otherwise, just send it anonymously
-            if request.user.is_active and request.user.is_authenticated:
+            if request.user.is_active and request.user.is_authenticated():
                 username = str(request.user.username)
                 email = str(request.user.email)
                 subject = 'Feedback from "'+username+'" ('+email+')'
@@ -141,6 +141,7 @@ def send_email(recipient, subject, message_body):
         return "Error: unable to send email."
     except Exception as exc:
         return "Exception sending an email"
+
 
 # ===============================================================================
 # ===============================================================================
@@ -342,11 +343,47 @@ def request_account_activation_link(request):
 # ===============================================================================
 # Account Related Routes (Except Forgotten Credential Routes)
 # ===============================================================================
+
+@never_cache
+@ensure_csrf_cookie
+def change_password_page(request):
+    if request.user.is_authenticated() and request.user.is_active:
+        return render(request, "change_password.html", {"username": request.user.username})
+    elif request.user.is_authenticated():
+        return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
+    else:
+        return redirect(login_page)
+
+# TEST THIS ROUTE HANDLER
+@api_view(["POST"])
+def change_password(request):
+    if request.user.is_authenticated() and request.user.is_active:
+
+        username = request.user.username
+        current_password = request.data["current_password"]
+        new_password = request.data["new_password"]
+
+        # try authenticating with current password before setting new password
+        user = authenticate(username=username, password=current_password)
+
+        if user is not None:
+            user.set_password(new_password)
+            return Response("Your new password has been updated.", status=status.HTTP_200_OK)
+        else:
+            return Response("Incorrect current password.", status=status.HTTP_401_UNAUTHORIZED)
+    elif request.user.is_authenticated():
+        return Response("Account Inactive. Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return Response("You are not authenticated", status=status.HTTP_401_UNAUTHORIZED)
+
+
 @never_cache
 @ensure_csrf_cookie
 def login_page(request):
-    if request.user.is_authenticated and request.user.is_active:
+    if request.user.is_authenticated() and request.user.is_active:
         return redirect(view_profile)
+    elif request.user.is_authenticated():
+        return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
 
     return render(request, 'login_page.html')
 
@@ -407,9 +444,9 @@ def activate_account(request, uidb64, token):
 @never_cache
 @ensure_csrf_cookie
 def create_account_page(request):
-    if request.user.is_authenticated and request.user.is_active:
+    if request.user.is_authenticated() and request.user.is_active:
         return redirect(view_profile)
-    elif request.user.is_authenticated:
+    elif request.user.is_authenticated():
         return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
     return render(request, "create_account.html")
 
@@ -494,7 +531,7 @@ def register(request):
 @ensure_csrf_cookie
 def view_profile(request):
 
-    if request.user.is_authenticated and request.user.is_active:
+    if request.user.is_authenticated() and request.user.is_active:
 
         buildings = Bottle_Building.objects.filter(created_by=request.user).order_by("-created_on")
         # initialize designs array
@@ -509,7 +546,7 @@ def view_profile(request):
             building_designs.append({"building": building, "coordinates": design_coordinates, "link": link})
 
         return render(request, "profile.html", {"building_designs": building_designs})
-    elif request.user.is_authenticated:
+    elif request.user.is_authenticated():
         return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
     else:
         return redirect(login_page)
@@ -538,13 +575,13 @@ def view_bottle_building(request, building_id):
         # if user is unauthenticated
         # building must be visible to public or to those with the link
         # otherwise, respond saying that the user is unauthorized
-        if not(request.user.is_authenticated) and not(building.visible_to_public or building.visible_to_those_with_link):
+        if not(request.user.is_authenticated()) and not(building.visible_to_public or building.visible_to_those_with_link):
             return render(request, "unauthorized_request.html")
 
         # if user is authenticated
         # building must be visible to public, members or those with the link, or it must be created by user
         # otherwise, respond saying that the user is unauthorized
-        if request.user.is_authenticated and not(building.visible_to_public or building.visible_to_members or building.visible_to_those_with_link or (request.user.pk == building.created_by.pk)):
+        if request.user.is_authenticated() and not(building.visible_to_public or building.visible_to_members or building.visible_to_those_with_link or (request.user.pk == building.created_by.pk)):
             return render(request, "unauthorized_request.html")
 
         coordinates = Coordinates.objects.filter(bottle_building=building)
@@ -566,7 +603,7 @@ def design_bottle_building(request):
 def delete_bottle_building_design(request, building_id):
     try:
         building = Bottle_Building.objects.get(pk=building_id)
-        if request.user.is_authenticated and request.user.is_active and (request.user.pk == building.created_by.pk):
+        if request.user.is_authenticated() and request.user.is_active and (request.user.pk == building.created_by.pk):
             building.delete()
             return Response("Successfully Deleted", status=status.HTTP_200_OK)
         return Response("Could not delete building because you are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
@@ -577,7 +614,7 @@ def delete_bottle_building_design(request, building_id):
 @api_view(['POST'])
 def post_bottle_building_design(request):
 
-    if request.user.is_authenticated and request.user.is_active:
+    if request.user.is_authenticated() and request.user.is_active:
         coordinate_array = list()
 
         title = None
@@ -696,13 +733,15 @@ def post_bottle_building_design(request):
         except Exception as exc:
             # Return Error
             return Response(str(exc), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    elif request.is_authenticated():
+        return Response("Please Activate Your Account", status=status.HTTP_401_UNAUTHORIZED)
     return Response("Please log in", status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['POST'])
 def post_building_privacy_changes(request):
     # ensure that the user is authenticated and active
-    if request.user.is_authenticated and request.user.is_active:
+    if request.user.is_authenticated() and request.user.is_active:
 
         # get data string
         data_string = str(request.data["data_string"])
@@ -750,6 +789,7 @@ def post_building_privacy_changes(request):
             # general error
             except Exception as exc:
                 return Response(str(exc), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    else:
+        return Response("You are not the owner, or your account is inactive", status=status.HTTP_401_UNAUTHORIZED)
 # ===============================================================================
 # ===============================================================================

@@ -2,11 +2,11 @@
 // otherwise returns true
 function password_length_is_valid(){
 
-    if(document.getElementById("password_input").value.length >= 30){
+    if(document.getElementById("new_password_input").value.length >= 30){
         set_message_bad_alert("Error: Your password exceeds 30 characters");
         show_bad_alert();
         return false;
-    }else if(document.getElementById("password_input").value.length <= 5){
+    }else if(document.getElementById("new_password_input").value.length <= 5){
         set_message_bad_alert("Error: Your password must be at least 5 characters");
         show_bad_alert();
         return false;
@@ -19,7 +19,7 @@ function password_length_is_valid(){
 // returns false and creates alert if passwords don't match
 // otherwise returns true
 function passwords_are_equal(){
-    if(document.getElementById("password_input").value == document.getElementById("confirm_password_input").value){
+    if(document.getElementById("new_password_input").value == document.getElementById("confirm_new_password_input").value){
         return true;
     }else{
         set_message_bad_alert("Error: Your passwords do not match.");
@@ -29,26 +29,32 @@ function passwords_are_equal(){
 }
 
 
-function reset_password_form_submitted(){
+function change_password_form_submitted(){
 
   if(password_length_is_valid() && passwords_are_equal()){
     //disable form
-    document.getElementById("password_input").disabled = true;
-    document.getElementById("confirm_password_input").disabled = true;
-    document.getElementById("reset_password_submit_button").disabled = true;
+    document.getElementById("current_password_input").disabled = true;
+    document.getElementById("new_password_input").disabled = true;
+    document.getElementById("confirm_new_password_input").disabled = true;
+    document.getElementById("change_password_submit_button").disabled = true;
 
 
     hide_bad_alert();
     set_message_good_alert("Setting Your New Password...");
     show_good_alert();
 
-    var reset_url = "/reset_password/"+get_uid()+"/"+get_token()+"/";
+
+    var post_data = {
+      "current_password": document.getElementById("current_password_input").value,
+      "new_password": document.getElementById("new_password_input").value,
+      "csrfmiddlewaretoken": get_csrf()
+    };
 
     $.ajax({
 
-        url: reset_url,
+        url: "/change_password/",
         type: "POST",
-        data: {"password": document.getElementById("password_input").value, "csrfmiddlewaretoken": get_csrf()},
+        data: post_data,
 
         success: function(response){
           hide_bad_alert();
@@ -64,9 +70,10 @@ function reset_password_form_submitted(){
           show_bad_alert();
 
           //disable form
-          document.getElementById("password_input").disabled = false;
-          document.getElementById("confirm_password_input").disabled = false;
-          document.getElementById("reset_password_submit_button").disabled = false;
+          document.getElementById("current_password_input").disabled = false;
+          document.getElementById("new_password_input").disabled = false;
+          document.getElementById("confirm_new_password_input").disabled = false;
+          document.getElementById("change_password_submit_button").disabled = false;
 
         }
 

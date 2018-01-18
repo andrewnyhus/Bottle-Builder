@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^about/', views.about, name="about"),
     url(r'^submit_feedback/', views.submit_feedback, name="submit_feedback"),
+    url(r'^admin/', admin.site.urls),
 
     url(r'^forgot_credentials_page/', views.forgot_credentials_page, name="forgot_credentials"),
     url(r'^forgot_username/', views.forgot_username, name="forgot_username"),
@@ -30,7 +31,8 @@ urlpatterns = [
     url(r'^reset_password/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', views.reset_password, name="reset_password"),
     url(r'^request_account_activation_link/', views.request_account_activation_link, name="request_account_activation_link"),
 
-
+    url(r'^change_password_page/', views.change_password_page, name="change_password_page"),
+    url(r'^change_password/', views.change_password, name="change_password"),
     url(r'^login_page/', views.login_page, name="login_page"),
     url(r'^login/', views.login, name="login"),
     url(r'^logout/', views.logout_page, name="logout"),
@@ -45,5 +47,4 @@ urlpatterns = [
     url(r'^post_bottle_building_design/', views.post_bottle_building_design, name="post_bottle_building_design"),
     url(r'^post_building_privacy_changes/', views.post_building_privacy_changes, name="post_building_privacy_changes"),
 
-    url(r'^admin/', admin.site.urls),
 ]
