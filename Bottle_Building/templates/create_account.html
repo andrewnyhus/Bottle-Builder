@@ -13,6 +13,7 @@
 
     <div class="panel-heading">
 			<h2 align="center"> Create Account </h2>
+
     </div>
 
     <div class="panel-body">
@@ -34,7 +35,41 @@
 	        <input align="center" class="form-control" type="password" name="password" id="password" placeholder="Password" maxlength="30">
 	        <input align="center" class="form-control" type="password" id="confirm_password" placeholder="Confirm Password" maxlength="30">
 	        <br>
-	        <button align="center" class="form-control btn btn-primary" type="submit" id="submit_button">Create Account</button>
+
+
+
+
+          <button align="center" class="form-control btn btn-primary" type="submit" id="submit_button">
+            Create Account
+            <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
+            <div id="submit_loader" align="center" class="loader" style="display:none;"></div>
+
+            <style>
+              .loader {
+                border: 3px solid #f3f3f3;
+                border-radius: 50%;
+                border-top: 3px solid #3498db;
+                width: 20px;
+                height: 20px;
+                -webkit-animation: spin 2s linear infinite; /* Safari */
+                animation: spin 2s linear infinite;
+              }
+
+              /* Safari */
+              @-webkit-keyframes spin {
+                0% { -webkit-transform: rotate(0deg); }
+                100% { -webkit-transform: rotate(360deg); }
+              }
+
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            </style>
+
+          </button>
+
+
 
 	    </form>
 
@@ -43,13 +78,8 @@
   </div>
 </div>
 
-
-
-
-
-
-    <script src="/static/create_account/js/validate_input_client_side.js"></script>
-    <script src="/static/create_account/js/on_form_submit.js"></script>
+<script src="/static/create_account/js/validate_input_client_side.js"></script>
+<script src="/static/create_account/js/on_form_submit.js"></script>
 
 
 

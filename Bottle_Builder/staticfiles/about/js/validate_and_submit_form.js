@@ -19,19 +19,21 @@ function form_is_valid(){
 }
 
 function submit_form(){
-  // disable form
-  document.getElementById("feedback_button").disabled = true;
-  document.getElementById("feedback_input").disabled = true;
-  document.getElementById("feedback_input").style.backgroundColor = "#ccc";
-
-  // update label
-  document.getElementById("feedback_input_label").innerHTML = "Submitting your feedback...";
-
-  //show loader
-  document.getElementById("submit_loader").style.display = "inline-block";
 
   // if form is valid, then send the feedback
   if (form_is_valid()){
+
+    // disable form
+    document.getElementById("feedback_button").disabled = true;
+    document.getElementById("feedback_input").disabled = true;
+    document.getElementById("feedback_input").style.backgroundColor = "#ccc";
+
+    // update label
+    document.getElementById("feedback_input_label").innerHTML = "Submitting your feedback...";
+
+    //show loader
+    document.getElementById("submit_loader").style.display = "inline-block";
+
 
     // send feedback
     $.ajax({

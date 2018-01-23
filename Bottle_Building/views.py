@@ -525,7 +525,7 @@ def register(request):
 
                 return Response("Account Created Successfully, Please Check Your Email For Your Temporary Account Activation Link", status=status.HTTP_201_CREATED)
             except Exception as exc:
-                return Response("Error, Account may have been created. Try logging in, if you are told to activate your account, either check your email for an activation link, or request a new one from our forgotten credentials page: "+ request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response("Error, account may have been created. Try logging in, if you are told to activate your account, either check your email for an activation link, or request a new one from our forgotten credentials page: "+ request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @never_cache
 @ensure_csrf_cookie
