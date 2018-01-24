@@ -1,11 +1,22 @@
 from .views import *
 
-
+'''
+    Serves the forgot credentials page.
+    This contains: forgot username, forgot password and request account activation link.
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def forgot_credentials_page(request):
     return render(request, 'forgot_credentials.html')
+#===============================================================================
 
+
+'''
+    Serves the reset password page if the token is valid.
+    Otherwise, provides an appropriate message.
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def reset_password_page(request, uidb64, token):
@@ -24,8 +35,15 @@ def reset_password_page(request, uidb64, token):
         return render(request, "message.html", {"title":"User is Invalid/Bad Link", "heading":"User is Invalid/Bad Link", "message":"The user is invalid or the link is bad. Please request a new link at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
     except Exception as exc:
         return render(request, "error.html", {"exception": str(exc)})
+#===============================================================================
 
 
+'''
+    Handles the reset password requests.
+    If the request and token are valid, it updates the password.
+    Otherwise, an appropriate response is returned.
+'''
+#===============================================================================
 @api_view(["POST"])
 @permission_classes((AllowAny, ))
 def reset_password(request, uidb64, token):
@@ -49,8 +67,16 @@ def reset_password(request, uidb64, token):
         return Response("The user is invalid or the link is bad. Please request a new link at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_400_BAD_REQUEST)
     except Exception as exc:
         return Response("There was an issue setting your new password. Please try again", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#===============================================================================
 
 
+'''
+    Handles the forgot username requests.
+    If the provided email is associated with an account, that account's
+    username is sent to the provided email.
+    Otherwise, an appropriate response is returned.
+'''
+#===============================================================================
 @api_view(["POST"])
 @permission_classes((AllowAny, ))
 def forgot_username(request):
@@ -83,8 +109,16 @@ def forgot_username(request):
         return Response("No account is associated with that email.", status=status.HTTP_400_BAD_REQUEST)
     except Exception as exc:
         return Response("Problem handling forgot username email request. Please try a few more times", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#===============================================================================
 
 
+'''
+    Handles the request password reset link requests.
+    If the provided email is associated with an account, a password reset link
+    is generated and sent to the provided email.
+    Otherwise, an appropriate response is returned.
+'''
+#===============================================================================
 @api_view(["POST"])
 @permission_classes((AllowAny, ))
 def request_password_reset_link(request):
@@ -131,8 +165,17 @@ def request_password_reset_link(request):
         return Response("No account is associated with that email.", status=status.HTTP_400_BAD_REQUEST)
     except Exception as exc:
         return Response("Problem handling password reset email request. Please try a few more times", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#===============================================================================
 
 
+
+'''
+    Handles the request account activation link requests.
+    If the provided email is associated with an inactive account, an account
+    activation link is generated and sent to the provided email.
+    Otherwise, an appropriate response is returned.
+'''
+#===============================================================================
 @api_view(["POST"])
 @permission_classes((AllowAny, ))
 def request_account_activation_link(request):
@@ -183,3 +226,4 @@ def request_account_activation_link(request):
         return Response("No account is associated with that email.", status=status.HTTP_400_BAD_REQUEST)
     except Exception as exc:
         return Response("Problem handling activation email request. Please try a few more times", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#===============================================================================

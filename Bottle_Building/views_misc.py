@@ -1,6 +1,10 @@
 from .views import *
 
-
+'''
+    Serves the home page.
+    Includes all building designs that are visible to the user.
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def home(request):
@@ -57,17 +61,25 @@ def home(request):
         return render(request, 'home.html', {"building_designs": building_designs})
     except Exception as exc:
         return render(request, "error.html", {"exception": str(exc)})
+#===============================================================================
 
 
 
-
-
+'''
+    Serves the about page.
+'''
+#===============================================================================
 def about(request):
     return render(request, "about.html")
+#===============================================================================
 
 
 
-
+'''
+    Handles submit feedback requests.
+    If the feedback is a valid length, it is sent via email to the address defined in email_account.py
+'''
+#===============================================================================
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
 def submit_feedback(request):
@@ -98,3 +110,4 @@ def submit_feedback(request):
 
     except Exception as exc:
         return Response("Error Submitting Feedback", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#===============================================================================

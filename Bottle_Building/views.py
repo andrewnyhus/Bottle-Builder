@@ -20,6 +20,11 @@ from email.mime.text import MIMEText
 from .email_account import *
 
 
+'''
+    Helper function that returns a message that corresponds to a given key.
+    This to standardize the response messages that the server gives.
+'''
+#===============================================================================
 def get_response_message(key):
     response_messages = {}
 
@@ -27,8 +32,15 @@ def get_response_message(key):
         return response_messages[key]
     except KeyError:
         return "Error retrieving response message, key is invalid."
+#===============================================================================
 
 
+'''
+    Helper function that sends an email with a specified:
+    recipient, subject, and plaintext message body from the email account with
+    the credentials that are stored in email_account.py (get_email_address() and get_password())
+'''
+#===============================================================================
 def send_email(recipient, subject, message_body):
     # help from http://www.tutorialspoint.com/python3/python_sending_email.htm
     # help from https://docs.python.org/2/library/email-examples.html
@@ -55,3 +67,4 @@ def send_email(recipient, subject, message_body):
         return "Error: unable to send email."
     except Exception as exc:
         return "Exception sending an email"
+#===============================================================================

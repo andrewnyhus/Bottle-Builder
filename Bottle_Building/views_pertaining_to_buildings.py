@@ -1,6 +1,10 @@
 from .views import *
 
-
+'''
+    Serves the view bottle building page if the user is allowed to view that design.
+    Otherwise, the user is told they are unauthorized.
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def view_bottle_building(request, building_id):
@@ -27,15 +31,26 @@ def view_bottle_building(request, building_id):
         return render(request, "view_bottle_building.html", {"building": building, "coordinates": coordinates, "link": link})
     except Exception as exc:
         return render(request, "error.html", {"exception": str(exc)})
+#===============================================================================
 
 
+'''
+    Serves the design bottle building page.
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def design_bottle_building(request):
     return render(request, "design_bottle_building.html", {"use_imperial_system": True})
+#===============================================================================
 
 
-
+'''
+    Handles delete bottle building design requests.
+    If the user is authenticated, active and the owner of the building matching
+    the specified building id, the building is deleted.
+'''
+#===============================================================================
 @api_view(['POST'])
 def delete_bottle_building_design(request, building_id):
     try:
@@ -46,8 +61,17 @@ def delete_bottle_building_design(request, building_id):
         return Response("Could not delete building because you are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
     except Exception as exc:
         return Response("Error deleting bottle building.  Make sure the proper id was provided.", status=status.HTTP_400_BAD_REQUEST)
+#===============================================================================
 
 
+
+'''
+    Handles post bottle building design requests.
+    If the user is authenticated and active, and the data for the new building
+    is valid, create the new building.
+    Otherwise returns an appropriate response.
+'''
+#===============================================================================
 @api_view(['POST'])
 def post_bottle_building_design(request):
 
@@ -173,8 +197,14 @@ def post_bottle_building_design(request):
     elif request.is_authenticated():
         return Response("Please Activate Your Account", status=status.HTTP_401_UNAUTHORIZED)
     return Response("Please log in", status=status.HTTP_401_UNAUTHORIZED)
+#===============================================================================
 
-
+'''
+    Handles the post building privacy changes requests.
+    If user is authenticated, active and the owner of the building,
+    apply the desired privacy changes. Otherwise, do not and return an appropriate response.
+'''
+#===============================================================================
 @api_view(['POST'])
 def post_building_privacy_changes(request):
     # ensure that the user is authenticated and active
@@ -228,3 +258,4 @@ def post_building_privacy_changes(request):
                 return Response(str(exc), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
         return Response("You are not the owner, or your account is inactive", status=status.HTTP_401_UNAUTHORIZED)
+#===============================================================================

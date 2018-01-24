@@ -1,6 +1,12 @@
 from .views import *
 
 
+'''
+    Serves the change password page. This page is for those who have not forgotten
+    their password, and can only be accessed if the user is authenticated and active.
+    If they are not, they are told to activate their account or redirected to the login page.
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def change_password_page(request):
@@ -10,8 +16,13 @@ def change_password_page(request):
         return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
     else:
         return redirect(login_page)
+#===============================================================================
 
-# TEST THIS ROUTE HANDLER
+
+'''
+    Changes the password if the request is valid. Otherwise returns an appropriate response.
+'''
+#===============================================================================
 @api_view(["POST"])
 def change_password(request):
     if request.user.is_authenticated() and request.user.is_active:
@@ -25,6 +36,7 @@ def change_password(request):
 
         if user is not None:
             user.set_password(new_password)
+            user.save()
             return Response("Your new password has been updated.", status=status.HTTP_200_OK)
         else:
             return Response("Incorrect current password.", status=status.HTTP_401_UNAUTHORIZED)
@@ -32,8 +44,15 @@ def change_password(request):
         return Response("Account Inactive. Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_401_UNAUTHORIZED)
     else:
         return Response("You are not authenticated", status=status.HTTP_401_UNAUTHORIZED)
+#===============================================================================
 
 
+'''
+    Serves the login page, unless the user is authenticated and active.
+    In that case, it redirects to the user's profile page.
+    If the user is not active but is authenticated,
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def login_page(request):
@@ -43,7 +62,14 @@ def login_page(request):
         return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
 
     return render(request, 'login_page.html')
+#===============================================================================
 
+
+'''
+    Handles the login requests. Logs in user if request is valid. Returns
+    appropriate response otherwise.
+'''
+#===============================================================================
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
 def login(request):
@@ -71,12 +97,26 @@ def login(request):
         return Response("Login Failed, Username is Incorrect.", status=status.HTTP_400_BAD_REQUEST)
     except Exception as exc:
         return Response("Login Failed, Server Problem, Please Try Again", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#===============================================================================
 
+
+
+'''
+    Logs user out if they are authenticated, informs the user.
+'''
+#===============================================================================
 def logout_page(request):
     logout(request)
     return render(request, "logout_successful.html")
+#===============================================================================
 
 
+'''
+    Handles the account activation requests.
+    If token and uid are valid, the account associated with that uid is activated.
+    Otherwise, an appropriate message is given to the user.
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def activate_account(request, uidb64, token):
@@ -96,8 +136,15 @@ def activate_account(request, uidb64, token):
             return render(request, "message.html", {"title":"User is Invalid/Bad Link", "heading":"User is Invalid/Bad Link", "message":"The user is invalid or the link is bad. Please request a new link at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
         except Exception as exc:
             return render(request, "error.html", {"exception": str(exc)})
+#===============================================================================
 
 
+'''
+    Serves the create account page if the user is unauthenticated.
+    Otherwise it either instructs the user to activate their account
+    or it redirects the user to their profile page.
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def create_account_page(request):
@@ -106,9 +153,17 @@ def create_account_page(request):
     elif request.user.is_authenticated():
         return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
     return render(request, "create_account.html")
+#===============================================================================
 
 
 
+'''
+    Handles the register account requests. It confirms that the account is valid.
+    If it is not, an appropriate message is returned.
+    If it is valid, the account is created, an activation token is generated,
+    and an account activation link is emailed to the user.
+'''
+#===============================================================================
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
 def register(request):
@@ -183,7 +238,15 @@ def register(request):
                 return Response("Account Created Successfully, Please Check Your Email For Your Temporary Account Activation Link", status=status.HTTP_201_CREATED)
             except Exception as exc:
                 return Response("Error, account may have been created. Try logging in, if you are told to activate your account, either check your email for an activation link, or request a new one from our forgotten credentials page: "+ request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#===============================================================================
 
+
+'''
+    Serves the user's profile page if the user is active and authenticated.
+    Otherwise, it either instructs the user to activate their account, or it
+    redirects them to the login page
+'''
+#===============================================================================
 @never_cache
 @ensure_csrf_cookie
 def view_profile(request):
@@ -207,3 +270,4 @@ def view_profile(request):
         return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
     else:
         return redirect(login_page)
+#===============================================================================
