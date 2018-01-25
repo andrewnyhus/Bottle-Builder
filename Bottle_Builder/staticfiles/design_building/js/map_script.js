@@ -2,8 +2,11 @@
 $(document).ready(function(){
 
 
-
-    // ------------------------------------------------------------------------------------------------------
+  /*
+    Initialize the map, it's controls,
+    and set up listener to fire buildingFloorDrawn when a drawing is complete.
+  */
+  // =============================================================================
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZnVlcnRlbnVldmFjYXNhIiwiYSI6ImNqMGgzdTg5ZzAydnEyd3J1cHF4eG54eHUifQ.Aikx4qEIowhrKbSVhNEpRw';
 
@@ -15,13 +18,14 @@ $(document).ready(function(){
         zoom: 1,
     });
 
-    // add search
+
+    // add search control
     map.addControl(new MapboxGeocoder({
         accessToken: mapboxgl.accessToken
     }));
 
 
-    // add drawing
+    // initialize and add drawing control
     var draw = new MapboxDraw({
         displayControlsDefault: false,
         controls: {
@@ -31,18 +35,23 @@ $(document).ready(function(){
     });
     map.addControl(draw);
 
+    // listener, when drawing is complete, fire buildingFloorDrawn
     map.on("draw.create", buildingFloorDrawn);
+    // =============================================================================
 
 
-    // ------------------------------------------------------------------------------------------------------
 
 
-
-    // ------------------------------------------------------------------------------------------------------
     // fires when a polygon is done being drawn on the map.
     // It stores the information of the vertices of this polygon as the
     // corners of the building. It updates the building_info global array
     // with the area of the building floor and the array containing data about the walls.
+
+    /*
+      Stores the vertices of the polygon (representation of the building perimeter).
+      Updates the global building_info array with this information as well as the building area.
+    */
+    // =============================================================================
     function buildingFloorDrawn(e) {
 
         // hide map
@@ -77,5 +86,5 @@ $(document).ready(function(){
         building_info["walls"] = convert_coordinates_to_walls(coordinate_set_vertices);
 
     }
-    // ------------------------------------------------------------------------------------------
+    // =============================================================================
 });

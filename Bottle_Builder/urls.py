@@ -17,6 +17,10 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from Bottle_Building import views, views_account, views_forgot_credentials, views_misc, views_pertaining_to_buildings
 
+'''
+    This is a list of the various url routes the server listens for and handles.
+    It is in the following format: url('{URL}', {PATH_TO_HANDLER_FUNCTION}, (optional) {ROUTE_NAME})
+'''
 
 urlpatterns = [
     url(r'^$', views_misc.home, name='home'),

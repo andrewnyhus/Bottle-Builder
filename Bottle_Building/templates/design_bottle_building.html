@@ -209,13 +209,21 @@
               <label for="bottle_height_input" id="bottle_height_label"></label>
               <input type="number" class="form-control" id="bottle_height_input" min="0" required><br><br>
 
+              <div class="btn-group btn-group-justified" role="group">
+                <!-- Generate Resource Estimate Button -->
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-default" id="generate_resource_estimate_button" onclick="generate_resource_estimate_html()">See In Depth Resource Estimate</button>
+                </div>
 
-              <!-- Generate Resource Estimate Button -->
-              <button type="button" class="btn btn-primary form-control" id="generate_resource_estimate_button" onclick="generate_resource_estimate_html()">See In Depth Resource Estimate</button>
-              <br>
-              <!-- Post Building Design -->
-              <button type="button" class="btn btn-default form-control" id="post_design_button"></button>
 
+
+                <!-- Post Building Design -->
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-default" id="post_design_button">
+
+                  </button>
+                </div>
+              </div>
 
           </form>
 
@@ -242,6 +250,7 @@
     <script src="/static/design_building/js/measurement_system.js"></script>
     <script src="/static/design_building/js/resource_estimation.js"></script>
     <script src="/static/design_building/js/validate_and_store_form_data.js"></script>
+    <script src="/static/design_building/js/manage_ui.js"></script>
     <script src="/static/js/cookie-stuff.js"></script>
 
     <script>
@@ -269,7 +278,34 @@
 
     {% if user.is_authenticated %}
         // set text and onclick of post button
-        $("#post_design_button").html("Post Building Design");
+        $("#post_design_button").html(`Post Building Design
+          <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
+
+          <style>
+            .loader {
+              border: 3px solid #f3f3f3;
+              border-radius: 50%;
+              border-top: 3px solid #3498db;
+              width: 20px;
+              height: 20px;
+              -webkit-animation: spin 2s linear infinite; /* Safari */
+              animation: spin 2s linear infinite;
+            }
+
+            /* Safari */
+            @-webkit-keyframes spin {
+              0% { -webkit-transform: rotate(0deg); }
+              100% { -webkit-transform: rotate(360deg); }
+            }
+
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          </style>
+
+          <div id="submit_loader" align="center" class="loader" style="display:none;"></div>
+          `);
         $("#post_design_button").attr("onclick", "post_building_design()");
     {% else %}
         // set text and onclick of post button
@@ -278,8 +314,6 @@
 
     {% endif %}
 
-    // show form once it is loaded
-    //document.getElementById("building_design_form").style.display = "block";
 
 
 

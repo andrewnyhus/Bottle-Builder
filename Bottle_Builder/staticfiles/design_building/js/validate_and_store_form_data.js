@@ -191,6 +191,12 @@ function post_building_design(){
       return false;
     }
 
+    // disable form and display loading spinner
+    disable_form_elements();
+
+    if(document.getElementById("submit_loader") != null){
+      document.getElementById("submit_loader").style.display = "inline-block";
+    }
 
     var post_data = {"resource_estimate": resource_estimate, "walls": building_info["walls"],
                      "building_height": building_info["building_height"], "building_height_units": building_info["building_height_units"],
@@ -213,6 +219,11 @@ function post_building_design(){
           set_message_good_alert("Building Design Created! Redirecting to: <a href='" +response + "'> " + response + "</a>");
           show_good_alert();
 
+          // hide loading spinner
+          if(document.getElementById("submit_loader") != null){
+            document.getElementById("submit_loader").style.display = "none";
+          }
+
           document.location = response;
 
         },
@@ -223,6 +234,12 @@ function post_building_design(){
           hide_good_alert();
           set_message_bad_alert(response);
           show_bad_alert();
+
+          // enable form and hide loading spinner
+          enable_form_elements();
+          document.getElementById("submit_loader").style.display = "none";
+
+
         }
 
     });

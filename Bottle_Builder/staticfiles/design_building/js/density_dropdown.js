@@ -1,21 +1,40 @@
+// options for fill density dropdown
 fill_density_entry_enum = {
     DIRT : 1,
     SAND : 2,
     MANUAL : 3
 }
 
+// initialize density entry to unselected
 var fill_density_entry = 0;
 
-function get_fill_density_entry(){ return fill_density_entry; }
 
+/*
+  Returns the fill density selection, not the density value.
+  Returns 0 if unselected.
+*/
+// =============================================================================
+function get_fill_density_entry(){
+  return fill_density_entry;
+}
+// =============================================================================
+
+
+/*
+  Returns the fill density value.
+  Returns -1 if the density is not selected or entered.
+*/
+// =============================================================================
 function get_fill_density(){
     var density_entry = get_fill_density_entry();
 
+    // return -1 if density is not selected or entered
     if(!(density_entry == 1 || density_entry == 2 || density_entry == 3)||(density_entry == 3 && $("#manual_entry_bottle_fill_density").val() == "")){
         return -1;
     }
 
-    if(imperial_selected()){// if imperial
+    // if user is using imperial system, return value in lb/cubic foot
+    if(imperial_selected()){
 
         if(density_entry == 1){ // if dirt
             return 76;
@@ -25,7 +44,8 @@ function get_fill_density(){
             return $("#manual_entry_bottle_fill_density").val();
         }
 
-    }else if(metric_selected()){// if metric
+    // if user is using metric system, return value in kg/cubic meter
+    }else if(metric_selected()){
 
         if(density_entry == 1){ // if dirt
             return 1220;
@@ -37,7 +57,13 @@ function get_fill_density(){
 
     }
 }
+// =============================================================================
 
+/*
+  On click listeners for the fill density dropdown items.
+  
+*/
+// =============================================================================
 $("#dry_dirt_selected").on("click", function(){
     $("#manual_entry_bottle_fill_density").css("display", "none");
 
@@ -59,5 +85,5 @@ $("#manual_entry_selected").on("click", function(){
 
     fill_density_entry = fill_density_entry_enum.MANUAL;
     $("#bottle_fill_density_dropdown_button").html("Manual Entry");
-
 });
+// =============================================================================
