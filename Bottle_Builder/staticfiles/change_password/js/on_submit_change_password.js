@@ -1,5 +1,8 @@
-// returns false and creates alert if password is an invalid length
-// otherwise returns true
+/*
+ returns false and creates alert if password is an invalid length
+ otherwise returns true
+*/
+// =============================================================================
 function password_length_is_valid(){
 
     if(document.getElementById("new_password_input").value.length >= 30){
@@ -15,9 +18,13 @@ function password_length_is_valid(){
     }
 
 }
+// =============================================================================
 
-// returns false and creates alert if passwords don't match
-// otherwise returns true
+/*
+ returns false and creates alert if passwords don't match
+ otherwise returns true
+*/
+// =============================================================================
 function passwords_are_equal(){
     if(document.getElementById("new_password_input").value == document.getElementById("confirm_new_password_input").value){
         return true;
@@ -27,8 +34,12 @@ function passwords_are_equal(){
         return false;
     }
 }
+// =============================================================================
 
-
+/*
+  Submits the change password request, updates UI
+*/
+// =============================================================================
 function change_password_form_submitted(){
 
   if(password_length_is_valid() && passwords_are_equal()){
@@ -38,7 +49,12 @@ function change_password_form_submitted(){
     document.getElementById("confirm_new_password_input").disabled = true;
     document.getElementById("change_password_submit_button").disabled = true;
 
+    // show loader
+    if (document.getElementById("submit_loader") != null){
+      document.getElementById("submit_loader").style.display = "inline-block";
+    }
 
+    // manage alerts
     hide_bad_alert();
     set_message_good_alert("Setting Your New Password...");
     show_good_alert();
@@ -50,6 +66,7 @@ function change_password_form_submitted(){
       "csrfmiddlewaretoken": get_csrf()
     };
 
+    // submit request
     $.ajax({
 
         url: "/change_password/",
@@ -60,6 +77,12 @@ function change_password_form_submitted(){
           hide_bad_alert();
           set_message_good_alert(response);
           show_good_alert();
+
+          // hide loader
+          if (document.getElementById("submit_loader") != null){
+            document.getElementById("submit_loader").style.display = "none";
+          }
+
         },
 
         error: function(xhr, error_message, err){
@@ -75,9 +98,16 @@ function change_password_form_submitted(){
           document.getElementById("confirm_new_password_input").disabled = false;
           document.getElementById("change_password_submit_button").disabled = false;
 
+          // hide loader
+          if (document.getElementById("submit_loader") != null){
+            document.getElementById("submit_loader").style.display = "none";
+          }
+
+
         }
 
     });
   }
 
 }
+// =============================================================================
