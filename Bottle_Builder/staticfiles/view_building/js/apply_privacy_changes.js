@@ -1,5 +1,10 @@
 
 
+/*
+  Returns whether the privacy changes data is valid.
+  If invalid, tells the console why not.
+*/
+// =============================================================================
 function validate_privacy_changes(privacy_changes){
 
   // if building pk is not set, return false
@@ -39,7 +44,14 @@ function validate_privacy_changes(privacy_changes){
   return true;
 
 }
+// =============================================================================
 
+
+
+/*
+  Populates the privacy changes dictionary and passes it into post_privacy_changes.
+*/
+// =============================================================================
 function apply_privacy_changes(){
   // put together dictionary
   privacy_changes = {};
@@ -72,8 +84,17 @@ function apply_privacy_changes(){
   post_privacy_changes(privacy_changes);
 
 }
+// =============================================================================
 
 
+
+/*
+  Submits building privacy change request to server if the data is valid.
+  If the data is not valid, displays an error message.
+  If the request is successful, informs user in an alert, disables apply changes button.
+  Otherwise, informs user that the request failed in an alert.
+*/
+// =============================================================================
 function post_privacy_changes(privacy_changes){
 
   // if privacy changes are valid, submit the post request
@@ -107,7 +128,9 @@ function post_privacy_changes(privacy_changes){
       });
 
   }else{
-    console.log("Did not send, data was invalid");
+    set_message_bad_alert("Unexpected error, did not apply privacy changes");
+    show_bad_alert();
   }
 
 }
+// =============================================================================

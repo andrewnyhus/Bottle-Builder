@@ -1,9 +1,9 @@
 
-
-// ========================================================================
-
-// returns false and creates alert if username is an invalid length
-// otherwise returns true
+/*
+  Returns whether the username length is valid,
+  also displays an alert if not.
+*/
+// =============================================================================
 function username_length_is_valid(){
 
     if($("#username").val().length >= 30){
@@ -19,9 +19,15 @@ function username_length_is_valid(){
     }
 
 }
+// =============================================================================
 
-// returns false and creates alert if username contains invalid characters
-// otherwise returns true
+
+
+/*
+  Returns whether the username characters are all valid,
+  also displays an alert if not.
+*/
+// =============================================================================
 function username_contains_only_valid_characters(){
 
     var proposed_username = $("#username").val();
@@ -43,13 +49,15 @@ function username_contains_only_valid_characters(){
     }
 
 }
-// ========================================================================
+// =============================================================================
 
 
-// ========================================================================
 
-// returns false and creates alert if password is an invalid length
-// otherwise returns true
+/*
+  Returns whether the password length is valid,
+  also displays an alert if not.
+*/
+// =============================================================================
 function password_length_is_valid(){
 
     if($("#password").val().length >= 30){
@@ -65,5 +73,4 @@ function password_length_is_valid(){
     }
 
 }
-
-// ========================================================================
+// =============================================================================

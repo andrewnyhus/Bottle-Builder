@@ -1,9 +1,8 @@
 
-
-
-// returns false & displays an alert if any form input is invalid
-// otherwise returns true
-// DOES NOT CHECK WITH SERVER IF DATA IS VALID
+/*
+  Returns whether the form input is valid and displays an alert if not.
+*/
+// =============================================================================
 function form_input_is_valid(){
 
     if(!email_length_is_valid()){ return false; }
@@ -20,9 +19,14 @@ function form_input_is_valid(){
     return true;
 
 }
+// =============================================================================
 
 
-
+/*
+  When the document is ready, it adds a listener for the form submission
+  which checks that the form is valid and then submits it.
+*/
+// =============================================================================
 $(function(){
     $("#create_account_form").submit(function(e){
 
@@ -81,5 +85,5 @@ $(function(){
         e.preventDefault();
     });
 
-
 });
+// =============================================================================

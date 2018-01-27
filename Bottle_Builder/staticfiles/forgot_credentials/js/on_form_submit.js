@@ -1,4 +1,8 @@
-// check if a given string is a valid email
+/*
+  Returns whether a string is a valid email,
+  also displays alert if not.
+*/
+// =============================================================================
 function email_is_valid(email){
   var index_of_at_symbol = email.indexOf("@");
 
@@ -20,10 +24,15 @@ function email_is_valid(email){
 
   return true;
 }
+// =============================================================================
 
 
 
-// validates and then sends forgotten username to users email
+/*
+  If the form is valid and complete, sends a request for the server to send
+  an email to the user containing their username.
+*/
+// =============================================================================
 function forgot_username_form_submitted(){
   // get email value
   var email = document.getElementById("forgot_username_email_input").value;
@@ -62,10 +71,15 @@ function forgot_username_form_submitted(){
     });
   }
 }
+// =============================================================================
 
 
 
-// validates and then sends password reset link to users email
+/*
+  If the form is valid and complete, sends a request for the server to send
+  an email to the user containing a password reset link.
+*/
+// =============================================================================
 function forgot_password_form_submitted(){
   // get email value
   var email = document.getElementById("forgot_password_email_input").value;
@@ -104,10 +118,15 @@ function forgot_password_form_submitted(){
     });
   }
 }
+// =============================================================================
 
 
 
-// validates and then sends account activation link to users email
+/*
+  If the form is valid and complete, sends a request for the server to send
+  an email to the user containing an account activation link.
+*/
+// =============================================================================
 function account_activation_form_submitted(){
   // get email value
   var email = document.getElementById("activate_account_email_input").value;
@@ -146,3 +165,4 @@ function account_activation_form_submitted(){
     });
   }
 }
+// =============================================================================

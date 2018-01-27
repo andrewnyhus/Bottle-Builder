@@ -1,9 +1,9 @@
 
-
-
-// returns false & displays an alert if any form input is invalid
-// otherwise returns true
-// DOES NOT CHECK WITH SERVER IF DATA IS VALID
+/*
+  Returns whether the form is valid and complete,
+  also displays an alert if not.
+*/
+// =============================================================================
 function form_input_is_valid(){
 
     if(!username_length_is_valid()){ return false; }
@@ -16,9 +16,16 @@ function form_input_is_valid(){
     return true;
 
 }
+// =============================================================================
 
 
 
+/*
+  When the document is ready, set an onsubmit handler for the login form,
+  to submit a login request if the form is valid.
+  If the request is successful, redirect to the home page.
+*/
+// =============================================================================
 $(function(){
     $("#login_form").submit(function(e){
 
@@ -52,6 +59,5 @@ $(function(){
         }
         e.preventDefault();
     });
-
-
 });
+// =============================================================================

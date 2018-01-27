@@ -1,17 +1,21 @@
-// ------------------------------------------------------------------------------------------------------
 var building_info = {};
 
-
-// getter for building_info
+/*
+  Returns global array building_info
+*/
+// =============================================================================
 function get_building_info(){
     return building_info;
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================
 
 
-// ------------------------------------------------------------------------------------------------------
-// helper function to buildingFloorDrawn.
-// provides an array that contains info pertaining to walls
+
+
+/*
+  Converts a set of coordinates into an array of wall info
+*/
+// =============================================================================
 function convert_coordinates_to_walls(coordinate_set){
     var walls = {};
 
@@ -42,14 +46,14 @@ function convert_coordinates_to_walls(coordinate_set){
     }
 
     return walls;
-
-
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================
 
 
-// ------------------------------------------------------------------------------------------------------
-// Resource Estimate Generation
+/*
+  Generates resource estimate
+*/
+// =============================================================================
 function generate_resource_estimate(){
 
     // if form is valid and building_info is complete, continue
@@ -58,23 +62,18 @@ function generate_resource_estimate(){
     var resource_estimate = {};
 
     // set up resource_estimate
-    //=====================================================================================================================
     resource_estimate["bottles"] = {};
     resource_estimate["fill"] = {};
     resource_estimate["cement"] = {};
-    //=====================================================================================================================
 
     // total counter variables for estimate
-    //=====================================================================================================================
     var total_bottles = 0;
     var total_fill = 0.0;
     var total_cement = 0.0;
-    //=====================================================================================================================
 
 
 
     // store some info into resource_estimate
-    //=====================================================================================================================
 
     resource_estimate["num_walls"] = Object.keys(building_info["walls"]).length;
 
@@ -106,11 +105,10 @@ function generate_resource_estimate(){
 
         resource_estimate["cement_units"] = "Cement (lb)";
     }
-    //=====================================================================================================================
 
 
     // create variables for building-wide information
-    //=====================================================================================================================
+
     var bottle_diameter = parseFloat(building_info["average_bottle_diameter"]);
     var bottle_volume = parseFloat(building_info["average_bottle_volume"]);
     var bottle_height = parseFloat(building_info["average_bottle_height"]);
@@ -118,22 +116,17 @@ function generate_resource_estimate(){
     var cement_density = parseFloat(building_info["cement_density"]);
     var fill_density = parseFloat(building_info["fill_density"]);
     var width_between_bottles = parseFloat(building_info["width_between_bottles"]);
-    //=====================================================================================================================
 
 
 
     // calculate & store the mass of cement needed
-    //=====================================================================================================================
+
     var foundation_volume = parseFloat(building_info["foundation_depth"]) * parseFloat(building_info["area"]);
     resource_estimate["cement"]["foundation"] = (cement_density * foundation_volume).toFixed(2);
     total_cement += (cement_density * foundation_volume);
-    //=====================================================================================================================
 
 
-    // generate resource estimates for walls
-    //=====================================================================================================================
-
-
+    // Generate resource estimates for walls:
 
     // iterate through all walls
     for(i = 0; i < Object.keys(building_info["walls"]).length; i++){
@@ -146,7 +139,7 @@ function generate_resource_estimate(){
         if(metric_selected()){
 
             // calculate num bottles needed for wall
-            //=====================================================================================================================
+
             // create variable for wall length
             var wall_length_m = parseFloat(building_info["walls"][i]["length"]);
 
@@ -162,10 +155,10 @@ function generate_resource_estimate(){
             resource_estimate["bottles"]["wall_" + (i+1)] = Math.round(num_bottles);
 
             total_bottles += resource_estimate["bottles"]["wall_" + (i+1)];
-            //=====================================================================================================================
+
 
             // calculate mass of fill needed for wall
-            //=====================================================================================================================
+
             // convert bottle volume
             var bottle_volume_l = bottle_volume * 0.001;
             var bottle_volume_cubic_m = bottle_volume_l * 0.001;
@@ -177,11 +170,10 @@ function generate_resource_estimate(){
 
 
             total_fill += fill_mass_kg;
-            //=====================================================================================================================
 
 
             // calculate mass of cement needed for wall
-            //=====================================================================================================================
+
             // get width between bottles in meters
             var width_between_bottles_m = width_between_bottles/100;
 
@@ -195,12 +187,12 @@ function generate_resource_estimate(){
             resource_estimate["cement"]["wall_" + (i+1)] = cement_mass_kg.toFixed(2);
 
             total_cement += cement_mass_kg;
-            //=====================================================================================================================
+
 
         }else if(imperial_selected()){
 
             // calculate num bottles needed for wall
-            //=====================================================================================================================
+
             // create variable for wall length
             var wall_length_ft = parseFloat(building_info["walls"][i]["length"]);
 
@@ -215,11 +207,11 @@ function generate_resource_estimate(){
             resource_estimate["bottles"]["wall_" + (i+1)] = Math.round(num_bottles);
 
             total_bottles += resource_estimate["bottles"]["wall_" + (i+1)];
-            //=====================================================================================================================
+
 
 
             // calculate mass of fill needed for wall
-            //=====================================================================================================================
+
             // convert bottle volume
             var bottle_volume_cubic_ft = bottle_volume * 0.00104438;  // convert US fl oz to cubic feet
             var bottle_volume_wall_cubic_ft = bottle_volume_cubic_ft * num_bottles;
@@ -230,10 +222,10 @@ function generate_resource_estimate(){
             resource_estimate["fill"]["wall_" + (i+1)] = weight_lb.toFixed(2);
 
             total_fill += weight_lb;
-            //=====================================================================================================================
+
 
             // calculate mass of cement needed for wall
-            //=====================================================================================================================
+
             // get width between bottles in feet
             var width_between_bottles_ft = width_between_bottles/12;
 
@@ -247,28 +239,34 @@ function generate_resource_estimate(){
             resource_estimate["cement"]["wall_" + (i+1)] = cement_mass_lb.toFixed(2);
 
             total_cement += cement_mass_lb;
-            //=====================================================================================================================
+
 
         }
 
 
     }
-    //=====================================================================================================================
+
 
     // store totals in resource estimate
-    //=====================================================================================================================
+
     resource_estimate["bottles"]["total"] = total_bottles;
     resource_estimate["fill"]["total"] = total_fill.toFixed(2);
     resource_estimate["cement"]["total"] = total_cement.toFixed(2);
-    //=====================================================================================================================
+
     return resource_estimate;
 
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================
 
 
-// ------------------------------------------------------------------------------------------------------
+
+
+
 // Resource Estimate Generation Table HTML
+/*
+  Generates the HTML string to represent the resource estimate in a table. 
+*/
+// =============================================================================
 function generate_resource_estimate_html(){
 
     var resource_estimate = generate_resource_estimate();
@@ -277,7 +275,7 @@ function generate_resource_estimate_html(){
 
 
         // create table header
-        //=====================================================================================================================
+
         var table_header = '<p align="center" style="padding-left:10%; padding-right:10%;"> Disclaimer: This has not been tested in real life, and is theoretical estimate.  It does not take into account any pillars that may be needed.  It assumes that the density of concrete is 1400 kg/cubic meter (87.39 lb/cubic foot).  If you have tried it and have feedback please go <a href="/feedback">here</a></p>';
 
         // include bottle in header
@@ -288,10 +286,10 @@ function generate_resource_estimate_html(){
         table_header += "<th>" + resource_estimate["cement_units"] + "</th>";
 
         table_header += "</tr></thead>";
-        //=====================================================================================================================
+
 
         // create table body
-        //=====================================================================================================================
+
         var table_body = "<tbody>";
 
         // total estimate variables
@@ -310,7 +308,7 @@ function generate_resource_estimate_html(){
         total_cement = parseFloat(resource_estimate["cement"]["foundation"]);
 
         // include walls, iterate through walls and include a row for each as well as a total
-        //=====================================================================================================================
+
         var num_walls = parseInt(resource_estimate["num_walls"]);
 
         // total wall estimate variables
@@ -355,7 +353,6 @@ function generate_resource_estimate_html(){
         total_fill += total_fill_for_walls;
         total_cement += total_cement_for_walls;
 
-        //=====================================================================================================================
 
 
 
@@ -373,7 +370,7 @@ function generate_resource_estimate_html(){
 
         // close body
         table_body += "</tbody>";
-        //=====================================================================================================================
+
 
 
 
@@ -390,6 +387,4 @@ function generate_resource_estimate_html(){
 
     }
 }
-
-
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================

@@ -1,7 +1,9 @@
 
 
-// ------------------------------------------------------------------------------------------------------
-// If form is complete, stores info into building_info
+/*
+  If form is complete, stores info into global array building_info
+*/
+// =============================================================================
 function store_form_input(){
     if(form_is_valid_and_complete()){
         // store info
@@ -64,17 +66,21 @@ function store_form_input(){
     }
     return false;
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================
 
 
-// ------------------------------------------------------------------------------------------------------
-// Checks that each form field is valid and filled.
+
+/*
+  Validates each form field. The helper functions display an alert if the
+  field is invalid or empty
+*/
+// =============================================================================
 function form_is_valid_and_complete(){
 
     set_message_bad_alert("");
     hide_bad_alert();
 
-
+    // if measurement system is not selected return false
     if(!measurement_system_is_selected()){return false;}
 
     if(!input_is_positive_number($("#building_height_input").val(), "building height")){return false;}
@@ -91,11 +97,14 @@ function form_is_valid_and_complete(){
     return true;
 
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================
 
 
-// ------------------------------------------------------------------------------------------------------
-// Checks that either the metric or imperial system are picked
+/*
+  Returns whether a measurement system is selected,
+  also displays alert if not selected.
+*/
+// =============================================================================
 function measurement_system_is_selected(){
     if($("#imperial_radio").prop("checked") || $("#metric_radio").prop("checked")){
         return true;
@@ -105,11 +114,15 @@ function measurement_system_is_selected(){
         return false;
     }
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================
 
 
-// ------------------------------------------------------------------------------------------------------
-// Checks that input is a positive number
+
+/*
+  Returns whether input value is a positive number,
+  also displays alert if not.
+*/
+// =============================================================================
 function input_is_positive_number(input, input_description){
 
     // if input is blank
@@ -130,10 +143,16 @@ function input_is_positive_number(input, input_description){
     return true;
 
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================
 
-// ------------------------------------------------------------------------------------------------------
-// Checks that fill density was selected
+
+
+
+/*
+  Returns whether a fill density is selected,
+  also displays alert if not selected.
+*/
+// =============================================================================
 function fill_density_is_selected(){
     var density_entry = get_fill_density_entry();
 
@@ -149,10 +168,15 @@ function fill_density_is_selected(){
 
     return true;
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================
 
-// ------------------------------------------------------------------------------------------------------
-// Checks that the map was drawn
+
+
+/*
+  Returns whether the building perimeter was drawn,
+  also displays alert if not.
+*/
+// =============================================================================
 function map_was_drawn(){
 
     // if map was not drawn, display alert and return false
@@ -164,12 +188,14 @@ function map_was_drawn(){
     // otherwise return true
     return true;
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================
 
 
 
-// ------------------------------------------------------------------------------------------------------
-// Post Building Design
+/*
+  Post Building Design
+*/
+// =============================================================================
 function post_building_design(){
 
     var resource_estimate;
@@ -245,4 +271,4 @@ function post_building_design(){
     });
 
 }
-// ------------------------------------------------------------------------------------------------------
+// =============================================================================

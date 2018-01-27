@@ -1,5 +1,8 @@
-// returns false and creates alert if password is an invalid length
-// otherwise returns true
+/*
+  Returns whether the entered password length is valid,
+  also displays alert if not.
+*/
+// =============================================================================
 function password_length_is_valid(){
 
     if(document.getElementById("password_input").value.length >= 30){
@@ -15,9 +18,15 @@ function password_length_is_valid(){
     }
 
 }
+// =============================================================================
 
-// returns false and creates alert if passwords don't match
-// otherwise returns true
+
+
+/*
+  Returns whether the entered passwords match,
+  also displays alert if not.
+*/
+// =============================================================================
 function passwords_are_equal(){
     if(document.getElementById("password_input").value == document.getElementById("confirm_password_input").value){
         return true;
@@ -27,8 +36,15 @@ function passwords_are_equal(){
         return false;
     }
 }
+// =============================================================================
 
 
+
+/*
+  If the reset password form is valid and complete, sends a request for
+  the server to update the specified account to the new password.
+*/
+// =============================================================================
 function reset_password_form_submitted(){
 
   if(password_length_is_valid() && passwords_are_equal()){
@@ -74,3 +90,4 @@ function reset_password_form_submitted(){
   }
 
 }
+// =============================================================================

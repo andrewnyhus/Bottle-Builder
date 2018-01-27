@@ -1,6 +1,5 @@
 /*
- returns false and creates alert if password is an invalid length
- otherwise returns true
+  Returns whether the password length is valid and alerts the user if it is not.
 */
 // =============================================================================
 function password_length_is_valid(){
@@ -21,8 +20,7 @@ function password_length_is_valid(){
 // =============================================================================
 
 /*
- returns false and creates alert if passwords don't match
- otherwise returns true
+  Returns whether the passwords match and alerts the user if they do not.
 */
 // =============================================================================
 function passwords_are_equal(){

@@ -1,3 +1,7 @@
+/*
+  Returns whether or not the form input is valid.
+*/
+// =============================================================================
 function form_is_valid(){
   var feedback = document.getElementById("feedback_input").value;
 
@@ -17,7 +21,14 @@ function form_is_valid(){
 
   return true;
 }
+// =============================================================================
 
+
+
+/*
+  If the form input is valid, it submits the form and manages the UI.
+*/
+// =============================================================================
 function submit_form(){
 
   // if form is valid, then send the feedback
@@ -68,3 +79,4 @@ function submit_form(){
   }
 
 }
+// =============================================================================

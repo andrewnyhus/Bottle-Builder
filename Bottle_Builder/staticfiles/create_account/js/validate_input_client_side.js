@@ -1,7 +1,7 @@
-// ========================================================================
-
-// returns false and creates alert if email is an invalid length
-// otherwise returns true
+/*
+  Returns whether the email address length is valid and displays an alert if not.
+*/
+// =============================================================================
 function email_length_is_valid(){
 
     if($("#email").val().length >= 50){
@@ -17,13 +17,14 @@ function email_length_is_valid(){
     }
 
 }
-// ========================================================================
+// =============================================================================
 
 
-// ========================================================================
 
-// returns false and creates alert if username is an invalid length
-// otherwise returns true
+/*
+  Returns whether the username length is valid and displays an alert if not.
+*/
+// =============================================================================
 function username_length_is_valid(){
 
     if($("#username").val().length >= 30){
@@ -39,9 +40,15 @@ function username_length_is_valid(){
     }
 
 }
+// =============================================================================
 
-// returns false and creates alert if username contains invalid characters
-// otherwise returns true
+
+
+/*
+  Returns whether the username is made up solely of legal characters
+  and displays an alert if so.
+*/
+// =============================================================================
 function username_contains_only_valid_characters(){
 
     var proposed_username = $("#username").val();
@@ -63,13 +70,14 @@ function username_contains_only_valid_characters(){
     }
 
 }
-// ========================================================================
+// =============================================================================
 
 
-// ========================================================================
 
-// returns false and creates alert if password is an invalid length
-// otherwise returns true
+/*
+  Returns whether the password length is valid and displays an alert if not.
+*/
+// =============================================================================
 function password_length_is_valid(){
 
     if($("#password").val().length >= 30){
@@ -85,9 +93,14 @@ function password_length_is_valid(){
     }
 
 }
+// =============================================================================
 
-// returns false and creates alert if passwords don't match
-// otherwise returns true
+
+
+/*
+  Returns whether the two passwords are equal and displays an alert if not.
+*/
+// =============================================================================
 function passwords_are_equal(){
     if($("#password").val() == $("#confirm_password").val()){
         return true;
@@ -97,4 +110,4 @@ function passwords_are_equal(){
         return false;
     }
 }
-// ========================================================================
+// =============================================================================
