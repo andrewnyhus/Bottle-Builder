@@ -71,9 +71,54 @@
       }
     </script>
 
+    <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
     <style>
         #display_map{
-            height: 380px;
+          height: 380px;
+        }
+
+
+        #display_map *:not(.map_loader) {
+          z-index:0;
+        }
+
+
+        .map_loader{
+          border: 8px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 8px solid #3498db;
+          width: 100px;
+          height: 100px;
+          -webkit-animation: spin 2s linear infinite; /* Safari */
+          animation: spin 2s linear infinite;
+          position: absolute;
+          top: calc(50% - 50px);
+          left: calc(50% - 50px);
+          z-index:1;
+        }
+
+
+        .loader {
+          border: 3px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 3px solid #3498db;
+          width: 20px;
+          height: 20px;
+          -webkit-animation: spin 2s linear infinite; /* Safari */
+          animation: spin 2s linear infinite;
+        }
+
+
+        /* Safari */
+        @-webkit-keyframes spin {
+          0% { -webkit-transform: rotate(0deg); }
+          100% { -webkit-transform: rotate(360deg); }
+        }
+
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
     </style>
@@ -93,28 +138,6 @@
                     <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
                     <div id="delete_loader" align="center" class="loader" style="display:none;"></div>
 
-                    <style>
-                      .loader {
-                        border: 3px solid #f3f3f3;
-                        border-radius: 50%;
-                        border-top: 3px solid #3498db;
-                        width: 20px;
-                        height: 20px;
-                        -webkit-animation: spin 2s linear infinite; /* Safari */
-                        animation: spin 2s linear infinite;
-                      }
-
-                      /* Safari */
-                      @-webkit-keyframes spin {
-                        0% { -webkit-transform: rotate(0deg); }
-                        100% { -webkit-transform: rotate(360deg); }
-                      }
-
-                      @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      }
-                    </style>
 
                 </button>
               {% endif %}
@@ -276,28 +299,6 @@
                                           <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
                                           <div id="popover_loader" align="center" class="loader" style="display:none;"></div>
 
-                                          <style>
-                                            .loader {
-                                              border: 3px solid #f3f3f3;
-                                              border-radius: 50%;
-                                              border-top: 3px solid #3498db;
-                                              width: 20px;
-                                              height: 20px;
-                                              -webkit-animation: spin 2s linear infinite; /* Safari */
-                                              animation: spin 2s linear infinite;
-                                            }
-
-                                            /* Safari */
-                                            @-webkit-keyframes spin {
-                                              0% { -webkit-transform: rotate(0deg); }
-                                              100% { -webkit-transform: rotate(360deg); }
-                                            }
-
-                                            @keyframes spin {
-                                              0% { transform: rotate(0deg); }
-                                              100% { transform: rotate(360deg); }
-                                            }
-                                          </style>
 
                                         </button>
                                         <br>
@@ -352,7 +353,12 @@
                 </div>
 
 
-                <div id="display_map"></div>
+                <!-- map -->
+                <div id="display_map">
+
+                  <div id="map_loader" align="center" class="map_loader"></div>
+
+                </div>
 
                 <h5 align="center">Building Height: {{building.building_height}} {{building.building_height_units}}</h5>
 
@@ -383,8 +389,6 @@
 
 
             // MAP AND TABLE UPDATES
-
-
 
 
             // fix bottle estimate labels
@@ -466,33 +470,65 @@
             // get bounds of polygon
             var bbox = turf.extent(geojson);
 
+            // initialize variables to track the progress of the map
+            var initial_zoom_complete = false;
+            var initial_move_complete = false;
+
 
             // listen for map load finish
+            // =================================================================
             map.on('load', function(){
 
-                // add data source for polygon
-                map.addSource('geojson-{{building.pk}}', {
-                    "type": "geojson",
-                    "data": geojson
-                });
+              // add data source for polygon
+              map.addSource('geojson-{{building.pk}}', {
+                  "type": "geojson",
+                  "data": geojson
+              });
 
 
-                // add polygon to map
-                map.addLayer({
-                    "id": "geojsonLayer",
-                    "type": "fill",
-                    "source": "geojson-{{building.pk}}",
-                    "paint": {
-                        "fill-color": "#000fff",
-                        "fill-opacity": 0.35
-                    }
-                });
+              // add polygon to map
+              map.addLayer({
+                  "id": "geojsonLayer",
+                  "type": "fill",
+                  "source": "geojson-{{building.pk}}",
+                  "paint": {
+                      "fill-color": "#000fff",
+                      "fill-opacity": 0.35
+                  }
+              });
 
-                // fit map to polygon of building
-                map.fitBounds(bbox, {padding: 20});
+              // fit map to polygon of building
+              map.fitBounds(bbox, {padding: 20});
 
             });
+            // =================================================================
 
+            // listen for map move finish
+            // =================================================================
+            map.on('moveend', function(){
+
+              /*
+                if the map has not finished moving previously but
+                has finished zooming, mark that the initial move is initial_move_complete
+                and hide the load spinner
+              */
+              if(initial_zoom_complete && !initial_move_complete){
+                initial_move_complete = true;
+                document.getElementById("map_loader").style.display = "none";
+              }
+
+            });
+            // =================================================================
+
+
+
+            // listen for map zoom finish
+            // =================================================================
+            map.on('zoomend', function(){
+              // mark that the initial zoom has completed
+              initial_zoom_complete = true;
+            });
+            // =================================================================
 
 
         });

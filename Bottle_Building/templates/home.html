@@ -79,6 +79,60 @@
   <h4 align="center"> No Public Designs to Display </h4>
   {% endif %}
 
+
+  <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
+  <style>
+      .display_map{
+        height: 380px;
+      }
+
+
+      .display_map *:not(.map_loader) {
+        z-index:0;
+      }
+
+
+      .map_loader{
+        border: 8px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 8px solid #3498db;
+        width: 100px;
+        height: 100px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+        position: absolute;
+        top: calc(50% - 50px);
+        left: calc(50% - 50px);
+        z-index:1;
+      }
+
+
+      .loader {
+        border: 3px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 3px solid #3498db;
+        width: 20px;
+        height: 20px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+      }
+
+
+      /* Safari */
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+  </style>
+
+
     {% for building_design in building_designs %}
 
 
@@ -96,28 +150,6 @@
                 <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
                 <div id="delete_loader_{{building_design.building.pk}}" align="center" class="loader" style="display:none;"></div>
 
-                <style>
-                  .loader {
-                    border: 3px solid #f3f3f3;
-                    border-radius: 50%;
-                    border-top: 3px solid #3498db;
-                    width: 20px;
-                    height: 20px;
-                    -webkit-animation: spin 2s linear infinite; /* Safari */
-                    animation: spin 2s linear infinite;
-                  }
-
-                  /* Safari */
-                  @-webkit-keyframes spin {
-                    0% { -webkit-transform: rotate(0deg); }
-                    100% { -webkit-transform: rotate(360deg); }
-                  }
-
-                  @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                  }
-                </style>
 
               </button>
           {% endif %}
@@ -270,29 +302,6 @@
                                       <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
                                       <div id="popover_loader_{{building_design.building.pk}}" align="center" class="loader" style="display:none;"></div>
 
-                                      <style>
-                                        .loader {
-                                          border: 3px solid #f3f3f3;
-                                          border-radius: 50%;
-                                          border-top: 3px solid #3498db;
-                                          width: 20px;
-                                          height: 20px;
-                                          -webkit-animation: spin 2s linear infinite; /* Safari */
-                                          animation: spin 2s linear infinite;
-                                        }
-
-                                        /* Safari */
-                                        @-webkit-keyframes spin {
-                                          0% { -webkit-transform: rotate(0deg); }
-                                          100% { -webkit-transform: rotate(360deg); }
-                                        }
-
-                                        @keyframes spin {
-                                          0% { transform: rotate(0deg); }
-                                          100% { transform: rotate(360deg); }
-                                        }
-                                      </style>
-
                                     </button>
                                     <br>
                                     `;
@@ -366,8 +375,11 @@
               Also, sometimes the polygon representing your design glitches and you need to zoom out in order to see the full polygon.
             </div>
 
-          <!-- Map -->
-          <div id="display_map_{{building_design.building.pk}}" style="height: 380px; width: 100%;"></div>
+            <!-- Map -->
+            <div id="display_map_{{building_design.building.pk}}" class="display_map" style="height: 380px; width: 100%;">
+              <div id="map_loader_{{building_design.building.pk}}" align="center" class="map_loader"></div>
+
+            </div><br>
 
           <h5 align="center">Building Height: {{building_design.building.building_height}} {{building_design.building.building_height_units}}</h5>
 
@@ -486,7 +498,13 @@
               var bbox_{{building_design.building.pk}} = turf.extent(geojson_{{building_design.building.pk}});
 
 
+              // initialize variables to track the progress of the map
+              var initial_zoom_complete_{{building_design.building.pk}} = false;
+              var initial_move_complete_{{building_design.building.pk}} = false;
+
+
               // listen for map load finish
+              // =================================================================
               map_{{building_design.building.pk}}.on('load', function(){
 
                   // add data source for polygon
@@ -511,6 +529,35 @@
                   map_{{building_design.building.pk}}.fitBounds(bbox_{{building_design.building.pk}}, {padding: 20});
 
               });
+              // =================================================================
+
+
+              // listen for map move to finish
+              // =================================================================
+              map_{{building_design.building.pk}}.on('moveend', function(){
+
+                /*
+                  if the map has not finished moving previously but
+                  has finished zooming, mark that the initial move is initial_move_complete
+                  and hide the load spinner
+                */
+                if(initial_zoom_complete_{{building_design.building.pk}} && !initial_move_complete_{{building_design.building.pk}}){
+                  initial_move_complete_{{building_design.building.pk}} = true;
+                  document.getElementById("map_loader_{{building_design.building.pk}}").style.display = "none";
+                }
+
+              });
+              // =================================================================
+
+
+              // listen for map zoom finish
+              // =================================================================
+              map_{{building_design.building.pk}}.on('zoomend', function(){
+                // mark that the initial zoom has completed
+                initial_zoom_complete_{{building_design.building.pk}} = true;
+              });
+              // =================================================================
+
             {% endfor %}
 
         });
