@@ -32,11 +32,54 @@
     </script>
 
 
-
+    <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
     <style>
         #map_to_draw_building{
             height: 380px;
             width: 100%;
+        }
+
+        #map_to_draw_building *:not(.map_loader) {
+          z-index:0;
+        }
+
+
+        .map_loader{
+          border: 8px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 8px solid #3498db;
+          width: 100px;
+          height: 100px;
+          -webkit-animation: spin 2s linear infinite; /* Safari */
+          animation: spin 2s linear infinite;
+          position: absolute;
+          top: calc(50% - 50px);
+          left: calc(50% - 50px);
+          z-index:1;
+        }
+
+
+        .loader {
+          border: 3px solid #f3f3f3;
+          border-radius: 50%;
+          border-top: 3px solid #3498db;
+          width: 20px;
+          height: 20px;
+          -webkit-animation: spin 2s linear infinite; /* Safari */
+          animation: spin 2s linear infinite;
+        }
+
+
+        /* Safari */
+        @-webkit-keyframes spin {
+          0% { -webkit-transform: rotate(0deg); }
+          100% { -webkit-transform: rotate(360deg); }
+        }
+
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
     </style>
@@ -165,7 +208,10 @@
 
 
               <!-- Map -->
-              <div id="map_to_draw_building"></div><br>
+              <div id="map_to_draw_building">
+                <div id="map_loader" align="center" class="map_loader"></div>
+
+              </div><br>
 
 
               <!-- Enter Building Height -->
@@ -279,30 +325,6 @@
     {% if user.is_authenticated %}
         // set text and onclick of post button
         $("#post_design_button").html(`Post Building Design
-          <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
-
-          <style>
-            .loader {
-              border: 3px solid #f3f3f3;
-              border-radius: 50%;
-              border-top: 3px solid #3498db;
-              width: 20px;
-              height: 20px;
-              -webkit-animation: spin 2s linear infinite; /* Safari */
-              animation: spin 2s linear infinite;
-            }
-
-            /* Safari */
-            @-webkit-keyframes spin {
-              0% { -webkit-transform: rotate(0deg); }
-              100% { -webkit-transform: rotate(360deg); }
-            }
-
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-          </style>
 
           <div id="submit_loader" align="center" class="loader" style="display:none;"></div>
           `);

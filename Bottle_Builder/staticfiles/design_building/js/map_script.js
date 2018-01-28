@@ -4,9 +4,8 @@ $(document).ready(function(){
 
   /*
     Initialize the map, it's controls,
-    and set up listener to fire buildingFloorDrawn when a drawing is complete.
+    and set up listeners for map
   */
-  // =============================================================================
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZnVlcnRlbnVldmFjYXNhIiwiYSI6ImNqMGgzdTg5ZzAydnEyd3J1cHF4eG54eHUifQ.Aikx4qEIowhrKbSVhNEpRw';
 
@@ -18,11 +17,12 @@ $(document).ready(function(){
         zoom: 1,
     });
 
+    var geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken
+    })
 
     // add search control
-    map.addControl(new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken
-    }));
+    map.addControl(geocoder);
 
 
     // initialize and add drawing control
@@ -37,7 +37,59 @@ $(document).ready(function(){
 
     // listener, when drawing is complete, fire buildingFloorDrawn
     map.on("draw.create", buildingFloorDrawn);
-    // =============================================================================
+
+
+    var result_has_settled = true;
+
+    // listen for map load finish
+    // =================================================================
+    map.on('load', function(){
+
+      // hide map load spinner
+      document.getElementById("map_loader").style.display = "none";
+
+      // listen for when the geocoder is beginning to move or zoom towards
+      // a location. when this happens, set the boolean and show the spinner.
+      geocoder.on("result", function(){
+        result_has_settled = false;
+        document.getElementById("map_loader").style.display = "block";
+      });
+
+
+      // listen for when the geocoder has an error and make a popup alert
+      // when this occurs.
+      geocoder.on("error", function(){
+        alert("Error finding location on map.");
+      });
+
+    });
+    // =================================================================
+
+    // listen for map move finish.
+    // if the geocoder was moving and just finished, hide the spinner.
+    // =================================================================
+    map.on('moveend', function(){
+
+      if(!result_has_settled){
+        document.getElementById("map_loader").style.display = "none";
+      }
+
+    });
+    // =================================================================
+
+
+    // listen for map zoom finish.
+    // if the geocoder was zooming and just finished, hide the spinner.
+    // =================================================================
+    map.on('zoomend', function(){
+
+      if(!result_has_settled){
+        document.getElementById("map_loader").style.display = "none";
+      }
+
+    });
+    // =================================================================
+
 
 
 
