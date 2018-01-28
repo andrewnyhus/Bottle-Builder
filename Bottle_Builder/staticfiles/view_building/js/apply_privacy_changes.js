@@ -101,6 +101,11 @@ function post_privacy_changes(privacy_changes){
   if(validate_privacy_changes(privacy_changes)){
       var data_string = JSON.stringify(privacy_changes)
 
+      // disable apply changes button
+      document.getElementById("apply_changes_button").disabled = true;
+
+      // show popover loader
+      document.getElementById("popover_loader").style.display = "inline-block";
 
       // submit post request
       $.ajax({
@@ -108,16 +113,23 @@ function post_privacy_changes(privacy_changes){
         type: "POST",
         data: {"csrfmiddlewaretoken":get_token(), "data_string": data_string},
         success: function(response){
+
+          // hide popover loader
+          document.getElementById("popover_loader").style.display = "none";
+
           hide_bad_alert();
           set_message_good_alert(response);
           show_good_alert();
 
-          // update apply changes button
-          document.getElementById('apply_changes_button').disabled = true;
-
         },
         error: function(xhr, error_message, err){
           var response = xhr.responseJSON;
+
+          // enable apply changes button
+          document.getElementById("apply_changes_button").disabled = false;
+
+          // hide popover loader
+          document.getElementById("popover_loader").style.display = "none";
 
           hide_good_alert();
           set_message_bad_alert(response);

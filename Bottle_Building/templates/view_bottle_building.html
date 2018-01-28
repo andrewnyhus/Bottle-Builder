@@ -28,7 +28,7 @@
 
         // show loader
         document.getElementById("trash_glyphicon").style.display = "none";
-        document.getElementById("submit_loader").style.display = "block";
+        document.getElementById("delete_loader").style.display = "block";
 
 
         $.ajax({
@@ -39,7 +39,7 @@
 
             // hide loader
             document.getElementById("trash_glyphicon").style.display = "block";
-            document.getElementById("submit_loader").style.display = "none";
+            document.getElementById("delete_loader").style.display = "none";
 
 
             hide_bad_alert();
@@ -58,7 +58,7 @@
 
             // show loader
             document.getElementById("trash_glyphicon").style.display = "block";
-            document.getElementById("submit_loader").style.display = "none";
+            document.getElementById("delete_loader").style.display = "none";
 
 
             hide_good_alert();
@@ -91,7 +91,7 @@
                     <span id="trash_glyphicon" class="glyphicon glyphicon-trash"></span>
 
                     <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
-                    <div id="submit_loader" align="center" class="loader" style="display:none;"></div>
+                    <div id="delete_loader" align="center" class="loader" style="display:none;"></div>
 
                     <style>
                       .loader {
@@ -122,12 +122,16 @@
                 <script src="/static/view_building/js/apply_privacy_changes.js"></script>
 
               <!-- Edit Privacy -->
-                <a id="building_popover" style="display:inline-block; float:right;" data-toggle="building_popover_toggle" title="More" data-html="true" >
+                <a id="building_popover" style="display:inline-block; float:right;" data-toggle="building_popover_toggle" data-placement="bottom" title="More" data-html="true" aria-describedby="privacy_popover">
                     <span id="building_popover_glyphicon" ></span>
 
 
                     <script>
                         // POPOVER FUNCTIONALITY
+
+                        function close_popover(){
+                          $('#'+$('#building_popover').attr('aria-describedby')).css('display', 'none');
+                        }
 
                         $(document).ready(function(){
 
@@ -135,12 +139,16 @@
                             return {{building.pk}};
                           }
 
+
                             // set popover
                             $('[data-toggle="building_popover_toggle"]').popover();
 
 
                             // declare building popover html
-                            var building_popover_html = '';
+                            var building_popover_html = "";
+
+                            // include button to close popover
+                            building_popover_html = building_popover_html + `<button type="button" class="btn btn-danger btn-sm" onclick="close_popover()"> <span class="glyphicon glyphicon-remove"></span> </button><br>`;
 
 
                             // include viewable at link
@@ -258,7 +266,36 @@
                                         </table>
 
                                         <!-- Apply Changes Button -->
-                                        <button type="button" id="apply_changes_button" class="btn btn-primary btn-block" onclick="apply_privacy_changes();" disabled>Apply Changes</button>
+                                        <button type="button" id="apply_changes_button" class="btn btn-primary btn-block" onclick="apply_privacy_changes();" disabled>
+                                          Apply Changes
+
+                                          <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
+                                          <div id="popover_loader" align="center" class="loader" style="display:none;"></div>
+
+                                          <style>
+                                            .loader {
+                                              border: 3px solid #f3f3f3;
+                                              border-radius: 50%;
+                                              border-top: 3px solid #3498db;
+                                              width: 20px;
+                                              height: 20px;
+                                              -webkit-animation: spin 2s linear infinite; /* Safari */
+                                              animation: spin 2s linear infinite;
+                                            }
+
+                                            /* Safari */
+                                            @-webkit-keyframes spin {
+                                              0% { -webkit-transform: rotate(0deg); }
+                                              100% { -webkit-transform: rotate(360deg); }
+                                            }
+
+                                            @keyframes spin {
+                                              0% { transform: rotate(0deg); }
+                                              100% { transform: rotate(360deg); }
+                                            }
+                                          </style>
+
+                                        </button>
                                         <br>
                                         `;
 
