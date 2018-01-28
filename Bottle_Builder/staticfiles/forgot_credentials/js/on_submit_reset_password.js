@@ -48,10 +48,14 @@ function passwords_are_equal(){
 function reset_password_form_submitted(){
 
   if(password_length_is_valid() && passwords_are_equal()){
+
     //disable form
     document.getElementById("password_input").disabled = true;
     document.getElementById("confirm_password_input").disabled = true;
     document.getElementById("reset_password_submit_button").disabled = true;
+
+    // show loader
+    document.getElementById("submit_loader").style.display = "inline-block";
 
 
     hide_bad_alert();
@@ -67,6 +71,10 @@ function reset_password_form_submitted(){
         data: {"password": document.getElementById("password_input").value, "csrfmiddlewaretoken": get_csrf()},
 
         success: function(response){
+
+          // hide loader
+          document.getElementById("submit_loader").style.display = "none";
+
           hide_bad_alert();
           set_message_good_alert(response);
           show_good_alert();
@@ -75,14 +83,18 @@ function reset_password_form_submitted(){
         error: function(xhr, error_message, err){
           var response = xhr.responseJSON;
 
-          hide_good_alert();
-          set_message_bad_alert(response);
-          show_bad_alert();
-
           //disable form
           document.getElementById("password_input").disabled = false;
           document.getElementById("confirm_password_input").disabled = false;
           document.getElementById("reset_password_submit_button").disabled = false;
+
+          // hide loader
+          document.getElementById("submit_loader").style.display = "none";
+
+          hide_good_alert();
+          set_message_bad_alert(response);
+          show_bad_alert();
+
 
         }
 

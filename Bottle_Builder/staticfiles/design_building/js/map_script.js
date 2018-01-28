@@ -41,7 +41,6 @@ $(document).ready(function(){
 
 
 
-
     // fires when a polygon is done being drawn on the map.
     // It stores the information of the vertices of this polygon as the
     // corners of the building. It updates the building_info global array
