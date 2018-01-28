@@ -101,8 +101,14 @@ function post_privacy_changes(privacy_changes){
   if(validate_privacy_changes(privacy_changes)){
       var data_string = JSON.stringify(privacy_changes)
 
-      // disable apply changes button
+      // disable apply changes button & radio buttons
       document.getElementById("apply_changes_button").disabled = true;
+      document.getElementById("set_visible_to_public").disabled = true;
+      document.getElementById("set_invisible_to_public").disabled = true;
+      document.getElementById("set_visible_to_members").disabled = true;
+      document.getElementById("set_invisible_to_members").disabled = true;
+      document.getElementById("set_visible_to_those_with_link").disabled = true;
+      document.getElementById("set_invisible_to_those_with_link").disabled = true;
 
       // show popover loader
       document.getElementById("popover_loader").style.display = "inline-block";
@@ -117,6 +123,14 @@ function post_privacy_changes(privacy_changes){
           // hide popover loader
           document.getElementById("popover_loader").style.display = "none";
 
+          // enable radio buttons
+          document.getElementById("set_visible_to_public").disabled = false;
+          document.getElementById("set_invisible_to_public").disabled = false;
+          document.getElementById("set_visible_to_members").disabled = false;
+          document.getElementById("set_invisible_to_members").disabled = false;
+          document.getElementById("set_visible_to_those_with_link").disabled = false;
+          document.getElementById("set_invisible_to_those_with_link").disabled = false;
+
           hide_bad_alert();
           set_message_good_alert(response);
           show_good_alert();
@@ -125,8 +139,14 @@ function post_privacy_changes(privacy_changes){
         error: function(xhr, error_message, err){
           var response = xhr.responseJSON;
 
-          // enable apply changes button
+          // enable apply changes button & radio buttons
           document.getElementById("apply_changes_button").disabled = false;
+          document.getElementById("set_visible_to_public").disabled = false;
+          document.getElementById("set_invisible_to_public").disabled = false;
+          document.getElementById("set_visible_to_members").disabled = false;
+          document.getElementById("set_invisible_to_members").disabled = false;
+          document.getElementById("set_visible_to_those_with_link").disabled = false;
+          document.getElementById("set_invisible_to_those_with_link").disabled = false;
 
           // hide popover loader
           document.getElementById("popover_loader").style.display = "none";

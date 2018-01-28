@@ -101,12 +101,39 @@ function post_privacy_changes(privacy_changes){
       var data_string = JSON.stringify(privacy_changes)
 
 
+      // disable apply changes button & radio buttons
+      document.getElementById("apply_changes_button_"+ privacy_changes["building_pk"]).disabled = true;
+      document.getElementById("set_visible_to_public_"+ privacy_changes["building_pk"]).disabled = true;
+      document.getElementById("set_invisible_to_public_"+ privacy_changes["building_pk"]).disabled = true;
+      document.getElementById("set_visible_to_members_"+ privacy_changes["building_pk"]).disabled = true;
+      document.getElementById("set_invisible_to_members_"+ privacy_changes["building_pk"]).disabled = true;
+      document.getElementById("set_visible_to_those_with_link_"+ privacy_changes["building_pk"]).disabled = true;
+      document.getElementById("set_invisible_to_those_with_link_"+ privacy_changes["building_pk"]).disabled = true;
+
+      // show popover loader
+      document.getElementById("popover_loader_"+ privacy_changes["building_pk"]).style.display = "inline-block";
+
+
+
       // submit post request
       $.ajax({
         url: "/post_building_privacy_changes/",
         type: "POST",
         data: {"csrfmiddlewaretoken":get_token(), "data_string": data_string},
         success: function(response){
+
+          // hide popover loader
+          document.getElementById("popover_loader_"+ privacy_changes["building_pk"]).style.display = "none";
+
+          // enable radio buttons
+          document.getElementById("set_visible_to_public_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_invisible_to_public_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_visible_to_members_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_invisible_to_members_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_visible_to_those_with_link_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_invisible_to_those_with_link_"+ privacy_changes["building_pk"]).disabled = false;
+
+
           hide_bad_alert();
           set_message_good_alert(response);
           show_good_alert();
@@ -117,6 +144,20 @@ function post_privacy_changes(privacy_changes){
         },
         error: function(xhr, error_message, err){
           var response = xhr.responseJSON;
+
+          // enable apply changes button & radio buttons
+          document.getElementById("apply_changes_button_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_visible_to_public_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_invisible_to_public_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_visible_to_members_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_invisible_to_members_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_visible_to_those_with_link_"+ privacy_changes["building_pk"]).disabled = false;
+          document.getElementById("set_invisible_to_those_with_link_"+ privacy_changes["building_pk"]).disabled = false;
+
+          // hide popover loader
+          document.getElementById("popover_loader_"+ privacy_changes["building_pk"]).style.display = "none";
+
+
 
           hide_good_alert();
           set_message_bad_alert(response);
