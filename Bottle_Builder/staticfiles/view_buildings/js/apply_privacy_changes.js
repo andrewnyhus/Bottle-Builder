@@ -133,6 +133,12 @@ function post_privacy_changes(privacy_changes){
           document.getElementById("set_visible_to_those_with_link_"+ privacy_changes["building_pk"]).disabled = false;
           document.getElementById("set_invisible_to_those_with_link_"+ privacy_changes["building_pk"]).disabled = false;
 
+          // close popover
+          close_popover(privacy_changes["building_pk"]);
+
+          // delete toggle
+          document.getElementById("building_popover_"+ privacy_changes["building_pk"]).remove();
+
 
           hide_bad_alert();
           set_message_good_alert(response);

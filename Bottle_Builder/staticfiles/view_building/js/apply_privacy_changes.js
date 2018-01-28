@@ -131,6 +131,13 @@ function post_privacy_changes(privacy_changes){
           document.getElementById("set_visible_to_those_with_link").disabled = false;
           document.getElementById("set_invisible_to_those_with_link").disabled = false;
 
+          // close popover
+          close_popover();
+
+          // delete toggle
+          document.getElementById("building_popover").remove();
+
+
           hide_bad_alert();
           set_message_good_alert(response);
           show_good_alert();
