@@ -22,21 +22,45 @@
     }
 
     function delete_building(primary_key){
+
+      // disable delete button
+      document.getElementById("delete_link_"+ primary_key).disabled = true;
+
+      // show loader
+      document.getElementById("trash_glyphicon_"+ primary_key).style.display = "none";
+      document.getElementById("submit_loader_"+ primary_key).style.display = "block";
+
+
+
       $.ajax({
         url: "/delete_bottle_building/building_id="+primary_key+"/",
         type: "POST",
         data: {"csrfmiddlewaretoken":get_token()},
         success: function(response){
+
+          // hide loader
+          document.getElementById("trash_glyphicon_"+ primary_key).style.display = "block";
+          document.getElementById("submit_loader_"+ primary_key).style.display = "none";
+
+
           hide_bad_alert();
           set_message_good_alert(JSON.stringify(response));
           show_good_alert();
 
-          // redirect
-          document.location = "/";
+          // remove building from page
+          document.getElementById("panel-div-"+primary_key).remove();
 
         },
         error: function(xhr, error_message, err){
           var response = xhr.responseJSON;
+
+          // enable delete button
+          document.getElementById("delete_link_"+ primary_key).disabled = false;
+
+
+          // hide loader
+          document.getElementById("trash_glyphicon_"+ primary_key).style.display = "block";
+          document.getElementById("submit_loader_"+ primary_key).style.display = "none";
 
           hide_good_alert();
           set_message_bad_alert(JSON.stringify(response));
@@ -59,7 +83,7 @@
 
 
 
-      <div class="panel-div">
+      <div id="panel-div-{{building_design.building.pk}}" class="panel-div">
       <div class="panel panel-default">
         <div class="panel-heading" style="overflow: auto;">
 
@@ -67,7 +91,35 @@
           {% if request.user.is_authenticated and request.user.pk == building_design.building.created_by.pk %}
           <!-- Delete Building -->
             <button class="btn btn-default" onclick="delete_building('{{building_design.building.pk}}');" id="delete_link_{{building_design.building.pk}}" style="display:inline-block; float:left;">
-                <span class="glyphicon glyphicon-trash"></span> </button>
+                <span id="trash_glyphicon_{{building_design.building.pk}}" class="glyphicon glyphicon-trash"></span>
+
+                <!-- Spinner, Courtesy of: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader -->
+                <div id="submit_loader_{{building_design.building.pk}}" align="center" class="loader" style="display:none;"></div>
+
+                <style>
+                  .loader {
+                    border: 3px solid #f3f3f3;
+                    border-radius: 50%;
+                    border-top: 3px solid #3498db;
+                    width: 20px;
+                    height: 20px;
+                    -webkit-animation: spin 2s linear infinite; /* Safari */
+                    animation: spin 2s linear infinite;
+                  }
+
+                  /* Safari */
+                  @-webkit-keyframes spin {
+                    0% { -webkit-transform: rotate(0deg); }
+                    100% { -webkit-transform: rotate(360deg); }
+                  }
+
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                </style>
+
+              </button>
           {% endif %}
 
           <!-- Edit Privacy -->
