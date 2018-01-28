@@ -37,12 +37,16 @@ function forgot_username_form_submitted(){
   // get email value
   var email = document.getElementById("forgot_username_email_input").value;
 
-  // disable form
-  document.getElementById("forgot_username_email_input").disabled = true;
-  document.getElementById("forgot_username_submit_button").disabled = true;
-
-
   if (email_is_valid(email)){
+
+    // show loader
+    document.getElementById("username_loader").style.display = "inline-block";
+
+    // disable form
+    document.getElementById("forgot_username_email_input").disabled = true;
+    document.getElementById("forgot_username_submit_button").disabled = true;
+
+
     $.ajax({
 
         url: "/forgot_username/",
@@ -50,6 +54,10 @@ function forgot_username_form_submitted(){
         data: {"email": email, "csrfmiddlewaretoken": get_csrf()},
 
         success: function(response){
+
+          // hide loader
+          document.getElementById("username_loader").style.display = "none";
+
           hide_bad_alert();
           set_message_good_alert("Please check your email for your username.");
           show_good_alert();
@@ -58,13 +66,16 @@ function forgot_username_form_submitted(){
         error: function(xhr, error_message, err){
           var response = xhr.responseJSON;
 
-          hide_good_alert();
-          set_message_bad_alert(response);
-          show_bad_alert();
+          // hide loader
+          document.getElementById("username_loader").style.display = "none";
 
           // re-enable form
           document.getElementById("forgot_username_email_input").disabled = false;
           document.getElementById("forgot_username_submit_button").disabled = false;
+
+          hide_good_alert();
+          set_message_bad_alert(response);
+          show_bad_alert();
 
         }
 
@@ -84,12 +95,15 @@ function forgot_password_form_submitted(){
   // get email value
   var email = document.getElementById("forgot_password_email_input").value;
 
-  // disable form
-  document.getElementById("forgot_password_email_input").disabled = true;
-  document.getElementById("forgot_password_submit_button").disabled = true;
-
-
   if (email_is_valid(email)){
+
+    // show loader
+    document.getElementById("password_loader").style.display = "inline-block";
+
+    // disable form
+    document.getElementById("forgot_password_email_input").disabled = true;
+    document.getElementById("forgot_password_submit_button").disabled = true;
+
     $.ajax({
 
         url: "/request_password_reset_link/",
@@ -97,6 +111,10 @@ function forgot_password_form_submitted(){
         data: {"email": email, "csrfmiddlewaretoken": get_csrf()},
 
         success: function(response){
+
+          // hide loader
+          document.getElementById("password_loader").style.display = "none";
+
           hide_bad_alert();
           set_message_good_alert("Please check your email for your temporary password reset link.");
           show_good_alert();
@@ -105,13 +123,16 @@ function forgot_password_form_submitted(){
         error: function(xhr, error_message, err){
           var response = xhr.responseJSON;
 
-          hide_good_alert();
-          set_message_bad_alert(response);
-          show_bad_alert();
+          // hide loader
+          document.getElementById("password_loader").style.display = "none";
 
           // re-enable form
           document.getElementById("forgot_password_email_input").disabled = false;
           document.getElementById("forgot_password_submit_button").disabled = false;
+
+          hide_good_alert();
+          set_message_bad_alert(response);
+          show_bad_alert();
 
         }
 
@@ -131,12 +152,16 @@ function account_activation_form_submitted(){
   // get email value
   var email = document.getElementById("activate_account_email_input").value;
 
-  // disable form
-  document.getElementById("activate_account_email_input").disabled = true;
-  document.getElementById("activate_account_submit_button").disabled = true;
-
 
   if (email_is_valid(email)){
+
+    // show loader
+    document.getElementById("activation_loader").style.display = "inline-block";
+
+    // disable form
+    document.getElementById("activate_account_email_input").disabled = true;
+    document.getElementById("activate_account_submit_button").disabled = true;
+
     $.ajax({
 
         url: "/request_account_activation_link/",
@@ -144,6 +169,10 @@ function account_activation_form_submitted(){
         data: {"email": email, "csrfmiddlewaretoken": get_csrf()},
 
         success: function(response){
+
+          // hide loader
+          document.getElementById("activation_loader").style.display = "none";
+
           hide_bad_alert();
           set_message_good_alert("Please check your email for your temporary account activation link.");
           show_good_alert();
@@ -152,13 +181,16 @@ function account_activation_form_submitted(){
         error: function(xhr, error_message, err){
           var response = xhr.responseJSON;
 
-          hide_good_alert();
-          set_message_bad_alert(response);
-          show_bad_alert();
+          // hide loader
+          document.getElementById("activation_loader").style.display = "none";
 
           // re-enable form
           document.getElementById("activate_account_email_input").disabled = false;
           document.getElementById("activate_account_submit_button").disabled = false;
+
+          hide_good_alert();
+          set_message_bad_alert(response);
+          show_bad_alert();
 
         }
 
