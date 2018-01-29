@@ -20,20 +20,6 @@ from email.mime.text import MIMEText
 from .email_account import *
 
 
-'''
-    Helper function that returns a message that corresponds to a given key.
-    This to standardize the response messages that the server gives.
-'''
-#===============================================================================
-def get_response_message(key):
-    response_messages = {}
-
-    try:
-        return response_messages[key]
-    except KeyError:
-        return "Error retrieving response message, key is invalid."
-#===============================================================================
-
 
 '''
     Helper function that sends an email with a specified:
