@@ -109,5 +109,5 @@ def submit_feedback(request):
             return Response("Feedback Submitted Successfully!", status=status.HTTP_200_OK)
 
     except Exception as exc:
-        return Response("Error Submitting Feedback", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response("Error Submitting Feedback, please try a few more times.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 #===============================================================================

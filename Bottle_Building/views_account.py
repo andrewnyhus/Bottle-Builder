@@ -37,9 +37,9 @@ def change_password(request):
         if user is not None:
             user.set_password(new_password)
             user.save()
-            return Response("Your new password has been updated.", status=status.HTTP_200_OK)
+            return Response("Your new password has been updated.", status=status.HTTP_202_ACCEPTED)
         else:
-            return Response("Incorrect current password.", status=status.HTTP_401_UNAUTHORIZED)
+            return Response("Incorrect current password.", status=status.HTTP_400_BAD_REQUEST)
     elif request.user.is_authenticated():
         return Response("Account Inactive. Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_401_UNAUTHORIZED)
     else:
@@ -84,11 +84,11 @@ def login(request):
 
             # if user is not active, make them active
             if(not(user.is_active)):
-                return Response("Your Account is Inactive, Please Check Your Email or Visit: " + request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_400_BAD_REQUEST)
+                return Response("Your Account is Inactive, Please Check Your Email or Visit: " + request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_401_UNAUTHORIZED)
 
             auth_login(request, user)
 
-            return Response("Logged in Successfully", status=status.HTTP_200_OK)
+            return Response("Logged in Successfully", status=status.HTTP_202_ACCEPTED)
         elif User.objects.get(username=username) is not None:
             return Response("Login Failed, Password is Incorrect", status=status.HTTP_400_BAD_REQUEST)
 

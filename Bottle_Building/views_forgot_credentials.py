@@ -60,7 +60,7 @@ def reset_password(request, uidb64, token):
             if default_token_generator.check_token(user, token):
                 user.set_password(new_password)
                 user.save()
-                return Response("Your new password has been saved.", status=status.HTTP_200_OK)
+                return Response("Your new password has been saved.", status=status.HTTP_202_ACCEPTED)
 
             return Response("Your token has expired, please request a new link at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_400_BAD_REQUEST)
     except User.DoesNotExist:
@@ -102,6 +102,7 @@ def forgot_username(request):
         # now we email the username to the account holders email.
         body = "Your username is: " + user.username
         send_email(email,"Your Bottle Builder Username", body)
+        
         return Response("We have successfully emailed you your username", status=status.HTTP_200_OK)
     except KeyError:
         return Response("No email was provided.", status=status.HTTP_400_BAD_REQUEST)

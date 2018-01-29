@@ -58,9 +58,9 @@ def delete_bottle_building_design(request, building_id):
         if request.user.is_authenticated() and request.user.is_active and (request.user.pk == building.created_by.pk):
             building.delete()
             return Response("Successfully Deleted", status=status.HTTP_200_OK)
-        return Response("Could not delete building because you are unauthorized", status=status.HTTP_401_UNAUTHORIZED)
+        return Response("Could not delete building because you are unauthorized or inactive.", status=status.HTTP_401_UNAUTHORIZED)
     except Exception as exc:
-        return Response("Error deleting bottle building.  Make sure the proper id was provided.", status=status.HTTP_400_BAD_REQUEST)
+        return Response("Error deleting bottle building.  Make sure the proper id was provided.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 #===============================================================================
 
 
@@ -193,7 +193,7 @@ def post_bottle_building_design(request):
             return Response(url_to_design, status=status.HTTP_201_CREATED)
         except Exception as exc:
             # Return Error
-            return Response(str(exc), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response("There was a problem saving your building. It may have been created or partially created. Please check your profile.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     elif request.is_authenticated():
         return Response("Please Activate Your Account", status=status.HTTP_401_UNAUTHORIZED)
     return Response("Please log in", status=status.HTTP_401_UNAUTHORIZED)
@@ -215,7 +215,7 @@ def post_building_privacy_changes(request):
 
         # construct array from data string
         request_data = json.loads(data_string)
-        #return Response(data_string)
+
         # ensure that a building pk is included in the data
         # and that the user is the owner of the building design
         # and that the necessary privacy info is in the data
@@ -244,7 +244,7 @@ def post_building_privacy_changes(request):
 
                     building.save()
 
-                    return Response("Privacy changes have been applied.", status=status.HTTP_202_ACCEPTED)
+                    return Response("Privacy changes have been applied.", status=status.HTTP_200_OK)
                 return Response("You are not the owner of the building design", status=status.HTTP_401_UNAUTHORIZED)
 
             # building does not exist
@@ -255,7 +255,7 @@ def post_building_privacy_changes(request):
                 return Response("Invalid Data", status=status.HTTP_400_BAD_REQUEST)
             # general error
             except Exception as exc:
-                return Response(str(exc), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response("There was a problem saving your privacy changes. Please try again.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     else:
-        return Response("You are not the owner, or your account is inactive", status=status.HTTP_401_UNAUTHORIZED)
+        return Response("You are not the owner of the bottle building, or your account is inactive", status=status.HTTP_401_UNAUTHORIZED)
 #===============================================================================
