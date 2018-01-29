@@ -19,7 +19,7 @@ $(document).ready(function(){
 
     var geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken
-    })
+    });
 
     // add search control
     map.addControl(geocoder);

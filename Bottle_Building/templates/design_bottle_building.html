@@ -7,8 +7,8 @@
 
 {% block import_headers %}
 
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.39.1/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.0/mapbox-gl.css' rel='stylesheet' />
 
     <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.js'></script>
     <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.0/mapbox-gl-draw.css' type='text/css'/>
@@ -151,10 +151,17 @@
               in the map below.</label>
 
               <!-- Need Help Popover -->
-              <a id="help_popover" style="display:inline-block; float:right;" data-placement="right" data-original-title="help_popover_toggle" title="Map Help" data-html="true" >
+              <a id="help_popover" style="display:inline-block; float:right;" data-original-title="help_popover_toggle" title="Map Help" data-placement="bottom" data-html="true" >
                   Need Help?
                   <script>
                       // POPOVER FUNCTIONALITY
+
+
+                      function close_popover(){
+                        // close popover
+                        $('#'+$('#help_popover').attr('aria-describedby')).css('display', 'none');
+                      }
+
 
                       $(document).ready(function(){
 
@@ -165,6 +172,10 @@
 
                           // declare building popover html
                           var help_popover_html = '';
+
+                          // include button to close popover
+                          help_popover_html = help_popover_html + `<button type="button" class="btn btn-danger btn-sm" onclick="close_popover()"> <span class="glyphicon glyphicon-remove"></span> </button><br>`;
+
 
                           // add first description and image
                           help_popover_html = help_popover_html + "<h5> Start the building perimeter polygon by clicking the draw button.</h5>";
@@ -258,7 +269,7 @@
               <div class="btn-group btn-group-justified" role="group">
                 <!-- Generate Resource Estimate Button -->
                 <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-default" id="generate_resource_estimate_button" onclick="generate_resource_estimate_html()">See In Depth Resource Estimate</button>
+                  <button type="button" class="btn btn-default" id="generate_resource_estimate_button" onclick="generate_resource_estimate_html()">Estimate Resources<br>(In Depth)</button>
                 </div>
 
 
@@ -324,14 +335,14 @@
 
     {% if user.is_authenticated %}
         // set text and onclick of post button
-        $("#post_design_button").html(`Post Building Design
-
+        $("#post_design_button").html(`Post
+          <br>Building Design
           <div id="submit_loader" align="center" class="loader" style="display:none;"></div>
           `);
         $("#post_design_button").attr("onclick", "post_building_design()");
     {% else %}
         // set text and onclick of post button
-        $("#post_design_button").html("Login to Post Building Design (You will lose progress).");
+        $("#post_design_button").html("Login to Post.<br>You will lose progress.");
         $("#post_design_button").attr("onclick", "document.location = '/login_page';");
 
     {% endif %}
