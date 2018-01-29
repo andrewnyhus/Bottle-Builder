@@ -19,6 +19,28 @@
     <div class="panel-body">
 			<br>
 
+      <div class="alert alert-info alert-dismissable" role="alert">
+        Please make sure that:
+
+        <br>
+        The length of your email address is valid (between 5 and 50 characters).
+        <br>
+
+        The length of your username is valid (between 5 and 30 characters).
+        <br>
+
+        Your username only contains valid characters
+        (uppercase or lowercase letters, numbers, underscores and dashes).
+        <br>
+
+        The length of your password is valid (between 5 and 30 characters).
+        <br>
+
+        Your two passwords match.
+        <br>
+
+      </div>
+
 	    <form align="center" id="create_account_form" style="padding-left:20%; padding-right:20%">
 	        {% csrf_token %}
           <script>
