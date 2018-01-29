@@ -34,7 +34,7 @@ def reset_password_page(request, uidb64, token):
     except User.DoesNotExist:
         return render(request, "message.html", {"title":"User is Invalid/Bad Link", "heading":"User is Invalid/Bad Link", "message":"The user is invalid or the link is bad. Please request a new link at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
     except Exception as exc:
-        return render(request, "error.html", {"exception": str(exc)})
+        return render(request, "error.html", {"message": "Sorry! We had a problem loading your reset password link. Please try again or request another."})
 #===============================================================================
 
 
@@ -102,7 +102,7 @@ def forgot_username(request):
         # now we email the username to the account holders email.
         body = "Your username is: " + user.username
         send_email(email,"Your Bottle Builder Username", body)
-        
+
         return Response("We have successfully emailed you your username", status=status.HTTP_200_OK)
     except KeyError:
         return Response("No email was provided.", status=status.HTTP_400_BAD_REQUEST)

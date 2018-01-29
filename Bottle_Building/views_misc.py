@@ -60,7 +60,7 @@ def home(request):
 
         return render(request, 'home.html', {"building_designs": building_designs})
     except Exception as exc:
-        return render(request, "error.html", {"exception": str(exc)})
+        return render(request, "error.html", {"message": "Sorry! We had a problem loading the home page."})
 #===============================================================================
 
 

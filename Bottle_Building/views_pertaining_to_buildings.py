@@ -30,7 +30,7 @@ def view_bottle_building(request, building_id):
 
         return render(request, "view_bottle_building.html", {"building": building, "coordinates": coordinates, "link": link})
     except Exception as exc:
-        return render(request, "error.html", {"exception": str(exc)})
+        return render(request, "error.html", {"message": "Sorry! We had a problem loading the bottle building."})
 #===============================================================================
 
 
@@ -192,7 +192,6 @@ def post_bottle_building_design(request):
             # Return url of building that was created.
             return Response(url_to_design, status=status.HTTP_201_CREATED)
         except Exception as exc:
-            # Return Error
             return Response("There was a problem saving your building. It may have been created or partially created. Please check your profile.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     elif request.is_authenticated():
         return Response("Please Activate Your Account", status=status.HTTP_401_UNAUTHORIZED)

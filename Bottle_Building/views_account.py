@@ -135,7 +135,7 @@ def activate_account(request, uidb64, token):
         except User.DoesNotExist:
             return render(request, "message.html", {"title":"User is Invalid/Bad Link", "heading":"User is Invalid/Bad Link", "message":"The user is invalid or the link is bad. Please request a new link at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
         except Exception as exc:
-            return render(request, "error.html", {"exception": str(exc)})
+            return render(request, "error.html", {"message": "Sorry! We had a problem activating your account"})
 #===============================================================================
 
 
