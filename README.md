@@ -5,12 +5,12 @@
 
 Not only are bottle buildings a great use of plastic bottles, they are very durable. I cannot confirm this, but according to various sources, these structures are: bulletproof, earthquake resistant, fireproof, and temperature retaining.
 
-There are several ways to build a bottle building. If you want to find instructions, inspiration or just more information, check out [these search results](https://bottlebuilder.herokuapp.com/about/)."
+There are several ways to build a bottle building. If you want to find instructions, inspiration or just more information, check out [these search results](https://www.google.com/search?q=bottle+building)."
 Source: [Bottle Builder About Page](https://bottlebuilder.herokuapp.com/about/)
 
 
 ## What is Bottle Builder?
-Bottle Builder is a website powered by Django Python. Bottle Builder allows users
+Bottle Builder is a website powered by Django Python and hosted by Heroku's free developer plan. Bottle Builder allows users
 to design the structure of their "Bottle Building" and Bottle Builder then provides
 a theoretical estimate of the resources needed for construction. Bottle Builder does not
 determine structural integrity of any building design, nor does Bottle Builder
@@ -19,7 +19,7 @@ from being constructed legally.
 
 ## How does the site work?
 
-1. The user goes to [https://bottlebuilder.herokuapp.com/design_bottle_building/](https://bottlebuilder.herokuapp.com/design_bottle_building/)
+1. The user goes to [the design bottle building page](https://bottlebuilder.herokuapp.com/design_bottle_building/)
 and creates a bottle building design. They do this by entering the necessary information
 and drawing the perimeter of the building on the map. Below is a screenshot of this.
 
@@ -36,3 +36,13 @@ they created at their profile page. A screenshot of a view of a bottle building 
 ![A view of a bottle building design](/readme_images/view_building.png)
 
 ## Project structure
+
+Project Directory
+* Bottle_Builder/ - contains staticfiles, settings, and url routes
+* Bottle_Building/ - contains page templates, and server route handlers (views)
+* readme_images/ - contains images for this README file
+* LICENSE - contains the MIT License
+* manage.py - tells the server where the settings file is and executes the server
+* Procfile - configuration for Heroku
+* README.md - explains things about the project
+* requirements.txt - lists dependencies that the server needs
