@@ -158,7 +158,14 @@
 
               {% endif %}
 
+              <!-- Alert for map bug -->
+                <div class="alert alert-info alert-dismissable" role="alert">
+                  <span class="glyphicon glyphicon-warning-sign"></span>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  If the map tiles turn white, manipulate the map slightly (zoom in/out, move left/right/up/down, etc.)
+                </div>
 
+                
 
               <!-- Measurement System Radio Buttons -->
               <label class="radio-inline">
@@ -169,12 +176,7 @@
               </label><br><br>
 
               <br>
-              <!-- Alert for map bug -->
-                <div class="alert alert-info alert-dismissable" role="alert">
-                  <span class="glyphicon glyphicon-warning-sign"></span>
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  If the map tiles turn white, manipulate the map slightly (zoom in/out, move left/right/up/down, etc.)
-                </div>
+
 
               <!-- Map label -->
               <label for="map_to_draw_building" id="map_label">Please draw the perimeter of your new building

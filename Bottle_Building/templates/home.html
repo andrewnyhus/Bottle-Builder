@@ -160,6 +160,13 @@
 
   </style>
 
+  <!-- Alert for map bug -->
+    <div class="alert alert-info alert-dismissable" role="alert">
+      <span class="glyphicon glyphicon-warning-sign"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      If the map tiles turn white, manipulate the map slightly (zoom in/out, move left/right/up/down, etc.)
+      If the polygon representing your building is incomplete or distorted, zoom out until is fixed.
+    </div>
 
     {% for building_design in building_designs %}
 
@@ -395,13 +402,7 @@
         </div>
         <div class="panel-body" style="overflow: auto;">
 
-          <!-- Alert for map bug -->
-            <div class="alert alert-info alert-dismissable" role="alert">
-              <span class="glyphicon glyphicon-warning-sign"></span>
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              If the map tiles turn white, manipulate the map slightly (zoom in/out, move left/right/up/down, etc.)
-              If the polygon representing your building is incomplete or distorted, zoom out until is fixed.
-            </div>
+
 
             <!-- Map -->
             <div id="display_map_{{building_design.building.pk}}" class="display_map" style="height: 380px; width: 100%;">
