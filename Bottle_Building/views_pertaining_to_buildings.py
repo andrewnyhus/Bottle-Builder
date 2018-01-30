@@ -17,13 +17,13 @@ def view_bottle_building(request, building_id):
         # building must be visible to public or to those with the link
         # otherwise, respond saying that the user is unauthorized
         if not(request.user.is_authenticated()) and not(building.visible_to_public or building.visible_to_those_with_link):
-            return render(request, "unauthorized_request.html")
+            return render(request, "message.html", {"title":"Unauthorized Request", "heading":"Unauthorized Request", "message":"Sorry, you cannot view this page."})
 
         # if user is authenticated
         # building must be visible to public, members or those with the link, or it must be created by user
         # otherwise, respond saying that the user is unauthorized
         if request.user.is_authenticated() and not(building.visible_to_public or building.visible_to_members or building.visible_to_those_with_link or (request.user.pk == building.created_by.pk)):
-            return render(request, "unauthorized_request.html")
+            return render(request, "message.html", {"title":"Unauthorized Request", "heading":"Unauthorized Request", "message":"Sorry, you cannot view this page."})
 
         coordinates = Coordinates.objects.filter(bottle_building=building)
         link = request.build_absolute_uri("/view_bottle_building/building_id=" + str(building.pk))

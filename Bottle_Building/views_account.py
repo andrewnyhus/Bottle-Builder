@@ -117,7 +117,7 @@ def login(request):
 def logout_page(request):
     try:
         logout(request)
-        return render(request, "logout_successful.html")
+        return render(request, "message.html", {"title":"Logout Successful", "heading":"Logout Successful", "message":"You have been logged out successfully."})
     except Exception as exc:
         return render(request, "error.html", {"message": "Sorry! There was an error logging you out."})
 #===============================================================================
