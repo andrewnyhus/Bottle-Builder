@@ -71,16 +71,19 @@
       });
     }
 
-    // get user agent
-    var user_agent = navigator.userAgent.toLowerCase();
+    $(document).ready(function(){
+      // get user agent
+      var user_agent = navigator.userAgent.toLowerCase();
 
-    // determine whether or not user is on android
-    var is_android = user_agent.indexOf("android") > -1;
+      // determine whether or not user is on android
+      var is_android = user_agent.indexOf("android") > -1;
 
-    // if user on android, show the alert
-    if (is_android){
-      document.getElementById("android_alert").style.display = "block";
-    }
+      // if user on android, show the alert
+      if (is_android){
+        document.getElementById("android_alert").style.display = "block";
+      }
+
+    });
 
   </script>
 
