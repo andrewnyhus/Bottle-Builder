@@ -29,6 +29,18 @@
       function get_token(){
         return "{{csrf_token}}";
       }
+      
+      // get user agent
+      var user_agent = navigator.userAgent.toLowerCase();
+
+      // determine whether or not user is on android
+      var is_android = user_agent.indexOf("android") > -1;
+
+      // if user on android, show the alert
+      if (is_android){
+        document.getElementById("android_alert").style.display = "block";
+      }
+
     </script>
 
 
@@ -86,7 +98,7 @@
 
 
     <!-- Alert for Android Users -->
-    <div class="alert alert-warning alert-dismissable" role="alert" data-toggle="collapse" data-target="#android_message">
+    <div id="android_alert" class="alert alert-warning alert-dismissable" role="alert" style="display:none;" data-toggle="collapse" data-target="#android_message">
       <span class="glyphicon glyphicon-warning-sign"></span>
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       Notice to Android users: (Click or Tap Here to Expand/Collapse)

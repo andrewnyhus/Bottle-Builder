@@ -116,6 +116,19 @@
 
 		</style>
 
+
+
+
+      <!-- bad alert, good alert -->
+      <script src="/static/js/alert-scripts.js"></script>
+      <div class="alert alert-danger" id="bad_alert" style="display: none;" role="alert"></div>
+      <div align="center" class="alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert"></div>
+
+
+
+		{% block content %}{% endblock %}
+
+
     <!-- Alert for Disclaimer -->
       <div class="alert alert-info alert-dismissable" role="alert" data-toggle="collapse" data-target="#disclaimer">
         <span class="glyphicon glyphicon-warning-sign"></span>
@@ -130,15 +143,6 @@
         </div>
       </div>
 
-
-      <!-- bad alert, good alert -->
-      <script src="/static/js/alert-scripts.js"></script>
-      <div class="alert alert-danger" id="bad_alert" style="display: none;" role="alert"></div>
-      <div align="center" class="alert alert-success alert-dismissible" id="good_alert" style="display:none;" role="alert"></div>
-
-
-
-		{% block content %}{% endblock %}
 	</body>
 
 </html>
