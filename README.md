@@ -39,7 +39,7 @@ they created at their profile page. A screenshot of a view of a bottle building 
 
 Project Directory
 * Bottle_Builder/ - contains staticfiles, settings, and url routes
-* Bottle_Building/ - contains page templates, and server route handlers (views)
+* Bottle_Building/ - contains page templates, database models and server route handlers (views)
 * readme_images/ - contains images for this README file
 * LICENSE - contains the MIT License
 * manage.py - tells the server where the settings file is and executes the server
