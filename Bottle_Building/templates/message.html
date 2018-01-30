@@ -11,13 +11,17 @@
 <div class="panel-div">
   <div class="panel panel-default">
 
+    {% if heading %}
     <div class="panel-heading">
 			<h2 align="center"> {{heading}} </h2>
     </div>
+    {% endif %}
 
+    {% if message %}
     <div class="panel-body">
 			<p align="center"> {{message}} </p>
     </div>
+    {% endif %}
 
   </div>
 </div>

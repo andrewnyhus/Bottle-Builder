@@ -10,12 +10,15 @@ from .views import *
 @never_cache
 @ensure_csrf_cookie
 def change_password_page(request):
-    if request.user.is_authenticated() and request.user.is_active:
-        return render(request, "change_password.html", {"username": request.user.username})
-    elif request.user.is_authenticated():
-        return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
-    else:
-        return redirect(login_page)
+    try:
+        if request.user.is_authenticated() and request.user.is_active:
+            return render(request, "change_password.html", {"username": request.user.username})
+        elif request.user.is_authenticated():
+            return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
+        else:
+            return redirect(login_page)
+    except Exception as exc:
+        return render(request, "error.html", {"message": "Sorry! There was an error loading the change password page."})
 #===============================================================================
 
 
@@ -25,25 +28,28 @@ def change_password_page(request):
 #===============================================================================
 @api_view(["POST"])
 def change_password(request):
-    if request.user.is_authenticated() and request.user.is_active:
+    try:
+        if request.user.is_authenticated() and request.user.is_active:
 
-        username = request.user.username
-        current_password = request.data["current_password"]
-        new_password = request.data["new_password"]
+            username = request.user.username
+            current_password = request.data["current_password"]
+            new_password = request.data["new_password"]
 
-        # try authenticating with current password before setting new password
-        user = authenticate(username=username, password=current_password)
+            # try authenticating with current password before setting new password
+            user = authenticate(username=username, password=current_password)
 
-        if user is not None:
-            user.set_password(new_password)
-            user.save()
-            return Response("Your new password has been updated.", status=status.HTTP_202_ACCEPTED)
+            if user is not None:
+                user.set_password(new_password)
+                user.save()
+                return Response("Your new password has been updated.", status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response("Incorrect current password.", status=status.HTTP_400_BAD_REQUEST)
+        elif request.user.is_authenticated():
+            return Response("Account Inactive. Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_401_UNAUTHORIZED)
         else:
-            return Response("Incorrect current password.", status=status.HTTP_400_BAD_REQUEST)
-    elif request.user.is_authenticated():
-        return Response("Account Inactive. Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/"), status=status.HTTP_401_UNAUTHORIZED)
-    else:
-        return Response("You are not authenticated", status=status.HTTP_401_UNAUTHORIZED)
+            return Response("You are not authenticated", status=status.HTTP_401_UNAUTHORIZED)
+    except Exception as exc:
+        return Response("Sorry! There was an error changing your password.", status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 #===============================================================================
 
 
@@ -56,12 +62,15 @@ def change_password(request):
 @never_cache
 @ensure_csrf_cookie
 def login_page(request):
-    if request.user.is_authenticated() and request.user.is_active:
-        return redirect(view_profile)
-    elif request.user.is_authenticated():
-        return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
+    try:
+        if request.user.is_authenticated() and request.user.is_active:
+            return redirect(view_profile)
+        elif request.user.is_authenticated():
+            return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
 
-    return render(request, 'login_page.html')
+        return render(request, 'login_page.html')
+    except Exception as exc:
+        return render(request, "error.html", {"message": "Sorry! There was an error loading the login page."})
 #===============================================================================
 
 
@@ -106,8 +115,11 @@ def login(request):
 '''
 #===============================================================================
 def logout_page(request):
-    logout(request)
-    return render(request, "logout_successful.html")
+    try:
+        logout(request)
+        return render(request, "logout_successful.html")
+    except Exception as exc:
+        return render(request, "error.html", {"message": "Sorry! There was an error logging you out."})
 #===============================================================================
 
 
@@ -120,22 +132,28 @@ def logout_page(request):
 @never_cache
 @ensure_csrf_cookie
 def activate_account(request, uidb64, token):
-    # help from https://stackoverflow.com/questions/25292052/send-email-confirmation-after-registration-django
-    if uidb64 is not None and token is not None:
-        try:
-            uid = urlsafe_base64_decode(str(uidb64))
-            user = User.objects.get(pk=uid)
-            # if user is inactive and token is valid
-            if default_token_generator.check_token(user, token) and not(user.is_active):
-                # set activate user, log them in and redirect to home
-                user.is_active = True
-                user.save()
-                return render(request, "message.html", {"title": "Account Activated Successfully!", "heading":"Your Account Has Been Activated", "message":"Please login now."})
-            return render(request, "message.html", {"title":"Account Activation Failed", "heading":"Account Activation Failed", "message":"This token has expired or is invalid. If you have not already activated your account, please do so at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
-        except User.DoesNotExist:
-            return render(request, "message.html", {"title":"User is Invalid/Bad Link", "heading":"User is Invalid/Bad Link", "message":"The user is invalid or the link is bad. Please request a new link at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
-        except Exception as exc:
-            return render(request, "error.html", {"message": "Sorry! We had a problem activating your account"})
+    try:
+        # help from https://stackoverflow.com/questions/25292052/send-email-confirmation-after-registration-django
+        if uidb64 is not None and token is not None:
+            try:
+                uid = urlsafe_base64_decode(str(uidb64))
+                user = User.objects.get(pk=uid)
+                # if user is inactive and token is valid
+                if default_token_generator.check_token(user, token) and not(user.is_active):
+                    # set activate user, log them in and redirect to home
+                    user.is_active = True
+                    user.save()
+                    return render(request, "message.html", {"title": "Account Activated Successfully!", "heading":"Your Account Has Been Activated", "message":"Please login now."})
+                return render(request, "message.html", {"title":"Account Activation Failed", "heading":"Account Activation Failed", "message":"This token has expired or is invalid. If you have not already activated your account, please do so at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
+            except User.DoesNotExist:
+                return render(request, "message.html", {"title":"User is Invalid/Bad Link", "heading":"User is Invalid/Bad Link", "message":"The user is invalid or the link is bad. Please request a new link at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
+            except Exception as exc:
+                return render(request, "error.html", {"message": "Sorry! We had a problem activating your account"})
+        else:
+            return render(request, "message.html", {"title":"Missing Token or Username", "heading":"Missing Token or Username", "message":"The token or the username is missing from your activation link. Make sure it is identical to the one sent to you, and if it is, please request another."})
+    except Exception as exc:
+        return render(request, "error.html", {"message": "Sorry! We had a problem activating your account"})
+
 #===============================================================================
 
 
@@ -148,11 +166,14 @@ def activate_account(request, uidb64, token):
 @never_cache
 @ensure_csrf_cookie
 def create_account_page(request):
-    if request.user.is_authenticated() and request.user.is_active:
-        return redirect(view_profile)
-    elif request.user.is_authenticated():
-        return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
-    return render(request, "create_account.html")
+    try:
+        if request.user.is_authenticated() and request.user.is_active:
+            return redirect(view_profile)
+        elif request.user.is_authenticated():
+            return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
+        return render(request, "create_account.html")
+    except Exception as exc:
+        return render(request, "error.html", {"message": "Sorry! There was a problem loading the create account page."})
 #===============================================================================
 
 
@@ -170,6 +191,9 @@ def register(request):
 
 
     try:
+        if request.user.is_authenticated():
+            return Response("You are already logged in and have an account.", status=status.HTTP_401_UNAUTHORIZED)
+
         # if user with requested username exists
         # give response that explains so
         user_who_took_username = User.objects.get(username=request.data["username"])
@@ -250,24 +274,26 @@ def register(request):
 @never_cache
 @ensure_csrf_cookie
 def view_profile(request):
+    try:
+        if request.user.is_authenticated() and request.user.is_active:
 
-    if request.user.is_authenticated() and request.user.is_active:
+            buildings = Bottle_Building.objects.filter(created_by=request.user).order_by("-created_on")
+            # initialize designs array
+            building_designs = []
+            # iterate through buildings created by user
+            for building in buildings.all():
+                # get coordinates
+                design_coordinates = Coordinates.objects.filter(bottle_building=building)
+                # get link for current design
+                link = request.build_absolute_uri("/view_bottle_building/building_id=" + str(building.pk))
+                # add building design to array
+                building_designs.append({"building": building, "coordinates": design_coordinates, "link": link})
 
-        buildings = Bottle_Building.objects.filter(created_by=request.user).order_by("-created_on")
-        # initialize designs array
-        building_designs = []
-        # iterate through buildings created by user
-        for building in buildings.all():
-            # get coordinates
-            design_coordinates = Coordinates.objects.filter(bottle_building=building)
-            # get link for current design
-            link = request.build_absolute_uri("/view_bottle_building/building_id=" + str(building.pk))
-            # add building design to array
-            building_designs.append({"building": building, "coordinates": design_coordinates, "link": link})
-
-        return render(request, "profile.html", {"building_designs": building_designs})
-    elif request.user.is_authenticated():
-        return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
-    else:
-        return redirect(login_page)
+            return render(request, "profile.html", {"building_designs": building_designs})
+        elif request.user.is_authenticated():
+            return render(request, "message.html", {"title":"Please Activate Your Account", "heading":"Please Activate Your Account", "message":"Check your email for the activation link, or request a new one at our forgot credentials page: "+request.build_absolute_uri("/forgot_credentials_page/")})
+        else:
+            return redirect(login_page)
+    except Exception as exc:
+        return render(request, "error.html", {"message":"Sorry! There was a problem loading the view profile page."})
 #===============================================================================

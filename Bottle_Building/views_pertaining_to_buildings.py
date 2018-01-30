@@ -198,6 +198,7 @@ def post_bottle_building_design(request):
     return Response("Please log in", status=status.HTTP_401_UNAUTHORIZED)
 #===============================================================================
 
+
 '''
     Handles the post building privacy changes requests.
     If user is authenticated, active and the owner of the building,
