@@ -130,6 +130,13 @@
 
 
               {% if user.is_authenticated %}
+              
+              <!-- Alert for map bug -->
+                <div class="alert alert-info alert-dismissable" role="alert">
+                  <span class="glyphicon glyphicon-warning-sign"></span>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  If the map tiles turn white, manipulate the map slightly (zoom in/out, move left/right/up/down, etc.)
+                </div>
 
               <!-- Enter Building Title -->
               <label for="building_title_input" id="building_title_label">Building Title: (max: 40 characters)</label>
@@ -156,8 +163,6 @@
                 Please note that you must login to post your building design.
               </div>
 
-              {% endif %}
-
               <!-- Alert for map bug -->
                 <div class="alert alert-info alert-dismissable" role="alert">
                   <span class="glyphicon glyphicon-warning-sign"></span>
@@ -165,7 +170,10 @@
                   If the map tiles turn white, manipulate the map slightly (zoom in/out, move left/right/up/down, etc.)
                 </div>
 
-                
+              {% endif %}
+
+
+
 
               <!-- Measurement System Radio Buttons -->
               <label class="radio-inline">
