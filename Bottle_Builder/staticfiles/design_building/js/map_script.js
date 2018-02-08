@@ -105,8 +105,8 @@ $(document).ready(function(){
     // =============================================================================
     function buildingFloorDrawn(e) {
 
-        // hide map
-        $("#map_to_draw_building").css("display", "none");
+        // disable map editing
+        document.getElementsByClassName("mapboxgl-ctrl-group")[0].remove();
 
         // hide help popover
         $("#help_popover").css("display", "none");
